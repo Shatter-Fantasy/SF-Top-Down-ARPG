@@ -1,5 +1,5 @@
-# SF-Metroidvania-Package
-There is a work in progress dedicated documentation website being made. Will update this section part way through alpha six that is currently in progress.
+# SF-Top-Down-ARPG-Package
+There is a work in progress dedicated documentation website being made.
 
 ## Summary 
 This is the Shatter Fantasy Topdown ARPG Unity package that can be used to create any game needing top down ARPGs like retro Zelda. 
