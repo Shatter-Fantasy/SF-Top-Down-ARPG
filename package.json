@@ -1,0 +1,29 @@
+{
+  "name": "shatterfantasy.sf-topdown-arpg",
+  "version": "0.0.1",
+  "displayName": "SF Metroidvania",
+  "description": "This is the Topdown ARPG Toolkit developed by \nJonathan Westfall of Shatter Fantasy studio.",
+  "keywords": [
+    "2D",
+    "Topdown",
+    "Template",
+    "Shatter Fantasy",
+    "Jonathan Westfall"
+  ],
+  "category": "Template",
+  "author": {
+    "name": "Jonathan Westfall - Shatter Fantasy"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/Shatter-Fantasy"
+  },
+  "_upm": {
+    "changelog": "### Created the package"
+  },
+  "unity": "6000.3",
+  "dependencies": {
+    "com.unity.inputsystem": "1.16.0",
+    "com.unity.cinemachine": "3.1.4"
+  },
+  "hideInEditor": false
+}
