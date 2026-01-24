@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-//using SF.Utilities;
+using SF.Utilities;
 using Unity.Collections;
 using UnityEngine;
 using UnityEngine.LowLevelPhysics2D;
@@ -99,7 +99,7 @@ namespace SF.PhysicsLowLevel
             Profiler.BeginSample("Getting Tile Data");
 #if UNITY_6000_4_OR_NEWER
             Tilemap.PositionArray tilePosition = new Tilemap.PositionArray();
-            //_tilemap.GetUsedTileData(out _tilesInBlock, out tilePosition);
+            _tilemap.GetUsedTileData(out _tilesInBlock, out tilePosition);
 #else
             _tilemap.GetUsedTileData(out _tilesInBlock);
             using var positions = _tilemap.GetTileCellPositions();
@@ -137,7 +137,7 @@ namespace SF.PhysicsLowLevel
                         {
                             // The (Vector2)_tilesInBlock[i].transform.MultiplyPoint3x4 below matches the tiles rotation or scale value of the placed tile data.
 #if UNITY_6000_4_OR_NEWER
-                        //vertexPath.Add((Vector2)_tilesInBlock[i].transform.MultiplyPoint3x4(_physicsShapeVertex[v]) + tilePosition[i].ToVector2Int() + (Vector2)_tilemap.tileAnchor);
+                        vertexPath.Add((Vector2)_tilesInBlock[i].transform.MultiplyPoint3x4(_physicsShapeVertex[v]) + tilePosition[i].ToVector2Int() + (Vector2)_tilemap.tileAnchor);
 #else
                         vertexPath.Add((Vector2)_tilesInBlock[i].transform.MultiplyPoint3x4(_physicsShapeVertex[v])+ positions[i].ToVector2Int() + (Vector2)_tilemap.tileAnchor);
 #endif
@@ -170,28 +170,6 @@ namespace SF.PhysicsLowLevel
                 // This is a bad solution and needs more updates for composite shapes.
                 _shape = ShapesInComposite[0];
             }
-            
-            // Iterate the polygons.
-            /*
-            foreach (var geometry in polygons)
-            {
-                if (!geometry.isValid)
-                    continue;
-
-                var shapeGeometry = geometry.Transform(relativeTransform, false);
-                if (!shapeGeometry.isValid)
-                    continue;
-
-                var shape = Body.CreateShape(shapeGeometry, ShapeDefinition);
-                
-                if (!shape.isValid)
-                    continue;
-
-                // Add to owned shapes.
-                if(ShapesInComposite.IsCreated)
-                    ShapesInComposite.Add(shape);
-            }
-            */
             Profiler.EndSample();
         }
     }

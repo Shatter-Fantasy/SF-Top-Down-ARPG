@@ -1,14 +1,13 @@
-using System;
 using System.Collections.Generic;
-using SF.PhysicsLowLevel;
 using UnityEditor;
 using UnityEditor.EditorTools;
 using UnityEditor.Overlays;
-using UnityEngine.LowLevelPhysics2D;
 using UnityEngine.UIElements;
 
 namespace SFEditor.PhysicsLowLevel
 {
+    using SF.PhysicsLowLevel;
+    
     [EditorTool("Edit SF Shape Component", typeof(SFShapeComponent))]
     public sealed class SFShapeSceneEditorTool : EditorTool, IDrawSelectedHandles
     {

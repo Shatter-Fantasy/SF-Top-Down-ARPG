@@ -10,6 +10,6 @@ namespace SF.PhysicsLowLevel
     /// </remarks>
     public interface IForceReceiver
     {
-        public void SetExternalVelocity(Vector2 velocity);
+        public abstract void SetExternalVelocity(Vector2 velocity);
     }
 }

@@ -6,10 +6,13 @@ namespace SF.PhysicsLowLevel
     /// <summary>
     /// Used to tell how custom shapes should be contained inside a <see cref="PhysicsShape"/> that acts like a container.
     /// </summary>
+    /// <remarks>
+    /// Example usage: <see cref="SF.RoomModule.RoomPhysicsShape"/> that is used to contain a cinemachine camera inside of it.
+    /// </remarks>
     public interface IPhysicsShapeContained
     {
         /// <summary>
-        /// The <see cref="SFShapeComponent"/> that this <see cref="IPhysicsShapeContained"/> is being contained in.
+        /// The <see cref="SFShapeBody2D"/> that this <see cref="IPhysicsShapeContained"/> is being contained in.
         /// </summary>
         public SFShapeComponent ContainerShape2D { get; set; }
 

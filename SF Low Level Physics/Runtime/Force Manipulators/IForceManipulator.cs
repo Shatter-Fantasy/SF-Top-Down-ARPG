@@ -7,6 +7,6 @@ namespace SF.PhysicsLowLevel
     /// </summary>
     public interface IForceManipulator
     {
-        public void ExertForce(IForceReceiver forceReceiver, Vector2 force);
+        public void ExtertForce(IForceReceiver forceReceiver, Vector2 force);
     }
 }
