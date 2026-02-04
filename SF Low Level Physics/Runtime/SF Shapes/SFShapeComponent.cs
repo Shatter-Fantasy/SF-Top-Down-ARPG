@@ -1,9 +1,6 @@
 using System;
 using System.Collections.Generic;
 using Unity.Collections;
-#if UNITY_LOW_LEVEL_EXTRAS_2D
-using Unity.U2D.Physics.Extras;
-#endif
 using UnityEngine;
 using UnityEngine.LowLevelPhysics2D;
 
@@ -35,12 +32,11 @@ namespace SF.PhysicsLowLevel
     [ExecuteAlways]
     [Icon("Packages/shatterfantasy.sf-metroidvania/Editor/Icons/SceneBody.png")]
     public abstract class SFShapeComponent : MonoBehaviour, 
-#if UNITY_LOW_LEVEL_EXTRAS_2D
-        IWorldSceneDrawable, 
-        IWorldSceneTransformChanged,
-#endif
         ITriggerShapeCallback,
         IContactShapeCallback
+    #if UNITY_EDITOR
+    , ITransformMonitor
+    #endif
     {
         
         #region Transform Cache - Temp fields
@@ -59,6 +55,11 @@ namespace SF.PhysicsLowLevel
         {
             var physicsTransform = new PhysicsTransform(transform.position, PhysicsRotate.identity);
             Body.SetAndWriteTransform(physicsTransform);
+        }
+        
+        public void TransformChanged()
+        {
+            UpdateShape();
         }
         #endregion
         
@@ -184,8 +185,8 @@ namespace SF.PhysicsLowLevel
             ApplyTransform();
             CacheTransform();
 
-#if UNITY_EDITOR && UNITY_LOW_LEVEL_EXTRAS_2D
-            WorldSceneTransformMonitor.AddMonitor(this);
+#if UNITY_EDITOR
+            PhysicTransformCache.AddMonitor(transform,this);
 #endif
             DebugPhysics();
         }
@@ -207,8 +208,8 @@ namespace SF.PhysicsLowLevel
             DestroyBody();
             DestroyShape();
             
-#if UNITY_EDITOR && UNITY_LOW_LEVEL_EXTRAS_2D
-            WorldSceneTransformMonitor.RemoveMonitor(this);
+#if UNITY_EDITOR 
+            PhysicTransformCache.RemoveMonitor(transform,this);
 #endif
         }
 
@@ -229,7 +230,6 @@ namespace SF.PhysicsLowLevel
             if (!IsPositionChanged)
                 return;
             
-            Debug.Log(transform.position);
             ApplyTransform();
             CacheTransform();
         }
@@ -540,5 +540,7 @@ namespace SF.PhysicsLowLevel
         {
             OnContactEnd2D(endEvent);
         }
+
+
     }
 }
