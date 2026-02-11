@@ -1,6 +1,10 @@
 using System;
 using System.Collections.Generic;
+using Unity.Burst;
 using Unity.Collections;
+#if UNITY_LOW_LEVEL_EXTRAS_2D
+using Unity.U2D.Physics.Extras;
+#endif
 using UnityEngine;
 using UnityEngine.LowLevelPhysics2D;
 
@@ -30,13 +34,14 @@ namespace SF.PhysicsLowLevel
     /// Create a custom implicit casting to a <see cref="PhysicsShape.ShapeProxy"/> that calls one of the constructors for geometry.
     /// </remarks>
     [ExecuteAlways]
+    [BurstCompile]
     [Icon("Packages/shatterfantasy.sf-metroidvania/Editor/Icons/SceneBody.png")]
     public abstract class SFShapeComponent : MonoBehaviour, 
+#if UNITY_EDITOR
+        ITransformMonitor,
+#endif
         ITriggerShapeCallback,
         IContactShapeCallback
-    #if UNITY_EDITOR
-    , ITransformMonitor
-    #endif
     {
         
         #region Transform Cache - Temp fields
@@ -55,11 +60,6 @@ namespace SF.PhysicsLowLevel
         {
             var physicsTransform = new PhysicsTransform(transform.position, PhysicsRotate.identity);
             Body.SetAndWriteTransform(physicsTransform);
-        }
-        
-        public void TransformChanged()
-        {
-            UpdateShape();
         }
         #endregion
         
@@ -144,6 +144,7 @@ namespace SF.PhysicsLowLevel
             }
         }
         
+
         /// <summary>
         /// A list of objects that are currently contained inside of <see cref="Shape"/>
         /// </summary>
@@ -163,6 +164,9 @@ namespace SF.PhysicsLowLevel
         /// Should the <see cref="Shape"/> size be scaled with the game objects transform.
         /// </summary>
         public bool ScaleSize = true;
+        
+        public Vector2 Offset = Vector2.zero; 
+        
         /// <summary>
         /// Should the Delaunay algorithm be used for creating meshes using <see cref="PhysicsComposer"/>.
         /// </summary>
@@ -208,7 +212,7 @@ namespace SF.PhysicsLowLevel
             DestroyBody();
             DestroyShape();
             
-#if UNITY_EDITOR 
+#if UNITY_EDITOR
             PhysicTransformCache.RemoveMonitor(transform,this);
 #endif
         }
@@ -341,6 +345,8 @@ namespace SF.PhysicsLowLevel
                 Body.Destroy();
                 Body         = default;
             }
+            
+
         }
 
 #region Physic Event Callbacks
@@ -407,6 +413,46 @@ namespace SF.PhysicsLowLevel
         {
             _contactTargets.Remove(target);
         }
+        
+        public void OnTriggerBegin2D(PhysicsEvents.TriggerBeginEvent beginEvent)
+        {
+            OnTriggerBeginCallbacks(beginEvent);
+        }
+
+        public void OnTriggerEnd2D(PhysicsEvents.TriggerEndEvent endEvent)
+        {
+            OnTriggerEndCallbacks(endEvent);
+        }
+
+        public void OnContactBegin2D(PhysicsEvents.ContactBeginEvent beginEvent)
+        {
+            OnContactBeginCallbacks(beginEvent);
+        }
+
+        public void OnContactEnd2D(PhysicsEvents.ContactEndEvent endEvent)
+        {
+            OnContactEndCallbacks(endEvent);
+        }
+
+        public void OnTriggerBegin2D(PhysicsEvents.TriggerBeginEvent beginEvent, SFShapeComponent callingShapeComponent)
+        {
+            OnTriggerBegin2D(beginEvent);
+        }
+
+        public void OnTriggerEnd2D(PhysicsEvents.TriggerEndEvent endEvent, SFShapeComponent callingShapeComponent)
+        {
+            OnTriggerEnd2D(endEvent);
+        }
+
+        public void OnContactBegin2D(PhysicsEvents.ContactBeginEvent beginEvent, SFShapeComponent callingShapeComponent)
+        {
+            OnContactBegin2D(beginEvent);
+        }
+
+        public void OnContactEnd2D(PhysicsEvents.ContactEndEvent endEvent, SFShapeComponent callingShapeComponent)
+        {
+            OnContactEnd2D(endEvent);
+        }
 #endregion
         
         /// <summary>
@@ -415,7 +461,12 @@ namespace SF.PhysicsLowLevel
         [System.Diagnostics.Conditional("UNITY_EDITOR")]
         public virtual void DebugPhysics()
         {
+            // We allow people to do their own custom debugging for custom components even when UsingDebugMode is disabled.
             DebugPhysicsExtra();
+            
+            if (!SFPhysicsManager.UsingDebugMode)
+                return;
+            
             if (!Shape.isValid)
             {
                 if (IsCompositeShape)
@@ -459,6 +510,10 @@ namespace SF.PhysicsLowLevel
         
         /// <summary>
         /// Override this to add custom debug log checking on top of the normal checks in DebugPhysics.
+        /// <remarks>
+        /// This runs even when <see cref="SFPhysicsManager.UsingDebugMode"/> is set to false
+        /// and is only ran inside of the editor at the current moment. Runtime support coming soon.
+        /// </remarks>
         /// </summary>
         [System.Diagnostics.Conditional("UNITY_EDITOR")]
         protected virtual void DebugPhysicsExtra(){}
@@ -469,10 +524,7 @@ namespace SF.PhysicsLowLevel
         /// </summary>
         void IWorldSceneDrawable.Draw()
         {
-            if (Shape.world.drawOptions.HasFlag(PhysicsWorld.DrawOptions.SelectedShapes))
-            {
-                Shape.Draw();
-            }
+            
             
             // Finish if we've nothing to draw.
             if (IsCompositeShape
@@ -501,46 +553,36 @@ namespace SF.PhysicsLowLevel
         }
 #endif
 
-        public void OnTriggerBegin2D(PhysicsEvents.TriggerBeginEvent beginEvent)
+        public PhysicsAABB CalculateAABB()
         {
-            OnTriggerBeginCallbacks(beginEvent);
+            return GetAABB(_shape);
+        }
+        
+        
+        public static PhysicsAABB GetAABB(in PhysicsShape physicsShape)
+        {
+            switch (physicsShape.shapeType)
+            {
+                case PhysicsShape.ShapeType.Circle :
+                    return physicsShape.circleGeometry.CalculateAABB(physicsShape.transform);
+                case PhysicsShape.ShapeType.Capsule:
+                    return physicsShape.capsuleGeometry.CalculateAABB(physicsShape.transform);
+                case PhysicsShape.ShapeType.Segment:
+                    return physicsShape.segmentGeometry.CalculateAABB(physicsShape.transform);
+                case PhysicsShape.ShapeType.Polygon:
+                    return physicsShape.polygonGeometry.CalculateAABB(physicsShape.transform);
+                case PhysicsShape.ShapeType.ChainSegment:
+                    return physicsShape.chainSegmentGeometry.CalculateAABB(physicsShape.transform);
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
 
-        public void OnTriggerEnd2D(PhysicsEvents.TriggerEndEvent endEvent)
+#if  UNITY_EDITOR
+        public void TransformChanged()
         {
-            OnTriggerEndCallbacks(endEvent);
+            UpdateShape();
         }
-
-        public void OnContactBegin2D(PhysicsEvents.ContactBeginEvent beginEvent)
-        {
-            OnContactBeginCallbacks(beginEvent);
-        }
-
-        public void OnContactEnd2D(PhysicsEvents.ContactEndEvent endEvent)
-        {
-            OnContactEndCallbacks(endEvent);
-        }
-
-        public void OnTriggerBegin2D(PhysicsEvents.TriggerBeginEvent beginEvent, SFShapeComponent callingShapeComponent)
-        {
-            OnTriggerBegin2D(beginEvent);
-        }
-
-        public void OnTriggerEnd2D(PhysicsEvents.TriggerEndEvent endEvent, SFShapeComponent callingShapeComponent)
-        {
-            OnTriggerEnd2D(endEvent);
-        }
-
-        public void OnContactBegin2D(PhysicsEvents.ContactBeginEvent beginEvent, SFShapeComponent callingShapeComponent)
-        {
-            OnContactBegin2D(beginEvent);
-        }
-
-        public void OnContactEnd2D(PhysicsEvents.ContactEndEvent endEvent, SFShapeComponent callingShapeComponent)
-        {
-            OnContactEnd2D(endEvent);
-        }
-
-
+#endif
     }
 }
