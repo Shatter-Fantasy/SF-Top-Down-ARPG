@@ -90,6 +90,7 @@ namespace SF.Characters
 			
 			/* All Controller2D have the next set of parameters*/
 			Animator.SetFloat("XSpeed", Mathf.Abs(_controllerBody2D.Direction.x));
+			Animator.SetFloat("YSpeed", Mathf.Abs(_controllerBody2D.Direction.y));
 
 			// Grounded States
 			Animator.SetBool("IsGrounded", _controllerBody2D.CollisionInfo.IsGrounded);
