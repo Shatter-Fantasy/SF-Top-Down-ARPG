@@ -11,10 +11,12 @@ namespace SF.SpawnModule
     public class SpawnSystem : MonoBehaviour
     {
         public GameObject Controller;
+
+        public Transform DebugSpawn;
         private void Start()
         {
             if (Controller != null)
-                OnInitialPlayerSpawn(Controller);
+                OnInitialPlayerSpawn(Controller, DebugSpawn);
         }
 
         private void OnDestroy()
@@ -42,12 +44,20 @@ namespace SF.SpawnModule
         /// <summary>
         /// Tell the game to start the initial spawning of the player when loading up a save file.
         /// </summary>
-        public static TopdownControllerBody2D OnInitialPlayerSpawn(GameObject playerPrefab)
+        public static TopdownControllerBody2D OnInitialPlayerSpawn(GameObject playerPrefab, Transform defaultSpawn = null)
         {
             if (playerPrefab == null)
                 return null;
-            
-            SpawnedPlayer = GameObject.Instantiate(playerPrefab,RoomSystem.CurrentRoom.SpawnedInstance.transform.position,Quaternion.identity);
+
+            if (defaultSpawn != null)
+            {
+                SpawnedPlayer = GameObject.Instantiate(playerPrefab,defaultSpawn.position,Quaternion.identity);
+            }
+            else
+            {
+                SpawnedPlayer = GameObject.Instantiate(playerPrefab,RoomSystem.CurrentRoom.SpawnedInstance.transform.position,Quaternion.identity);
+            }
+          
             if (SpawnedPlayer == null)
                 return null;
             
