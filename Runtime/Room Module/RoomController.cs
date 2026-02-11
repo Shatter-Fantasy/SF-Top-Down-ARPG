@@ -161,15 +161,5 @@ namespace SF.RoomModule
         {
             OnTriggerEnd2D(endEvent);
         }
-
-        public void Draw()
-        {
-            
-        }
-
-        public void TransformChanged()
-        {
-            
-        }
     }
 }
