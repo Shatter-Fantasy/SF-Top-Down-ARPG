@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.LowLevelPhysics2D;
 
@@ -47,16 +48,15 @@ namespace SF.DamageModule
             // noop - No Operation.
         }
         
-        
         public void OnTriggerBegin2D(PhysicsEvents.TriggerBeginEvent beginEvent, SFShapeComponent callingShapeComponent)
         {
-            
-            Debug.Log("YOU WORKING!!!!");
-            
-            if (!callingShapeComponent.TryGetComponent(out IDamagable damagable))
+            // If the target is not a component we can back out.
+            if(!beginEvent.TryGetCallbackComponentOnVisitor(out Component callbackTarget))
                 return;
             
-            Debug.Log(damagable);
+            if(!callbackTarget.TryGetComponent(out IDamagable damagable))
+                return;
+            
             damagable.TakeDamage(DamageAmount,_knockBackForce);
         }
 
@@ -109,8 +109,6 @@ namespace SF.DamageModule
 
         public void OnContactBegin2D(PhysicsEvents.ContactBeginEvent beginEvent, SFShapeComponent callingShapeComponent)
         {
-            Debug.Log("YOU WORKING!!!!");
-            
             if (!callingShapeComponent.TryGetComponent(out IDamagable damagable))
                 return;
             

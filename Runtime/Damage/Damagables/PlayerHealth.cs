@@ -1,7 +1,17 @@
+using System;
+using UnityEngine;
+
 namespace SF.SpawnModule
 {
     public class PlayerHealth : CharacterHealth
     {
+        public static Action<int> PlayerHealthChangedHandler;
+
+        public override void TakeDamage(int damage, Vector2 knockback = new Vector2())
+        {
+            base.TakeDamage(damage, knockback);
+            PlayerHealthChangedHandler.Invoke(CurrentHealth);
+        }
 
         protected override void Kill()
         {
