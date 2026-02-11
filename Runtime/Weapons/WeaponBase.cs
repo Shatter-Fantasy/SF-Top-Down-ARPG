@@ -21,10 +21,8 @@ namespace SF.Weapons
     public abstract class WeaponBase : MonoBehaviour, IWeapon
     {
         public int WeaponDamage = 1;
-
-        [FormerlySerializedAs("ComboType")] 
-        [SerializeField] protected ComboType _comboType;
-        public List<ComboAttack> ComboAttacks = new();
+        
+       
         [SerializeField] protected Vector2 _knockBackForce;
         [SerializeField] protected CharacterRenderer2D _character2D;
         [SerializeField] protected TopdownControllerBody2D _controllerBody2D;
