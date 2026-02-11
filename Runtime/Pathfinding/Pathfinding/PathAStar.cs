@@ -42,10 +42,10 @@ namespace SF.Pathfinding
      *          
      *       }
      */
-    [RequireComponent(typeof(PathRequetManager))]
+    [RequireComponent(typeof(PathRequestManager))]
     public class PathAStar : MonoBehaviour
     {
-        private PathRequetManager _pathRequestManager;
+        private PathRequestManager _pathRequestManager;
         [field: SerializeField] public GridBase GridPath { get; private set; }
 
         private PathNodeBase _startNode;
@@ -53,7 +53,7 @@ namespace SF.Pathfinding
 
         private void Awake()
         {
-            _pathRequestManager = GetComponent<PathRequetManager>();
+            _pathRequestManager = GetComponent<PathRequestManager>();
             if(GridPath == null)
                 GridPath = GetComponent<GridBase>();
         }

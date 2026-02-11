@@ -51,7 +51,8 @@ namespace SF.StateMachine.Core
 				if(SpawnSystem.SpawnedPlayerController != null)
 					_target = SpawnSystem.SpawnedPlayerController.transform;
 				
-                _currentTargetPos = _target.position;
+				if(_target != null)
+				    _currentTargetPos = _target.position;
             }
 
             if (TryGetComponent(out DistanceDecision distance))
@@ -89,13 +90,13 @@ namespace SF.StateMachine.Core
 				_targetIndex      = 0;
 				_currentTargetPos = _target.position;
 			
-				_path = await PathRequetManager._instance.PathFinding.FindPathAwaitable(_controlledTransform.position, _target.position);
+				_path = await PathRequestManager._instance.PathFinding.FindPathAwaitable(_controlledTransform.position, _target.position);
             
 				_followingTarget = true;
 				
-				if(PathRequetManager._instance?.PathFinding?.GridPath != null)
+				if(PathRequestManager._instance?.PathFinding?.GridPath != null)
 				{
-					_grid       = PathRequetManager._instance.PathFinding.GridPath;
+					_grid       = PathRequestManager._instance.PathFinding.GridPath;
 					_nodeRadius = _grid.NodeRadius;
 				}
 			}
@@ -117,7 +118,7 @@ namespace SF.StateMachine.Core
 		        
 	        if (Vector2.Distance(_currentTargetPos, _target.position) > _nodeRadius)
 	        {
-		        _path = await PathRequetManager._instance.PathFinding.FindPathAwaitable(_controlledTransform.position,
+		        _path = await PathRequestManager._instance.PathFinding.FindPathAwaitable(_controlledTransform.position,
 			        _target.position);
 
 		        // If when updating the path we realized the player moved into the same node 
@@ -174,7 +175,7 @@ namespace SF.StateMachine.Core
 	        {
 		        if (Vector2.Distance(_currentTargetPos, _target.position) > _nodeRadius)
 		        {
-			        _path = await PathRequetManager._instance.PathFinding.FindPathAwaitable(_controlledTransform.position,
+			        _path = await PathRequestManager._instance.PathFinding.FindPathAwaitable(_controlledTransform.position,
 				        _target.position);
 
 			        // If when updating the path we realized the player moved into the same node 
