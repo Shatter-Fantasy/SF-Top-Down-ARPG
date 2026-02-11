@@ -78,11 +78,14 @@ namespace SF.AbilityModule
 		/// <returns></returns>
 		protected bool CanStartAbility()
 		{
+
+			if (GameManager.Instance != null
+				&& GameManager.Instance.ControlState != GameControlState.Player)
+				return false;
 			
 			if (!_isInitialized
 			    || !enabled
-			    || _controller2d == null
-			    || GameManager.Instance.ControlState != GameControlState.Player)
+			    || _controller2d == null)
 			{
 				return false;
 			}
