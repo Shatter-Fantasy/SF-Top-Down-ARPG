@@ -58,9 +58,7 @@ namespace SF.AbilityModule.Characters
             if(!_controller2d.IsClimbing)
                 return;
 
-            Vector2 moveDirection = ctx.ReadValue<Vector2>();
-
-            _controller2d.Direction = new Vector2(_controller2d.Direction.x, 0);
+            _controller2d.Direction = ctx.ReadValue<Vector2>();;
         }
 
         private void OnClimb(InputAction.CallbackContext ctx)

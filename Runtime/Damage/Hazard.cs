@@ -38,16 +38,6 @@ namespace SF.DamageModule
             }
         }
         
-        public void OnTriggerBegin2D(PhysicsEvents.TriggerBeginEvent beginEvent)
-        {  
-            // noop - No Operation.
-        }
-
-        public void OnTriggerEnd2D(PhysicsEvents.TriggerEndEvent endEvent)
-        {
-            // noop - No Operation.
-        }
-        
         public void OnTriggerBegin2D(PhysicsEvents.TriggerBeginEvent beginEvent, SFShapeComponent callingShapeComponent)
         {
             // If the target is not a component we can back out.
@@ -65,48 +55,6 @@ namespace SF.DamageModule
             // noop - No Operation.
         }
         
-
-        private bool CheckCollisionDirection()
-        {
-            switch(DamageDirection)
-            {
-                case Direction.Any:
-                    return true;
-                case Direction.Left:
-                    if(_collisionNormal.x < 0) 
-                        return true;
-                    break;
-                case Direction.Right:
-                    if(_collisionNormal.x > 0)
-                        return true;
-                    break;
-                case Direction.Sides:
-                    if(_collisionNormal.x < 0 || _collisionNormal.x > 0)
-                        return true;
-                    break;
-                case Direction.Up:
-                    if(_collisionNormal.y > 0)
-                        return true;
-                    break;
-                case Direction.Down:
-                    if(_collisionNormal.y < 0)
-                        return true;
-                    break;
-            }
-
-            return false;
-        }
-
-        public void OnContactBegin2D(PhysicsEvents.ContactBeginEvent beginEvent)
-        {
-           
-        }
-
-        public void OnContactEnd2D(PhysicsEvents.ContactEndEvent endEvent)
-        {
-           
-        }
-
         public void OnContactBegin2D(PhysicsEvents.ContactBeginEvent beginEvent, SFShapeComponent callingShapeComponent)
         {
             if (!callingShapeComponent.TryGetComponent(out IDamagable damagable))
