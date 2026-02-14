@@ -12,7 +12,7 @@ namespace SF.Pathfinding
         public bool DebugDrawGrid = false;
         [SerializeField] private SFRectangleShape _shapeComponent; 
         public PhysicsQuery.QueryFilter UnwalkableFilter;
-        public Vector2 GridWorldSize;
+        public Vector2 GridWorldSize = new Vector2(10,10); // Setting default so I never suffer through forgetting to not have it at zero.
         public float NodeRadius = 0.5f;
 
         private PathNodeBase[,] _grid;
@@ -34,6 +34,20 @@ namespace SF.Pathfinding
 
         private void GenerateGrid()
         {
+            if (_shapeComponent == null)
+            {
+#if UNITY_EDITOR
+                Debug.Log("Could not generate grid on a GridBase component. No ShapeComponent was set to use when checking obstacles that could block pathfinding agents.", gameObject);
+#endif
+                return;
+            }
+
+            if (!_shapeComponent.Shape.isValid)
+            {
+                _shapeComponent.UpdateShape();
+            }
+               
+            
             PhysicsWorld physicsWorld = PhysicsWorld.defaultWorld;
             
             _grid = new PathNodeBase[_gridSizeX, _gridSizeY];
