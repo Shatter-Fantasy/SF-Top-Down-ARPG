@@ -10,7 +10,7 @@ namespace SF.SpawnModule
         public override void TakeDamage(int damage, Vector2 knockback = new Vector2())
         {
             base.TakeDamage(damage, knockback);
-            PlayerHealthChangedHandler.Invoke(CurrentHealth);
+            PlayerHealthChangedHandler?.Invoke(CurrentHealth);
         }
 
         protected override void Kill()
