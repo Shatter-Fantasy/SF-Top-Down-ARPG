@@ -40,13 +40,15 @@ namespace SF.PhysicsLowLevel
                     _previousDirection = _direction;
                 
                 value.x = Mathf.RoundToInt(value.x);
+                value.y = Mathf.RoundToInt(value.y);
+                
                 _direction = value;
                 OnDirectionChanged?.Invoke(this, _direction);
             }
         }
         
         [SerializeField] protected Vector2 _direction;
-        [SerializeField] protected Vector2 _directionLastFrame;
+        public Vector2 DirectionLastFrame;
         /// <summary>
         /// Used to keep track of the direction to restore after unfreezing the Controller2D.
         /// </summary>
@@ -60,7 +62,7 @@ namespace SF.PhysicsLowLevel
         /// <summary>
         /// The overall velocity to be added this frame.
         /// </summary>
-        protected Vector2 _calculatedVelocity;
+        [SerializeField] protected Vector2 _calculatedVelocity;
         /// <summary>
         /// Velocity adding through external physics forces such as gravity and interactable objects.
         /// </summary>
@@ -110,7 +112,10 @@ namespace SF.PhysicsLowLevel
         protected virtual void FixedUpdate()
         { 
             if (_direction.x != 0)
-                _directionLastFrame.x = _direction.x;
+                DirectionLastFrame.x = _direction.x;
+            
+            if (_direction.y != 0)
+                DirectionLastFrame.y = _direction.y;
             
             OnPreFixedUpdate();
 
@@ -170,7 +175,7 @@ namespace SF.PhysicsLowLevel
         /// </summary>
         public void SetDirectionalForce(Vector2 force)
         {
-            _externalVelocity = force * -_directionLastFrame.x;
+            _externalVelocity = force * -DirectionLastFrame.x;
         }
         public void AddVelocity(Vector2 velocity)
         {

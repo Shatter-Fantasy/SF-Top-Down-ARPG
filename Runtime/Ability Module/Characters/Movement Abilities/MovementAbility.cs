@@ -32,12 +32,7 @@ namespace SF.AbilityModule.Characters
 		        return;
 	        }
 
-	        Vector2 input = context.ReadValue<Vector2>();
-			
-			// Feel like the below xDirection is redundant and can be removed after testing it out now
-			float xDirection = input.x != 0 ? input.x : 0;
-			float yDirection = input.y != 0 ? input.y : 0;
-			_controller2d.Direction = new Vector2(xDirection, yDirection);
+			_controller2d.Direction =context.ReadValue<Vector2>();
 		}
         private void OnMoveInputRun(InputAction.CallbackContext context)
         {

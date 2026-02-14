@@ -25,7 +25,6 @@ namespace SF.Characters
 		/// The runtime animator for <see cref="Animator"/>.
 		/// This is used to update animation clips at runtime for forced states.
 		/// </summary>
-		private RuntimeAnimatorController _runtimeAnimator;
 		private TopdownControllerBody2D _controllerBody2D;
 		#endregion
 		
@@ -33,6 +32,7 @@ namespace SF.Characters
 		[SerializeField] private int _forcedStateHash = 0;
 		[SerializeField] private int _lastAnimationHash;
 		
+		private static readonly int AttackAnimationHash = Animator.StringToHash(nameof(AttackState.Attacking));
 		private static readonly int DeathAnimationHash = Animator.StringToHash(nameof(CharacterStatus.Dead));
 		//[SerializeField] private bool _hasForcedState;
 
@@ -76,29 +76,41 @@ namespace SF.Characters
 
 		private void UpdateAnimatorParameters()
 		{
-			if (_controllerBody2D?.CharacterState.CharacterStatus == CharacterStatus.Dead)
-			{
-				Animator.Play(DeathAnimationHash,0);
-				return;
-			}
-			
-			if (_controllerBody2D?.CharacterState.AttackState != AttackState.NotAttacking)
-				return;
 			
 			if (_controllerBody2D is null)
 				return;
 			
-			/* All Controller2D have the next set of parameters*/
-			Animator.SetFloat("XSpeed", Mathf.Abs(_controllerBody2D.Direction.x));
-			Animator.SetFloat("YSpeed", Mathf.Abs(_controllerBody2D.Direction.y));
+			if (_controllerBody2D.CharacterState.CharacterStatus == CharacterStatus.Dead)
+			{
+				Animator.Play(DeathAnimationHash,0);
+				return;
+			}
 
+			if (_controllerBody2D.CharacterState.AttackState != AttackState.NotAttacking)
+			{
+				Animator.SetTrigger(AttackAnimationHash);
+				Animator.ResetTrigger(AttackAnimationHash);
+				_controllerBody2D.CharacterState.AttackState = AttackState.NotAttacking;
+				return;
+			}
+
+			
+			var direction = _controllerBody2D.Direction;
+			// Check if we are moving or idle
+			bool idle = Mathf.Approximately(direction.x, 0) && Mathf.Approximately(direction.y, 0);
+			
+			Animator.SetBool("Idle", idle);
+			
+			Animator.SetFloat("LastX", Mathf.Abs(_controllerBody2D.DirectionLastFrame.x));
+			Animator.SetFloat("LastY", _controllerBody2D.DirectionLastFrame.y);
+			
 			// Grounded States
-			Animator.SetBool("IsGrounded", _controllerBody2D.CollisionInfo.IsGrounded);
+			//Animator.SetBool("IsGrounded", _controllerBody2D.CollisionInfo.IsGrounded);
 			
 			// Jump/Air States
-			Animator.SetBool("IsJumping", _controllerBody2D.IsJumping);
-			Animator.SetBool("IsFalling", _controllerBody2D.IsFalling);
-			Animator.SetBool("IsGliding", _controllerBody2D.IsGliding);
+			//Animator.SetBool("IsJumping", _controllerBody2D.IsJumping);
+			//Animator.SetBool("IsFalling", _controllerBody2D.IsFalling);
+			//Animator.SetBool("IsGliding", _controllerBody2D.IsGliding);
 		}
         
         // The 0.3f is the default fade time for Unity's crossfade api.

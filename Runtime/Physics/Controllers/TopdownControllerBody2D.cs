@@ -27,6 +27,7 @@ namespace ZTDR.PhysicsLowLevel
 
         protected override void OnAwake()
         {
+            DefaultPhysics.GravityScale = 0;
             CollisionInfo = new BodyCollisionInfo()
             {
                 ControllerBody2D = this
@@ -40,8 +41,10 @@ namespace ZTDR.PhysicsLowLevel
 
         protected override void FixedUpdate()
         {
-            if (_direction.x != 0)
-                _directionLastFrame.x = _direction.x;
+            if (_direction.x != 0 || _direction.y != 0)
+            {
+                DirectionLastFrame = _direction;
+            }
 
             if (!ShapeComponent.Shape.isValid)
                 return;
@@ -91,8 +94,8 @@ namespace ZTDR.PhysicsLowLevel
             }
             else // No Input Direction
             {
-                _calculatedVelocity.x =
-                    Mathf.MoveTowards(_calculatedVelocity.x, 0, CurrentPhysics.GroundDeacceleration);
+                _calculatedVelocity.x = ShapeComponent.Body.linearVelocity.x;
+                    //Mathf.MoveTowards(_calculatedVelocity.x, 0, CurrentPhysics.GroundDeacceleration);
             }
             
             if (CollisionInfo.IsCollidingLeft && Direction.x < 0)
@@ -120,8 +123,8 @@ namespace ZTDR.PhysicsLowLevel
             }
             else // No Input Direction
             {
-                _calculatedVelocity.y =
-                    Mathf.MoveTowards(_calculatedVelocity.y, 0, CurrentPhysics.GroundDeacceleration);
+                // By using ShapeComponent.Body.linearVelocity we get the velocity with linear damping applied for a slowdown.
+                _calculatedVelocity.y = ShapeComponent.Body.linearVelocity.y;
             }
             
             if (CollisionInfo.IsCollidingBelow && Direction.y < 0)
