@@ -7,7 +7,10 @@ using UnityEngine.LowLevelPhysics2D;
 
 namespace SF.PhysicsLowLevel
 {
-    
+    public interface IContactFilterShapeCallback
+    {
+        bool OnContactFilter2D(PhysicsEvents.ContactFilterEvent contactFilterEvent,SFShapeComponent callingShapeComponent);
+    }
     public interface IPreSolveShapeCallback
     {
         bool OnPreSolve2D(PhysicsEvents.PreSolveEvent preSolveEvent,SFShapeComponent callingShapeComponent);
@@ -45,6 +48,7 @@ namespace SF.PhysicsLowLevel
 #endif
         PhysicsCallbacks.ITriggerCallback,
         PhysicsCallbacks.IContactCallback,
+        PhysicsCallbacks.IContactFilterCallback,
         PhysicsCallbacks.IPreSolveCallback
     {
         
@@ -153,7 +157,7 @@ namespace SF.PhysicsLowLevel
         /// A list of objects that are currently contained inside of <see cref="Shape"/>
         /// </summary>
         public List<IPhysicsShapeContained> ContainedPhysicsShapes = new();
-
+        
         public PhysicsBody Body;
         public PhysicsBodyDefinition BodyDefinition = PhysicsBodyDefinition.defaultDefinition;
 
@@ -183,6 +187,7 @@ namespace SF.PhysicsLowLevel
         private readonly List<ITriggerShapeCallback> _triggerTargets = new();
         private readonly List<IContactShapeCallback> _contactTargets = new();
         private readonly List<IPreSolveShapeCallback> _preSolveTargets = new();
+        private readonly List<IContactFilterShapeCallback> _contactFilterTargets = new();
         
 
         public Action ShapeCreatedHandler;
@@ -431,7 +436,22 @@ namespace SF.PhysicsLowLevel
 
             foreach (var target in _preSolveTargets)
             {
-                target.OnPreSolve2D(preSolveEvent, this);
+                if (!target.OnPreSolve2D(preSolveEvent, this))
+                    return false;
+            }
+
+            return true;
+        }
+        
+        public bool OnContactFilter2D(PhysicsEvents.ContactFilterEvent contactFilterEvent)
+        {
+            if(_contactFilterTargets == null || _contactFilterTargets.Count < 1)
+                return false;
+
+            foreach (var target in _contactFilterTargets)
+            {
+                if (!target.OnContactFilter2D(contactFilterEvent, this))
+                    return false;
             }
 
             return true;
@@ -533,5 +553,6 @@ namespace SF.PhysicsLowLevel
         }
 #endif
 
+        
     }
 }
