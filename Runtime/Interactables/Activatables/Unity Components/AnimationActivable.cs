@@ -1,10 +1,9 @@
 using System.Collections.Generic;
-
 using UnityEngine;
 
-namespace SF
+namespace SF.Interactables
 {
-    public class AnimationActivatable : ActivatableWrapper, IActivatable
+    public class AnimationActivable : ActivableWrapper
     {
         public Animator _animator;
         public int _parameterHash;
