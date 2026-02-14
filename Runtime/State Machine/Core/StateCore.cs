@@ -24,7 +24,7 @@ namespace SF.StateMachine.Core
 		/// <summary>
 		/// This is to allow setting states to enter themselves on loop.
 		/// </summary>
-		public bool CanStateTransistToSelf = false;
+		public bool CanStateTransistToSelf;
 
 		[Tooltip("You can add states in this list so certain states can't enter this state during a transition check.")]
 		public List<StateCore> NonEnterableStates = new();
@@ -33,13 +33,12 @@ namespace SF.StateMachine.Core
 		[HideInInspector] public StateMachineBrain StateBrain;
 
 		protected DecisionTransition _decision = new();
-		protected bool _initialized = false;
+		protected bool _initialized;
 
         protected TopdownControllerBody2D _controllerBody2D;
 
         private void Awake()
 		{
-			Init();
 			OnAwake();
 		}
 		protected virtual void OnAwake()
@@ -63,25 +62,12 @@ namespace SF.StateMachine.Core
 		{
 			if(!_initialized)
 				_initialized = true;
-
-			if(controllerBody2D == null)
-				OnInit();
-			else
-			{
-				_controllerBody2D = controllerBody2D;
-                OnInit(_controllerBody2D);
-			}
+			
+			_controllerBody2D = controllerBody2D;
+			OnInit(_controllerBody2D);
 		}
-
-		/// <summary>
-		/// This function can be overridden to give sub class of State Core custom Init functionality.
-		/// </summary>
-		protected virtual void OnInit()
-		{
-
-		}
-
-        protected virtual void OnInit(TopdownControllerBody2D controllerBody2D)
+		
+        protected virtual void OnInit(TopdownControllerBody2D controllerBody2D = null)
         {
 
         }

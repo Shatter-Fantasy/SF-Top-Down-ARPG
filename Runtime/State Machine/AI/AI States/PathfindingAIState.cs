@@ -5,6 +5,7 @@ using SF.SpawnModule;
 using SF.StateMachine.Decisions;
 using UnityEngine;
 using UnityEngine.LowLevelPhysics2D;
+using ZTDR.PhysicsLowLevel;
 
 namespace SF.StateMachine.Core
 {
@@ -42,10 +43,9 @@ namespace SF.StateMachine.Core
 		/// on if <see cref="_usePhysicsTransform"/> is set to true.
 		/// </summary>
 		[SerializeField] private SFShapeComponent _controlledShapeComponent;
-        
-        protected override void OnInit()
+		
+        protected override void OnInit(TopdownControllerBody2D controllerBody2D = null)
         {
-            base.OnInit();
             if (_chasePlayer)
             {
 				if(SpawnSystem.SpawnedPlayerController != null)
@@ -62,24 +62,28 @@ namespace SF.StateMachine.Core
 		            distance.Target = _target;
             }
 			
-			_controlledTransform = StateBrain.ControlledGameObject.transform;
+			_controlledTransform = (StateBrain != null) 
+				? StateBrain?.ControlledGameObject.transform 
+				: transform;
+        }
 
+        protected override void OnStart()
+        {
 			if (!_usePhysicsTransform)
 				return;
-			
+
 			if (_controlledShapeComponent == null && _controllerBody2D != null)
 			{
 				_controlledShapeComponent = _controllerBody2D.ShapeComponent;
 			}
 
-			if (_controlledShapeComponent != null)
-			{
-				_controlledShapeComponent.Body.transformObject = _controlledTransform;
-			}
-        }
-
-        protected override void OnStart()
-        {
+			if (_controlledShapeComponent == null 
+				|| !_controlledShapeComponent.Body.isValid
+				|| _controlledTransform == null)
+				return;
+			
+			_controlledShapeComponent.Body.transformObject = _controlledTransform;
+			
             StartPath();
         }
 
@@ -88,6 +92,16 @@ namespace SF.StateMachine.Core
 			try
 			{
 				_targetIndex      = 0;
+				
+				// When target is null default to the player for safety.
+				if (_target == null)
+				{
+					_target = GameObject.FindGameObjectWithTag("Player")?.transform;
+					// If target still null there was no player object to follow
+					if (_target == null)
+						return;
+				}
+				
 				_currentTargetPos = _target.position;
 			
 				_path = await PathRequestManager._instance.PathFinding.FindPathAwaitable(_controlledTransform.position, _target.position);

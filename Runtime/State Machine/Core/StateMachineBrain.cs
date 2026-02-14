@@ -20,7 +20,7 @@ namespace SF.StateMachine.Core
 		[Tooltip("This is the game object that the newState machine brain is controlling.")]
 		
         public GameObject ControlledGameObject;
-        protected List<StateCore> _states = new();
+        [SerializeField] protected List<StateCore> _states = new();
 
         protected TopdownControllerBody2D _controllerBody2D;
 		private void Awake()
