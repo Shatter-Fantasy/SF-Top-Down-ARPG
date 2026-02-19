@@ -86,6 +86,20 @@ namespace SF.PhysicsLowLevel
             return null;
         }
 
+        public static bool TryGetCallbackComponentOnVisitor<T>(this PhysicsEvents.ContactBeginEvent beginEvent,out T component, bool checkValidation = false)
+        {
+            component = default(T);
+            // Optional check for only using Component set as a callbackTarget for valid shapes.
+            if (checkValidation && !beginEvent.shapeB.isValid)
+                return false;
+
+            if (beginEvent.shapeB.callbackTarget is not T callbackTarget)
+                return false;
+
+            component = callbackTarget;
+
+            return true;
+        }
         
         /// <summary>
         /// Attempts to get a <see cref="SFShapeComponent"/> that is set as a callback target to a <see cref="PhysicsShape"/>
