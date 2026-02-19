@@ -1,9 +1,9 @@
 using UnityEngine;
-using ZTDR.PhysicsLowLevel;
 
 namespace SF.Characters
 {
 	using Managers;
+	using PhysicsLowLevel;
 	using Weapons;
 	
 	/// <summary>
@@ -118,6 +118,12 @@ namespace SF.Characters
         {
 			_forcedStateHash = Animator.StringToHash(stateName);
         }
+		
+		public void SetAnimationState(int stateHash, float animationFadeTime = 0.01f)
+		{
+			_forcedStateHash = stateHash;
+		}
+		
 		private void SpriteFlip(Vector2 direction)
 		{
 			if(!CanTurnAround || _spriteRend == null)

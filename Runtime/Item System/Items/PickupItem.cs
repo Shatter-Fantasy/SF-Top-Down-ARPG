@@ -1,14 +1,12 @@
-using System;
-using SF.Interactables;
 using SF.Managers;
-using SF.PhysicsLowLevel;
 using UnityEngine;
 using UnityEngine.LowLevelPhysics2D;
-using ZTDR.PhysicsLowLevel;
 
 namespace SF.ItemModule
 {
     using Interactables;
+    using PhysicsLowLevel;
+    
     public class PickupItem : MonoBehaviour, 
         IInteractable<PlayerControllerBody2D>, 
         ITriggerShapeCallback

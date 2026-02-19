@@ -1,10 +1,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using ZTDR.PhysicsLowLevel;
+
 
 namespace SF.StateMachine.Core
 {
+	using PhysicsLowLevel;
 	
 	/// <summary>
 	/// This is for controlling non-player controlled characters states and actions.

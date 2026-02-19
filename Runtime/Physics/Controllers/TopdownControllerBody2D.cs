@@ -1,9 +1,8 @@
 using UnityEngine;
 
-namespace ZTDR.PhysicsLowLevel
+namespace SF.PhysicsLowLevel
 {
-    using SF.Characters;
-    using SF.PhysicsLowLevel;
+    using Characters;
     
     /// <summary>
     /// Base class for all topdown style physic controllers.

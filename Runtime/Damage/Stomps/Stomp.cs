@@ -1,10 +1,9 @@
-using SF.DamageModule;
-using SF.PhysicsLowLevel;
 using UnityEngine;
-using ZTDR.PhysicsLowLevel;
 
-namespace SF
+namespace SF.DamageModule
 {
+    using PhysicsLowLevel;
+    
     public class Stomp : MonoBehaviour
     {
         public float BounceVelocity = 5f;

@@ -1,11 +1,10 @@
 using System.Linq;
-using SF.PhysicsLowLevel;
-using SF.PhysicsLowLevel.Utilities;
 using Unity.Collections;
 using UnityEngine.LowLevelPhysics2D;
 
-namespace ZTDR.PhysicsLowLevel
+namespace SF.PhysicsLowLevel
 {
+    using Utilities;
     [System.Serializable]
     public class BodyCollisionInfo : CollisionInfoBase
     {

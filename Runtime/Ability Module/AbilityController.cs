@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using ZTDR.PhysicsLowLevel;
 
 namespace SF.AbilityModule
 {
@@ -27,7 +26,7 @@ namespace SF.AbilityModule
         public GameObject AbilityOwner;
         /// <summary>
         /// The game objects with abilities attached. It allows organizing abilities into separate
-        /// game objects to make the hierarchy to be cleaner.
+        /// game objects to make the hierarchy a bit cleaner.
         /// </summary>
         public List<GameObject> AbilityObjects = new();
         public List<AbilityCore> Abilities = new List<AbilityCore>();

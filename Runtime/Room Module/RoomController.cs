@@ -4,10 +4,6 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.LowLevelPhysics2D;
-using ZTDR.PhysicsLowLevel;
-#if UNITY_LOW_LEVEL_EXTRAS_2D
-using Unity.U2D.Physics.Extras;
-#endif
 
 namespace SF.RoomModule
 {
@@ -16,10 +12,6 @@ namespace SF.RoomModule
     
     public class RoomController : MonoBehaviour, 
         ITriggerShapeCallback
-#if UNITY_LOW_LEVEL_EXTRAS_2D
-        IWorldSceneDrawable, 
-        IWorldSceneTransformChanged
-#endif
     {
         
         /* TODO List:

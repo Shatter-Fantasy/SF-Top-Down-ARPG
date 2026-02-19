@@ -1,12 +1,11 @@
 using System.Collections.Generic;
 
 using UnityEngine;
-using ZTDR.PhysicsLowLevel;
 
-namespace SF
+namespace SF.Interactables
 {
     using InputModule;
-    using Interactables;
+    using PhysicsLowLevel;
     
     public class InteractableSwitch : MonoBehaviour, IInteractable
     {
