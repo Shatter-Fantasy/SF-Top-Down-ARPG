@@ -1,6 +1,5 @@
 using SF.PhysicsLowLevel;
 using Unity.Burst;
-using Unity.Collections;
 using UnityEngine;
 using UnityEngine.LowLevelPhysics2D;
 
@@ -8,63 +7,55 @@ namespace ZTDR.StateMachine
 {
     using SF.StateMachine.Core;
     [BurstCompile]
-    public class MovementRandomAIState : StateCore
+    public class MovementRandomAIState : StateCore, IContactShapeCallback
     {
         [SerializeField] private Vector2 _randomMovementRange = new Vector2(1.5f,1.5f);
         [SerializeField] private float _stopDistance = .5f;
-        [SerializeField] private float _chanceToChangeDirection = 20;
-
-        private bool _updateDirection = true;
+        
         private PhysicsBody _physicsBody;
-        public Vector2 Velocity;
         private Vector2 _targetPosition;
+        private Vector2 _lastPositionDelta;
 
-        private Vector2 MovementDirection => _targetPosition - _physicsBody.position;
         protected override void OnStateEnter()
         {
-            ref var physicsBody    = ref _controllerBody2D.ShapeComponent.Body;
+            _controllerBody2D.ShapeComponent.AddContactCallbackTarget(this);
+            _controllerBody2D.ShapeComponent.Shape.contactEvents = true;
             
-            if (!physicsBody.isValid)
+            _physicsBody                                         = _controllerBody2D.ShapeComponent.Body;
+            
+            if (!_physicsBody.isValid)
                 return;
-            
-            CalculateRandomRange(ref _randomMovementRange, out Velocity);
-            _controllerBody2D.SetVelocity(Velocity);
-
-            return;
             
             CalculateRandomRange(ref _randomMovementRange,out Vector2 randomRange);
             _targetPosition = _physicsBody.position + randomRange;
+        }
+
+        protected override void OnStateExit()
+        {
+            base.OnStateExit();
+            _controllerBody2D.ShapeComponent.RemoveContactCallbackTarget(this);
         }
 
         protected override void OnUpdateState()
         {
             if(!_physicsBody.isValid)
                 return;
-
-            CalculateRandomRange(ref _randomMovementRange, out Vector2 velocity);
-            _physicsBody.linearVelocity = velocity;
-            //Move(_stopDistance,ref _randomMovementRange, _physicsBody, ref _targetPosition);
-            
-            /*
-            var world = _physicsBody.world;
-            if (!world.isValid)
-                return;
-            
-            var shape = _controllerBody2D.ShapeComponent.Shape;
-            if (!shape.isValid)
-                return;
-            var translation = _physicsBody.position*/
+            _lastPositionDelta = _physicsBody.position - _targetPosition;
+            Move(_stopDistance,ref _randomMovementRange, ref _physicsBody, ref _targetPosition);
         }
 
         [BurstCompile]
-        public static void Move(float stopDistance, ref Vector2 randomMovementRange, in PhysicsBody physicsBody, ref Vector2 targetPosition)
+        public static void Move(float stopDistance, ref Vector2 randomMovementRange, 
+            ref PhysicsBody physicsBody, ref Vector2 targetPosition)
         {
             // Get distance to target position.
             float distance = Vector2.Distance(physicsBody.position, targetPosition);
             
             if (distance > stopDistance)
             {
-                physicsBody.position = Vector2.Lerp(physicsBody.position, targetPosition, Time.deltaTime);
+                //physicsBody.position = Vector2.Lerp(physicsBody.position, targetPosition, Time.deltaTime);
+                Vector2 deltaPosition = targetPosition - physicsBody.position;
+                physicsBody.linearVelocity = deltaPosition;
             }
             else
             {
@@ -82,6 +73,14 @@ namespace ZTDR.StateMachine
                 );
         }
 
-       
+        public void OnContactBegin2D(PhysicsEvents.ContactBeginEvent beginEvent, SFShapeComponent callingShapeComponent)
+        {
+            _targetPosition = _physicsBody.position + _lastPositionDelta;
+        }
+
+        public void OnContactEnd2D(PhysicsEvents.ContactEndEvent endEvent, SFShapeComponent callingShapeComponent)
+        {
+            //no-op
+        }
     }
 }
