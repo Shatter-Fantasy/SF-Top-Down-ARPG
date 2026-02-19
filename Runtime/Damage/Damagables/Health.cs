@@ -66,7 +66,7 @@ namespace SF.SpawnModule
             if(CurrentHealth <= 0)
             {
                 CurrentHealth = 0;
-                Kill();
+                Kill(knockback);
             }
         }
 
@@ -79,10 +79,10 @@ namespace SF.SpawnModule
         public virtual void InstantKill()
         {
             CurrentHealth = 0;
-            Kill();
+            Kill(); // No knock back added during instant kill.
 		}
 
-        protected virtual void Kill()
+        protected virtual void Kill(Vector2 knockback = new Vector2())
         {
             if(_deathSFX != null)
                 AudioManager.Instance.PlayOneShot(_deathSFX);

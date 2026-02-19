@@ -13,7 +13,7 @@ namespace SF.SpawnModule
             PlayerHealthChangedHandler?.Invoke(CurrentHealth);
         }
 
-        protected override void Kill()
+        protected override void Kill(Vector2 knockback = new Vector2())
         {
             base.Kill();
             
