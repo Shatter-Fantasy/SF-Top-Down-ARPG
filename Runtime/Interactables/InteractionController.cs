@@ -9,7 +9,6 @@ namespace SF.Interactables
     {
         [SerializeField] protected PhysicsQuery.QueryFilter _interactableFilter;
         [SerializeField] protected SFShapeComponent _hitShape;
-        [SerializeField] protected PhysicsQuery.CastShapeInput _castInput;
         protected NativeArray<PhysicsShape> _hitShapes;
     }
 }
