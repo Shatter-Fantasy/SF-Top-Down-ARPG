@@ -26,19 +26,20 @@ namespace SF.Weapons
         [SerializeField] protected SFShapeComponent _hitBox;
         protected readonly List<PhysicsShape> _hitResults = new();
         
-        protected Vector2 _facingDirection;
-        protected Vector2 _originalHitBoxOffset;
+        [SerializeField] protected Vector2 _facingDirection;
+        [SerializeField] private float _directionalOffset = 0.5f;
+        private Vector2 _originalOffset;
         
         protected virtual void Awake()
         {
             _attackTimer = new Timer(AttackDefinition.AttackTimer, OnUseComplete);
             _hitBoxTimer = new Timer(AttackDefinition.HitBoxDelay, OnHitBoxDelay);
-            
-            if(_controllerBody2D != null)
+
+            if (_controllerBody2D != null)
                 _controllerBody2D.OnDirectionChanged += OnDirectionChange;
 
             if (_hitBox != null)
-                _originalHitBoxOffset = _hitBox.Offset;
+                _originalOffset = _hitBox.Offset;
         }
 
         protected override void OnDirectionChange(object sender, Vector2 newDirection)
@@ -46,8 +47,6 @@ namespace SF.Weapons
             if (newDirection != Vector2.zero)
             {
                 _facingDirection = newDirection;
-                if(_hitBox != null)
-                    _hitBox.UpdateShape();
             }
         }
 
@@ -59,15 +58,40 @@ namespace SF.Weapons
             if (OnCooldown)
                 return;
             
+            
             // Stop attack while dead attack while dead.
             if (_controllerBody2D?.CharacterState.CharacterStatus == CharacterStatus.Dead)
                 return;
             
-            // First hack in the entire package.
-            // Not sure why the game object transform is being written to in some cases so setting local position to 0,0 first than setting the hitbox body position
             transform.localPosition = Vector3.zero;
-            _hitBox.Offset = new Vector2(_originalHitBoxOffset.x * _facingDirection.x, _originalHitBoxOffset.y); 
-            _hitBox.Body.position   = transform.position;
+
+            if(_controllerBody2D != null && _controllerBody2D.Direction != Vector2.zero)
+                _facingDirection = _controllerBody2D.Direction;
+            
+            
+            var offset = new Vector2(0, 0);
+            if (_facingDirection.y != 0)
+            {
+                offset = new Vector2 (
+                        0,
+                        _facingDirection.y >= 0
+                            ? _directionalOffset 
+                            : -_directionalOffset
+                    );
+            }
+            else
+            {
+                offset = new Vector2(
+                        _facingDirection.x >= 0
+                            ? _directionalOffset
+                            : -_directionalOffset,
+                        0
+                    );
+            }
+
+
+            _hitBox.Body.position = (Vector2)transform.position + offset ;
+            _hitBox.Body.enabled  = true;
             
             _character2D.CharacterState.AttackState = AttackState.Attacking;
             DoAttack();
@@ -116,7 +140,8 @@ namespace SF.Weapons
             _hitBoxTimer.StopTimer();
             _attackTimer.StopTimer();
             UseCompleted?.Invoke();
-            OnCooldown = false;
+            OnCooldown           = false;
+            _hitBox.Body.enabled = false;
         }
 
        
