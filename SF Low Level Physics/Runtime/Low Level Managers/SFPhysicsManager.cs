@@ -15,5 +15,7 @@ namespace SF.PhysicsLowLevel
         /// Should the SF Low Level Physics use the <see cref=""/>. 
         /// </summary>
         public static bool UsingDebugRendering = true;
+
+        public const int InteractableLayer = 17;
     }
 }
