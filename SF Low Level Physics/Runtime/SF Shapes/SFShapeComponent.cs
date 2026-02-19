@@ -42,6 +42,7 @@ namespace SF.PhysicsLowLevel
     [ExecuteAlways]
     [BurstCompile]
     [Icon("Packages/shatterfantasy.sf-metroidvania/Editor/Icons/SceneBody.png")]
+    [DefaultExecutionOrder(LowLevelPhysicsExecutionOrder.PhysicsBody)]
     public abstract class SFShapeComponent : MonoBehaviour, 
 #if UNITY_EDITOR
         ITransformMonitor,
@@ -355,8 +356,6 @@ namespace SF.PhysicsLowLevel
                 Body.Destroy();
                 Body         = default;
             }
-            
-
         }
 
 #region Physic Event Callbacks
