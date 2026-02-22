@@ -2,6 +2,7 @@ using UnityEngine.InputSystem;
 
 using SF.InputModule;
 using SF.Weapons;
+using UnityEngine;
 
 namespace SF.AbilityModule.CombatModule
 {

@@ -57,7 +57,8 @@ namespace SF.DamageModule
         
         public void OnContactBegin2D(PhysicsEvents.ContactBeginEvent beginEvent, SFShapeComponent callingShapeComponent)
         {
-            if (!callingShapeComponent.TryGetComponent(out IDamagable damagable))
+            // Alright this was broken by me. I should be grabbing the visiting physics shape IDamagable not the IDamagable for the attached component.
+            if (!beginEvent.TryGetCallbackComponentOnVisitor(out IDamagable damagable))
                 return;
             
             Debug.Log(damagable);
