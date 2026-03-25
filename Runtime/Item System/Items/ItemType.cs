@@ -11,5 +11,6 @@ namespace SF.ItemModule
         Material = 4, // Used in crafting and enchanting mainly.
         SideQuest = 8, // Used in side quests only.
         MainQuest = 16,
+        Currency = 32
     }
 }

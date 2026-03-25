@@ -2,14 +2,18 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using SF.DataManagement;
-using SF.Managers;
 
 namespace SF.ItemModule
 {
+    using DataManagement;
+    using Managers;
+    
     [Serializable]
     public class PlayerInventory : ItemContainer
     {
+        
+        public List<CurrencyData> Currencies = new List<CurrencyData>();
+        
         [NonSerialized] public List<ItemData> FilteredConsumable = new List<ItemData>();
         [NonSerialized] public List<Weapon> FilteredWeapons = new List<Weapon>();
         [NonSerialized] public List<Armor> FilteredArmor = new List<Armor>();
@@ -19,6 +23,7 @@ namespace SF.ItemModule
         /// Does not activate when gaining items from shops, quest rewards, or from NPC dialogue interactions.
         /// </summary>
         public static Action<int> ItemPickedUpHandler;
+        public static Action<CurrencyData> CurrencyPickedUpHandler;
         
         private void Start()
         {
@@ -42,6 +47,20 @@ namespace SF.ItemModule
         {
             AddItem(itemID);
             ItemPickedUpHandler?.Invoke(itemID);
+        }
+        
+        public void AddItem(CurrencyData currencyData)
+        {
+            if (Currencies.Count < 1)
+                Currencies.Add(currencyData);
+            else
+                Currencies[0].Quantity += currencyData.Quantity;
+        }
+        
+        public void PickUpItem(CurrencyData currencyData)
+        {
+            AddItem(currencyData);
+            CurrencyPickedUpHandler?.Invoke(currencyData);
         }
 
         public void FilterInventory()

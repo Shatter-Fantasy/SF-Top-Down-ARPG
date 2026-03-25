@@ -1,14 +1,13 @@
 using System.Collections.Generic;
-using SF.Managers;
 using UnityEngine;
 
 namespace SF.ItemModule
 {
+    using Managers;
     public class ItemContainer : MonoBehaviour
     {
-        
         public List<ItemData> Items = new List<ItemData>();
-
+        
         public virtual void AddItem(int itemID)
         {
             var item = GameLoader.Instance?.ItemDatabase[itemID];
