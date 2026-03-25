@@ -7,7 +7,6 @@ namespace SF.Interactables
     {
         public bool Activated{ get; set; }
     }
-
     
     public interface IActivableEventHandler : IActivable
     {
@@ -21,6 +20,20 @@ namespace SF.Interactables
         /// </example>
         /// </summary>
         public event Action OnResetActivableHandler;
+        
+        public void OnActivation()
+        {
+
+        }
+        public void OnDeactivate()
+        {
+
+        }
+    }
+
+    public interface IResetActivable : IActivableEventHandler
+    {
+        void OnResetActivable();
     }
 
     public abstract class ActivableWrapper : MonoBehaviour, IActivable
