@@ -38,6 +38,7 @@ namespace SF.SpawnModule
             }
         }
         public Action<int> HealthChangedCallback;
+        public Action WasKilledCallback;
         
         public int MaxHealth = 10;
 
@@ -86,7 +87,7 @@ namespace SF.SpawnModule
         {
             if(_deathSFX != null)
                 AudioManager.Instance.PlayOneShot(_deathSFX);
-
+            WasKilledCallback?.Invoke();
             _ = _deathTimer.StartTimerAsync();
         }
         
@@ -103,7 +104,7 @@ namespace SF.SpawnModule
 
 		protected virtual void OnEnable()
 		{
-            _deathTimer = new Timer(Despawn);
+            _deathTimer = new Timer(_deathTimer.Duration,Despawn);
         }
 
         protected virtual void OnDisable()
