@@ -1,4 +1,4 @@
-namespace SF.PhysicsLowLevel
+namespace SF.U2D.Physics
 {
     /// <summary>
     /// Useful Execution orders for low level physics.
@@ -8,7 +8,7 @@ namespace SF.PhysicsLowLevel
     /// This are just included for those who don't want to install an extra package.
     /// </remarks>
     /// </summary>
-    public static class LowLevelPhysicsExecutionOrder
+    public static class PhysicsCore2DExecutionOrder
     {
         public const int PhysicsWorld = -1000;
         public const int PhysicsBody = PhysicsWorld + 1;

@@ -5,12 +5,8 @@ using Unity.Collections;
 using UnityEngine;
 using UnityEngine.LowLevelPhysics2D;
 
-namespace SF.PhysicsLowLevel
+namespace SF.U2D.Physics
 {
-    public interface IContactFilterShapeCallback
-    {
-        bool OnContactFilter2D(PhysicsEvents.ContactFilterEvent contactFilterEvent,SFShapeComponent callingShapeComponent);
-    }
     public interface IPreSolveShapeCallback
     {
         bool OnPreSolve2D(PhysicsEvents.PreSolveEvent preSolveEvent,SFShapeComponent callingShapeComponent);
@@ -42,15 +38,14 @@ namespace SF.PhysicsLowLevel
     [ExecuteAlways]
     [BurstCompile]
     [Icon("Packages/shatterfantasy.sf-metroidvania/Editor/Icons/SceneBody.png")]
-    [DefaultExecutionOrder(LowLevelPhysicsExecutionOrder.PhysicsBody)]
     public abstract class SFShapeComponent : MonoBehaviour, 
 #if UNITY_EDITOR
         ITransformMonitor,
 #endif
-        PhysicsCallbacks.ITriggerCallback,
-        PhysicsCallbacks.IContactCallback,
-        PhysicsCallbacks.IContactFilterCallback,
-        PhysicsCallbacks.IPreSolveCallback
+        ITriggerShapeCallback, PhysicsCallbacks.ITriggerCallback,
+        IContactShapeCallback, PhysicsCallbacks.IContactCallback,
+        IPreSolveShapeCallback, PhysicsCallbacks.IPreSolveCallback
+        
     {
         
         #region Transform Cache - Temp fields
@@ -79,11 +74,11 @@ namespace SF.PhysicsLowLevel
         /// <remarks>
         /// Keyword here is completed because you can use <see cref="PhysicsComposer"/> to merge shapes and vertexes into a single shape.
         /// If a <see cref="SFShapeComponent"/> is made from multiple individual shapes and a single shape is created this is the completed merged shape.
-        /// <see cref="SF.PhysicsLowLevel.SFTileMapShape"/> for an example of this.
+        /// <see cref="SF.U2D.Physics.SFTileMapShape"/> for an example of this.
         /// </remarks>
         public ref PhysicsShape Shape => ref _shape;
 
-        public PhysicsWorld World =>_shape.isValid ? _shape.world : PhysicsWorld.defaultWorld;
+        public PhysicsWorld World => Body.isValid ? Body.world : PhysicsWorld.defaultWorld;
 
         public virtual void SetShape<TGeometryType>(TGeometryType geometryType) where  TGeometryType : struct
         {
@@ -153,12 +148,11 @@ namespace SF.PhysicsLowLevel
             }
         }
         
-
         /// <summary>
         /// A list of objects that are currently contained inside of <see cref="Shape"/>
         /// </summary>
         public List<IPhysicsShapeContained> ContainedPhysicsShapes = new();
-        
+
         public PhysicsBody Body;
         public PhysicsBodyDefinition BodyDefinition = PhysicsBodyDefinition.defaultDefinition;
 
@@ -188,8 +182,6 @@ namespace SF.PhysicsLowLevel
         private readonly List<ITriggerShapeCallback> _triggerTargets = new();
         private readonly List<IContactShapeCallback> _contactTargets = new();
         private readonly List<IPreSolveShapeCallback> _preSolveTargets = new();
-        private readonly List<IContactFilterShapeCallback> _contactFilterTargets = new();
-        
 
         public Action ShapeCreatedHandler;
         public Action ShapeDestroyedHandler;
@@ -356,6 +348,8 @@ namespace SF.PhysicsLowLevel
                 Body.Destroy();
                 Body         = default;
             }
+            
+
         }
 
 #region Physic Event Callbacks
@@ -363,10 +357,27 @@ namespace SF.PhysicsLowLevel
         {
             _triggerTargets.Add(target);
         }
-        
-        public void AddPreSolveCallbackTarget(IPreSolveShapeCallback target)
+
+        private void OnTriggerBeginCallbacks(PhysicsEvents.TriggerBeginEvent beginEvent)
         {
-            _preSolveTargets.Add(target);
+            if(_triggerTargets == null || _triggerTargets.Count < 1)
+                return;
+            
+            foreach (var target in _triggerTargets)
+            {
+                target.OnTriggerBegin2D(beginEvent, this);
+            }
+        }
+        
+        private void OnTriggerEndCallbacks(PhysicsEvents.TriggerEndEvent endEvent)
+        {
+            if(_triggerTargets == null || _triggerTargets.Count < 1)
+                return;
+
+            foreach (var target in _triggerTargets)
+            {
+                target.OnTriggerEnd2D(endEvent, this);
+            }
         }
         
         public void RemoveTriggerCallbackTarget(ITriggerShapeCallback target)
@@ -379,34 +390,12 @@ namespace SF.PhysicsLowLevel
             _contactTargets.Add(target);
         }
         
-        public void RemoveContactCallbackTarget(IContactShapeCallback target)
+        public void AddPreSolveCallbackTarget(IPreSolveShapeCallback target)
         {
-            _contactTargets.Remove(target);
-        }
-        
-        public void OnTriggerBegin2D(PhysicsEvents.TriggerBeginEvent beginEvent)
-        {
-            if(_triggerTargets == null || _triggerTargets.Count < 1)
-                return;
-            
-            foreach (var target in _triggerTargets)
-            {
-                target.OnTriggerBegin2D(beginEvent, this);
-            }
+            _preSolveTargets.Add(target);
         }
 
-        public void OnTriggerEnd2D(PhysicsEvents.TriggerEndEvent endEvent)
-        {
-            if(_triggerTargets == null || _triggerTargets.Count < 1)
-                return;
-
-            foreach (var target in _triggerTargets)
-            {
-                target.OnTriggerEnd2D(endEvent, this);
-            }
-        }
-
-        public void OnContactBegin2D(PhysicsEvents.ContactBeginEvent beginEvent)
+        private void OnContactBeginCallbacks(PhysicsEvents.ContactBeginEvent beginEvent)
         {
             if(_contactTargets == null || _contactTargets.Count < 1)
                 return;
@@ -416,8 +405,8 @@ namespace SF.PhysicsLowLevel
                 target.OnContactBegin2D(beginEvent, this);
             }
         }
-
-        public void OnContactEnd2D(PhysicsEvents.ContactEndEvent endEvent)
+        
+        private void OnContactEndCallbacks(PhysicsEvents.ContactEndEvent endEvent)
         {
             if(_contactTargets == null || _contactTargets.Count < 1)
                 return;
@@ -428,29 +417,64 @@ namespace SF.PhysicsLowLevel
             }
         }
         
+        public void RemoveContactCallbackTarget(IContactShapeCallback target)
+        {
+            _contactTargets.Remove(target);
+        }
+        
+        public void OnTriggerBegin2D(PhysicsEvents.TriggerBeginEvent beginEvent)
+        {
+            OnTriggerBeginCallbacks(beginEvent);
+        }
+
+        public void OnTriggerEnd2D(PhysicsEvents.TriggerEndEvent endEvent)
+        {
+            OnTriggerEndCallbacks(endEvent);
+        }
+
+        public void OnContactBegin2D(PhysicsEvents.ContactBeginEvent beginEvent)
+        {
+            OnContactBeginCallbacks(beginEvent);
+        }
+
+        public void OnContactEnd2D(PhysicsEvents.ContactEndEvent endEvent)
+        {
+            OnContactEndCallbacks(endEvent);
+        }
+
+        public void OnTriggerBegin2D(PhysicsEvents.TriggerBeginEvent beginEvent, SFShapeComponent callingShapeComponent)
+        {
+            OnTriggerBegin2D(beginEvent);
+        }
+
+        public void OnTriggerEnd2D(PhysicsEvents.TriggerEndEvent endEvent, SFShapeComponent callingShapeComponent)
+        {
+            OnTriggerEnd2D(endEvent);
+        }
+
+        public void OnContactBegin2D(PhysicsEvents.ContactBeginEvent beginEvent, SFShapeComponent callingShapeComponent)
+        {
+            OnContactBegin2D(beginEvent);
+        }
+
+        public void OnContactEnd2D(PhysicsEvents.ContactEndEvent endEvent, SFShapeComponent callingShapeComponent)
+        {
+            OnContactEnd2D(endEvent);
+        }
+        
         public bool OnPreSolve2D(PhysicsEvents.PreSolveEvent preSolveEvent)
+        {
+            return OnPreSolve2D(preSolveEvent, this);
+        }
+
+        public bool OnPreSolve2D(PhysicsEvents.PreSolveEvent preSolveEvent, SFShapeComponent callingShapeComponent)
         {
             if(_preSolveTargets == null || _preSolveTargets.Count < 1)
                 return true;
 
             foreach (var target in _preSolveTargets)
             {
-                if (!target.OnPreSolve2D(preSolveEvent, this))
-                    return false;
-            }
-
-            return true;
-        }
-        
-        public bool OnContactFilter2D(PhysicsEvents.ContactFilterEvent contactFilterEvent)
-        {
-            if(_contactFilterTargets == null || _contactFilterTargets.Count < 1)
-                return false;
-
-            foreach (var target in _contactFilterTargets)
-            {
-                if (!target.OnContactFilter2D(contactFilterEvent, this))
-                    return false;
+                target.OnPreSolve2D(preSolveEvent, this);
             }
 
             return true;
@@ -551,7 +575,5 @@ namespace SF.PhysicsLowLevel
             UpdateShape();
         }
 #endif
-
-        
     }
 }

@@ -1,14 +1,14 @@
 using System.Collections.Generic;
+
 using Unity.Collections;
 using UnityEngine;
 using UnityEngine.LowLevelPhysics2D;
 using UnityEngine.Profiling;
 using UnityEngine.Tilemaps;
 
-namespace SF.PhysicsLowLevel
+namespace SF.U2D.Physics
 {
     using SF.Utilities;
-    
     [RequireComponent(typeof(Tilemap))]
     public class SFTileMapShape : SFShapeComponent
     {
@@ -145,10 +145,10 @@ namespace SF.PhysicsLowLevel
                         }
                         
                         PhysicsTransform tileTransform = PhysicsTransform.identity;
-                        
+                        tileTransform.position += Offset;
                         // Add the layer to the composer.
                         // I use PhysicsTransform.identity to get the relative position of tiles away from the grid origin.
-                        composer.AddLayer(vertexPath.AsArray(), PhysicsTransform.identity);
+                        composer.AddLayer(vertexPath.AsArray(), tileTransform);
                     }
 
                     vertexPath.Clear();
