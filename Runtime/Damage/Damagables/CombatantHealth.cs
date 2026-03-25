@@ -23,16 +23,13 @@ namespace SF.SpawnModule
         }
         
         protected override void Kill(Vector2 knockback = new Vector2())
-        {
-            if (_combatantData is not null)
-            {
-                // TODO: Will need checks later for allies and summonings to not grant experience.
-                //  Grant the player his experience from the enemy kill.
+         {
+            // TODO: Will need checks later for allies and summonings to not grant experience.
+            //  Grant the player his experience from the enemy kill.
                 
-                if (_combatantData.EnemyLootTable is not null)
-                {
-                    _combatantData.EnemyLootTable.DropRandomLoot(transform.position);
-                }
+            if (_combatantData?.EnemyLootTable != null)
+            {
+                _combatantData.EnemyLootTable.DropRandomLoot(transform.position);
             }
 
             if (_controllerBody2D != null)
@@ -43,6 +40,8 @@ namespace SF.SpawnModule
             
             if(_deathSFX != null)
                 AudioManager.Instance.PlayOneShot(_deathSFX);
+            
+            CharacterDeathHandler?.Invoke(this);
             
             _ = _spriteBlink.Use();
             _ = _deathTimer.StartTimerAsync();

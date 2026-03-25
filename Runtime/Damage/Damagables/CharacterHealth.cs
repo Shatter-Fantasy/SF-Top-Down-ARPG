@@ -1,9 +1,10 @@
+using System;
 using UnityEngine;
 
 namespace SF.SpawnModule
 {
     using Characters;
-    using PhysicsLowLevel;
+    using U2D.Physics;
         
     /*  TODO: Merge this with the CombatantHealth.cs
         and remove this script from the package.    */
@@ -20,12 +21,11 @@ namespace SF.SpawnModule
         [Tooltip("If you want to force an animation state when this object is damaged than set this string to the name of the animation state.")]
         public const string HitAnimationName = "Damaged";
         public readonly int HitAnimationHash = Animator.StringToHash(HitAnimationName);
-        
-
         public float HitAnimationDuration = 0.3f;
         
         //public SpriteBlinkCommand DamageBlink;
-        
+
+        public Action<CharacterHealth> CharacterDeathHandler;
         protected TopdownControllerBody2D _controllerBody2D;
         protected CharacterRenderer2D _character2D;
 
@@ -42,9 +42,10 @@ namespace SF.SpawnModule
             if(_controllerBody2D != null)
                 _controllerBody2D.CharacterState.CharacterStatus = CharacterStatus.Dead;
             
+            CharacterDeathHandler?.Invoke(this);
             //DamageBlink.StopInteruptBlinking();
             
-            base.Kill();
+            base.Kill(knockback);
         }
 
         public override void Respawn()

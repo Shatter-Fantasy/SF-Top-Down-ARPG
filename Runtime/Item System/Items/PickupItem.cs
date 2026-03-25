@@ -1,11 +1,11 @@
-using SF.Managers;
 using UnityEngine;
 using UnityEngine.LowLevelPhysics2D;
 
 namespace SF.ItemModule
 {
     using Interactables;
-    using PhysicsLowLevel;
+    using U2D.Physics;
+    using Managers;
     
     public class PickupItem : MonoBehaviour, 
         IInteractable<PlayerControllerBody2D>, 
@@ -13,7 +13,8 @@ namespace SF.ItemModule
     {
         [field: SerializeField] public InteractableMode InteractableMode { get; set; }
         
-        public ItemData Item;
+        [SerializeReference] // If you don't put the new ItemData() by default the SerializeReference will render a blank inspector visual element.
+        public ItemData Item = new ItemData();
 
         private void Start()
         {
@@ -43,29 +44,22 @@ namespace SF.ItemModule
             playerInventory.AddItem(Item.ID);
             Destroy(gameObject);
         }
-
-        public void OnTriggerBegin2D(PhysicsEvents.TriggerBeginEvent beginEvent)
+        
+        public void OnTriggerBegin2D(PhysicsEvents.TriggerBeginEvent beginEvent, SFShapeComponent callingShapeComponent)
         {
             if (GameManager.Instance.ControlState == GameControlState.Cutscenes)
                 return;
-           
-            if (beginEvent.visitorShape.callbackTarget is not PlayerControllerBody2D body2D)
+            
+            if(!beginEvent.TryGetCallbackComponentOnVisitor(out SFShapeComponent shapeComponent))
                 return;
-                    
+
+            if (!shapeComponent.TryGetComponent(out PlayerControllerBody2D body2D))
+                return;
+            
             if(body2D.CollisionInfo.CollisionActivated)
             {
                 Interact(body2D);
             }
-        }
-
-        public void OnTriggerEnd2D(PhysicsEvents.TriggerEndEvent endEvent)
-        {
-            // noo - No Operation
-        }
-
-        public void OnTriggerBegin2D(PhysicsEvents.TriggerBeginEvent beginEvent, SFShapeComponent callingShapeComponent)
-        {
-            OnTriggerBegin2D(beginEvent);
         }
 
         public void OnTriggerEnd2D(PhysicsEvents.TriggerEndEvent endEvent, SFShapeComponent callingShapeComponent)
