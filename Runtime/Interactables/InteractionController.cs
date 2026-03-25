@@ -1,7 +1,7 @@
 using SF.U2D.Physics;
 using Unity.Collections;
 using UnityEngine;
-using UnityEngine.LowLevelPhysics2D;
+using Unity.U2D.Physics;
 
 namespace SF.Interactables
 {
