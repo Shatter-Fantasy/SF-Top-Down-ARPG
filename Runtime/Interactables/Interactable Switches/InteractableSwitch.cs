@@ -5,7 +5,7 @@ using UnityEngine;
 namespace SF.Interactables
 {
     using InputModule;
-    using PhysicsLowLevel;
+    using U2D.Physics;
     
     public class InteractableSwitch : MonoBehaviour, IInteractable
     {

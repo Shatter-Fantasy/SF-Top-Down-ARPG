@@ -29,6 +29,7 @@ namespace SF.U2D.Physics
             return true;
         }
         
+
         /// <summary>
         /// Gets the <see cref="PhysicsEvents.TriggerBeginEvent"/> visiting <see cref="PhysicsShape.callbackTarget"/>
         /// as a <see cref="Component"/> if casting is possible.
@@ -96,6 +97,22 @@ namespace SF.U2D.Physics
 #endregion
 
 #region PhysicsEvents.ContactBeginEvent  
+        
+        public static bool TryGetCallbackComponentOnVisitor<T>(this PhysicsEvents.ContactBeginEvent beginEvent,out T component, bool checkValidation = false)
+        {
+            component = default(T);
+            // Optional check for only using Component set as a callbackTarget for valid shapes.
+            if (checkValidation && !beginEvent.shapeB.isValid)
+                return false;
+
+            if (beginEvent.shapeB.callbackTarget is not T callbackTarget)
+                return false;
+
+            component = callbackTarget;
+
+            return true;
+        }
+        
         public static bool TryGetCallbackComponentOnShapeA<T>(this PhysicsEvents.ContactBeginEvent beginEvent,out T component, bool checkValidation = false)
         {
             component = default(T);
@@ -104,21 +121,6 @@ namespace SF.U2D.Physics
                 return false;
 
             if (beginEvent.shapeA.callbackTarget is not T callbackTarget)
-                return false;
-
-            component = callbackTarget;
-
-            return true;
-        }
-        
-        public static bool TryGetCallbackComponentOnShapeB<T>(this PhysicsEvents.ContactBeginEvent beginEvent,out T component, bool checkValidation = false)
-        {
-            component = default(T);
-            // Optional check for only using Component set as a callbackTarget for valid shapes.
-            if (checkValidation && !beginEvent.shapeB.isValid)
-                return false;
-
-            if (beginEvent.shapeB.callbackTarget is not T callbackTarget)
                 return false;
 
             component = callbackTarget;

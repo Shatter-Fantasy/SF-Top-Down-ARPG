@@ -7,7 +7,7 @@ using UnityEngine.LowLevelPhysics2D;
 
 namespace SF.StateMachine.Core
 {
-	using PhysicsLowLevel;
+	using U2D.Physics;
     public class PathfindingAIState : StateCore
     {
 	    [SerializeField] private float _speed = 5;

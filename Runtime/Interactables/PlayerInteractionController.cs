@@ -6,7 +6,7 @@ using UnityEngine.LowLevelPhysics2D;
 namespace SF.Interactables
 {
     using InputModule;
-    using PhysicsLowLevel;
+    using SF.U2D.Physics;
     
     public class PlayerInteractionController : InteractionController, ITriggerShapeCallback
     {

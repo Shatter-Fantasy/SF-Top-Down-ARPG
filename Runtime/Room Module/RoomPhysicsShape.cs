@@ -6,7 +6,7 @@ using UnityEngine.LowLevelPhysics2D;
 
 namespace SF.RoomModule
 {
-    using PhysicsLowLevel;
+    using U2D.Physics;
     
     [AddComponentMenu("Cinemachine/Procedural/Extensions/Cinemachine Physic2D Shape")]
     [SaveDuringPlay]

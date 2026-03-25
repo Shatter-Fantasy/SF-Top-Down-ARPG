@@ -1,7 +1,7 @@
 
 using UnityEngine;
 
-namespace SF.PhysicsLowLevel
+namespace SF.U2D.Physics
 {
     [System.Serializable]
     public struct MovementProperties

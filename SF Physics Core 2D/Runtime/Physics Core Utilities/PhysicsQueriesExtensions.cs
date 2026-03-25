@@ -1,5 +1,6 @@
 using Unity.Burst;
 using Unity.Collections;
+using UnityEngine;
 using UnityEngine.LowLevelPhysics2D;
 
 namespace SF.U2D.Physics
@@ -37,6 +38,43 @@ namespace SF.U2D.Physics
             }
             return nativeArray;
         }
+        
+        /// <summary>
+        /// Only works when the <see cref="PhysicsShape.shapeType"/> is
+        /// a <see cref="PhysicsShape.ShapeType.Capsule"/>
+        /// </summary>
+        /// <param name="shape"></param>
+        /// <param name="world"></param>
+        /// <param name="targetPosition"></param>
+        /// <param name="velocity"></param>
+        /// <param name="maxSolverIterations"></param>
+        /// <param name="moveTolerance"></param>
+        /// <returns></returns>
+        public static PhysicsQuery.WorldMoverResult CastMover(
+                this in PhysicsShape shape,
+                in PhysicsWorld world,
+                Vector2 targetPosition,
+                Vector2 velocity,
+                int maxSolverIterations = 1,
+                float moveTolerance = 0.01f
+            )
+        {
+            
+            var worldMoveResult = new PhysicsQuery.WorldMoverInput
+            {
+                geometry       = shape.capsuleGeometry,
+                maxIterations  = maxSolverIterations,
+                overlapFilter  = shape.GetQueryFilter(),
+                castFilter     = shape.GetQueryFilter(),
+                moveTolerance  = moveTolerance,
+                targetPosition = targetPosition,
+                transform      = shape.transform,
+                velocity       = velocity
+            };
+
+            return world.CastMover(worldMoveResult);
+        }
+
 #endregion
 
 #region PhysicsQuery.QueryFilter

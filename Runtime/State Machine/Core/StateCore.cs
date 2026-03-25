@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace SF.StateMachine.Core
 {
-	using PhysicsLowLevel;
+	using U2D.Physics;
 	using Characters;
 	using Decisions;
 	public class DecisionTransition
