@@ -4,10 +4,9 @@ using UnityEditor.EditorTools;
 using UnityEditor.Overlays;
 using UnityEngine.UIElements;
 
-namespace SFEditor.PhysicsLowLevel
+namespace SFEditor.U2D.Physics
 {
-    using SF.PhysicsLowLevel;
-    
+    using SF.U2D.Physics;
     [EditorTool("Edit SF Shape Component", typeof(SFShapeComponent))]
     public sealed class SFShapeSceneEditorTool : EditorTool, IDrawSelectedHandles
     {
@@ -19,13 +18,6 @@ namespace SFEditor.PhysicsLowLevel
         // Use SceneShapeEditorTool as a reference for figuring this out.
         public override void OnActivated()
         {
-           // TODO: Create the Geometry Tool Overlay that inherits from Overlay class.
-           /*
-           _overlay = new SFShapeGeometryOverlay();
-           SceneView.AddOverlayToActiveView(_overlay);
-           */
-           
-           
            // Create a new list of selected SFShapeComponent targets to be edited.
            _shapeGeometryTools = new List<ShapeComponentGeometryTool>(capacity: 1);
            
@@ -47,6 +39,11 @@ namespace SFEditor.PhysicsLowLevel
                    }
                }
            }
+        }
+
+        public override void OnWillBeDeactivated()
+        {
+            _shapeGeometryTools.Clear();
         }
 
         /// <summary>
