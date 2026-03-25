@@ -2,13 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+
 using UnityEngine;
 using UnityEngine.LowLevelPhysics2D;
 
 namespace SF.RoomModule
 {
+    using CameraModule;
     using Managers;
-    using PhysicsLowLevel;
+    using U2D.Physics;
     
     public class RoomController : MonoBehaviour, 
         ITriggerShapeCallback
@@ -42,10 +44,17 @@ namespace SF.RoomModule
         private readonly List<IRoomExtension> _roomExtensions = new();
 
         private ReadOnlyCollection<IRoomExtension> _roomEnteredExtensions;
-        private readonly List<IRoomExtension> _roomExitedExtensions = new();
+        private ReadOnlyCollection<IRoomExtension> _roomExitedExtensions;
+        private ReadOnlyCollection<IRoomExtension> _roomClearedExtensions;
         #endregion
         
         [SerializeReference] private SFShapeComponent _physicsShapeComponent;
+        
+        /// <summary>
+        ///  The camera bounds for the room being controlled.
+        /// </summary>
+        public Bounds CameraBounds;
+        
         private void Awake()
         {
             if (TryGetComponent(out _physicsShapeComponent))
@@ -58,9 +67,21 @@ namespace SF.RoomModule
             
             // Non-allocating version when used with read only List<T>
             gameObject.GetComponents(_roomExtensions);
-            
-            var rooms  = _roomExtensions.Where((room => room.RoomExtensionType == RoomExtensionType.OnRoomEntered));
-            _roomEnteredExtensions = new ReadOnlyCollection<IRoomExtension>(rooms.ToList());
+
+            if (_roomExtensions.Count > 0)
+            {
+                var roomsEntered =
+                    _roomExtensions.Where((room => room.RoomExtensionType == RoomExtensionType.OnRoomEntered));
+                _roomEnteredExtensions = new ReadOnlyCollection<IRoomExtension>(roomsEntered.ToList());
+
+                var roomsExited =
+                    _roomExtensions.Where((room => room.RoomExtensionType == RoomExtensionType.OnRoomExit));
+                _roomExitedExtensions = new ReadOnlyCollection<IRoomExtension>(roomsExited.ToList());
+                
+                var roomsCleared =
+                    _roomExtensions.Where((room => room.RoomExtensionType == RoomExtensionType.OnRoomCleared));
+                _roomClearedExtensions = new ReadOnlyCollection<IRoomExtension>(roomsCleared.ToList());
+            }
         }
 
         private void Start()
@@ -111,21 +132,16 @@ namespace SF.RoomModule
 
             RoomSystem.SetCurrentRoom(RoomID);
         }
-        
-        public void OnTriggerBegin2D(PhysicsEvents.TriggerBeginEvent beginEvent)
-        {
-            OnRoomEnteredHandler?.Invoke();
-            for (int i = 0; i < _roomEnteredExtensions.Count; i++)
-            {
-                _roomEnteredExtensions[i].Process();
-            }
-            
-            MakeCurrentRoom();
-        }
 
-        public void OnTriggerEnd2D(PhysicsEvents.TriggerEndEvent endEvent)
+        public void OnRoomCleared()
         {
-            OnRoomExitHandler?.Invoke();
+            if (_roomClearedExtensions.Count < 1)
+                return;
+
+            for (int i = 0; i < _roomClearedExtensions.Count; i++)
+            {
+                _roomClearedExtensions[i].Process();
+            }
         }
 
         public void OnTriggerBegin2D(PhysicsEvents.TriggerBeginEvent beginEvent, SFShapeComponent callingShapeComponent)
@@ -146,12 +162,24 @@ namespace SF.RoomModule
             if (!body2D.CollisionInfo.CollisionActivated)
                 return;
             
-            OnTriggerBegin2D(beginEvent);
+            OnRoomEnteredHandler?.Invoke();
+            
+            // Check just in case no _roomEnteredExtensions was ever set.
+            if(_roomEnteredExtensions != null)
+            {
+                for (int i = 0; i < _roomEnteredExtensions.Count; i++)
+                {
+                    _roomEnteredExtensions[i].Process();
+                }
+            }
+            
+            MakeCurrentRoom();
+            CameraController.UpdateActiveCameraBounds(transform.position,CameraBounds.size, CameraBounds.center);
         }
 
         public void OnTriggerEnd2D(PhysicsEvents.TriggerEndEvent endEvent, SFShapeComponent callingShapeComponent)
         {
-            OnTriggerEnd2D(endEvent);
+            OnRoomExitHandler?.Invoke();
         }
     }
 }

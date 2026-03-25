@@ -1,6 +1,4 @@
-using SF.Characters.Data;
-using SF.RoomModule;
-using SF.StatModule;
+using System;
 using UnityEngine;
 
 #if UNITY_EDITOR
@@ -9,6 +7,10 @@ using UnityEngine;
 
 namespace SF.SpawnModule
 {
+    using Characters.Data;
+    using RoomModule;
+    using StatModule;
+    
     [System.Serializable]
     public struct SpawnSet
     {
@@ -23,22 +25,43 @@ namespace SF.SpawnModule
     /// </summary>
     public class RoomCharacterSpawner : MonoBehaviour
     {
+
+        [Header("Character Data")]
         public CharacterDatabase CharacterDB;
         public SpawnSet[] SpawnSets;
-
+        
         private bool _alreadySpawned;
+        private int _roomCharacterCount = 0; 
+
+        private RoomController _roomController;
+        
         private void Awake()
         {
-            if (TryGetComponent(out RoomController roomController))
-            {
-                roomController.OnRoomEnteredHandler += SpawnCharacters;
-                roomController.OnRoomExitHandler += DespawnCharacters;
-            }
+            TryGetComponent(out _roomController);
         }
+        
+        private void OnEnable()
+        {
+            if (_roomController == null)
+                return;
+            
+            _roomController.OnRoomEnteredHandler += SpawnCharacters;
+            _roomController.OnRoomExitHandler    += DespawnCharacters;
+        }
+        
+        private void OnDisable()
+        {
+            if (_roomController == null)
+                return;
+            
+            _roomController.OnRoomEnteredHandler -= SpawnCharacters;
+            _roomController.OnRoomExitHandler    -= DespawnCharacters;
+        }
+        
 
         private void SpawnCharacters()
         {
-            // Don't respawn the characters when they are already loaded in memory.
+            // Don't spawn the characters when they are already loaded in memory.
             if (_alreadySpawned)
             {
                 RespawnCharacters();
@@ -47,21 +70,25 @@ namespace SF.SpawnModule
 
             if (SpawnSets.Length < 1)
                 return;
-            
+
+            _roomCharacterCount = SpawnSets.Length;
             
             for (int i = 0; i < SpawnSets.Length; i++)
             {
                 var spawnedCharacterData = CharacterDB.GetDataByID(SpawnSets[i].SpawnCharacterID);
-                SpawnSets[i].SpawnedCharacter = Instantiate(spawnedCharacterData.Prefab,
-                SpawnSets[i].SpawnPosition,
-                Quaternion.identity);
+                SpawnSets[i].SpawnedCharacter = Instantiate(spawnedCharacterData.Prefab, SpawnSets[i].SpawnPosition, Quaternion.identity);
+                
 
                 if(!SpawnSets[i].SpawnedCharacter.TryGetComponent(out CharacterStats stats))
                 {
                     stats = SpawnSets[i].SpawnedCharacter.AddComponent<CharacterStats>();
                 }
 
-                stats.CharacterStatList = spawnedCharacterData.Stats;
+                stats.CharacterStatList                          =  spawnedCharacterData.Stats;
+                SpawnSets[i].SpawnedHealth                       =  stats.CharacterHealth;
+                SpawnSets[i].SpawnedHealth.CharacterDeathHandler += OnCharacterDeath;
+                SpawnSets[i].SpawnedHealth.Respawn();
+                
 
                 if(!SpawnSets[i].SpawnedCharacter.TryGetComponent(out CharacterData characterData))
                 {
@@ -70,9 +97,7 @@ namespace SF.SpawnModule
                     
                 if(characterData is CombatantData cData)
                 {
-                    SpawnSets[i].SpawnedHealth = stats.CharacterHealth;
-                    SpawnSets[i].SpawnedHealth.Respawn();
-                    
+
                     cData.SetData(spawnedCharacterData);
                 }
                 else
@@ -83,6 +108,17 @@ namespace SF.SpawnModule
             } // End of for loop.
 
             _alreadySpawned = true;
+        }
+
+        private void OnCharacterDeath(CharacterHealth obj)
+        {
+            _roomCharacterCount--;
+
+            // If all enemies are killed invoke OnRoomClearedEvents
+            if (_roomCharacterCount <= 0)
+            {
+                _roomController.OnRoomCleared();
+            }
         }
 
         private void DespawnCharacters()

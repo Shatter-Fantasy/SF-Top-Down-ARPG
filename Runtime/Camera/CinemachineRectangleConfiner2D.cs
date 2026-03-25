@@ -1,6 +1,7 @@
 using Unity.Burst;
 using Unity.Cinemachine;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace SF.CameraModule
 {
@@ -12,31 +13,32 @@ namespace SF.CameraModule
     public class CinemachineRectangleConfiner2D : CinemachineExtension
     {
         public Bounds ConfinerBounds;
-        [SerializeField] private Transform _confinerCenter;
-
+        [FormerlySerializedAs("OriginsOfBounds")] public Vector3 OffsetOfBounds; 
         private Vector3 _correctedPosition;
         
         protected override void PostPipelineStageCallback(CinemachineVirtualCameraBase vcam, CinemachineCore.Stage stage, ref CameraState state, float deltaTime)
         {
             if (stage != CinemachineCore.Stage.Body)
                 return;
-
-            if (_confinerCenter == null)
-                return;
             
             var camPosition = vcam.transform.position;
             var settings = state.Lens;
             float frustumHalfHeight = CalculateFrustumHalfHeight(settings.OrthographicSize,camPosition.z,settings.FieldOfView);
             float frustumHalfWidth = frustumHalfHeight * settings.Aspect;
+
+            Vector3 pos = state.RawPosition;
             
-            //ConfinerBounds.center = _confinerCenter.transform.position;
-            Vector3 pos = vcam.transform.position;
-
-            _correctedPosition.x = Mathf.Max(ConfinerBounds.min.x + frustumHalfWidth,Mathf.Min(ConfinerBounds.max.x - frustumHalfWidth, pos.x) );
-            _correctedPosition.y = Mathf.Max(ConfinerBounds.min.y + frustumHalfHeight,Mathf.Min(ConfinerBounds.max.y - frustumHalfHeight, pos.y) );
+            _correctedPosition.x = Mathf.Max(ConfinerBounds.min.x + OffsetOfBounds.x + frustumHalfWidth,
+                Mathf.Min(ConfinerBounds.max.x - frustumHalfWidth + OffsetOfBounds.x, pos.x));
+            
+            _correctedPosition.y = Mathf.Max(ConfinerBounds.min.y + OffsetOfBounds.y + frustumHalfHeight,
+                Mathf.Min(ConfinerBounds.max.y + OffsetOfBounds.y - frustumHalfHeight, pos.y));
+            
+            //Debug.Log($"YMin: {ConfinerBounds.min.y }, YMax:{ConfinerBounds.max.y }, X Corrected:{_correctedPosition.x}, Y Corrected:{_correctedPosition.y}");
             _correctedPosition.z = state.RawPosition.z;
-
-            state.PositionCorrection += _correctedPosition - state.GetCorrectedPosition();
+            
+            state.PositionCorrection.x += _correctedPosition.x - state.GetCorrectedPosition().x;
+            state.PositionCorrection.y += _correctedPosition.y - state.GetCorrectedPosition().y;
         }
         
         /// <summary>
@@ -71,12 +73,6 @@ namespace SF.CameraModule
 
             return Mathf.Abs(frustumHeight);
             
-        }
-
-        public void UpdateConfinerBounds(in Bounds newConfinerBounds)
-        {
-            // TODO: Add logic for making sure the bounds don't have invalid values like negative sizes or 0.
-            ConfinerBounds = newConfinerBounds;
         }
     }
 }

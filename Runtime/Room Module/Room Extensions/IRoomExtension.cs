@@ -1,11 +1,9 @@
-using UnityEngine;
-
 namespace SF.RoomModule
 {
     /// <summary>
     /// 
     /// </summary>
-    public enum RoomExtensionType
+    public enum RoomExtensionType : uint
     {
         OnRoomEntered = 0,
         OnRoomEnteredFirstTime = 1,
@@ -13,6 +11,7 @@ namespace SF.RoomModule
         OnRoomExitedFirstTime = 4,
         OnRoomLoaded = 8,
         OnRoomUnloaded = 16,
+        OnRoomCleared = 32
     }
     /// <summary>
     /// Implement to create a custom extension that adds logic for rooms.

@@ -53,19 +53,22 @@ namespace SF.CameraModule
         public static CinemachineCamera ActiveRoomCamera;
         public static CinemachineCamera ActiveCutsceneCamera;
 
+        [SerializeField] private CinemachineRectangleConfiner2D _cameraConfiner; 
+
         private void Awake()
         {
-            if(Instance != null && _instance  != this)
-                Destroy(this);
-            else // done in an else statement for times when the component is not destroyed instantly and continues into the Awake call.
+            if (Instance != null && _instance != this)
             {
-                Instance = this;
+                Destroy(this);
+                return; // We return because Destroy sometimes takes effect next frame.
             }
+            
+            Instance = this;
 
             MainCamera = GetComponent<Camera>();
             if (MainCamera != null)
                 MainCamera.TryGetComponent(out MainCameraBrain);
-           
+            
             SpawnSystem.InitialPlayerSpawnHandler += SetInitialCameraTarget;
         }
         
@@ -86,8 +89,11 @@ namespace SF.CameraModule
         /// Set's the <see cref="CameraTarget"/> of the CameraManager <see cref="Instance"/>.
         /// </summary>
         /// <param name="spawnedPlayer"></param>
-        private void SetInitialCameraTarget(GameObject spawnedPlayer)
+        private void SetInitialCameraTarget(GameObject spawnedPlayer = null)
         {
+            if (SpawnSystem.SpawnedPlayer == null && spawnedPlayer == null)
+                return;
+            
             _instance.CameraTarget = SpawnSystem.SpawnedPlayer.transform;
             
             if(MainCameraBrain != null 
@@ -95,13 +101,23 @@ namespace SF.CameraModule
                && _instance.CameraTarget != null)
                 SwitchPlayerCMCamera(MainCameraBrain.ActiveVirtualCamera as CinemachineCamera);
         }
+
+        public static void UpdateActiveCameraBounds(Vector3 centerOfBounds,Vector3 sizeOfBounds, Vector2 offsetOfBounds )
+        {
+            if (_instance._cameraConfiner != null && sizeOfBounds != default)
+            {
+                _instance._cameraConfiner.ConfinerBounds = new Bounds(centerOfBounds,sizeOfBounds);
+                _instance._cameraConfiner.OffsetOfBounds = offsetOfBounds;
+            }
+        }
         
         /// <summary>
         /// Switches between the current <see cref="ActiveRoomCamera"/> and makes a new room camera the <see cref="ActiveRoomCamera"/>.
         /// </summary>
         /// <param name="cmCamera"></param>
+        /// <param name="cameraBounds"></param>
         /// <param name="priority"></param>
-        public static void SwitchPlayerCMCamera(CinemachineCamera cmCamera, int priority = ActivePriority)
+        public static void SwitchPlayerCMCamera(CinemachineCamera cmCamera, Bounds cameraBounds = default, int priority = ActivePriority)
         {
             if(cmCamera == null)
                 return;
@@ -124,6 +140,9 @@ namespace SF.CameraModule
             // From here Instance.ActiveRoomCamera is the new camera.
             if(Instance.CameraTarget != null)
                 ActiveRoomCamera.transform.position = Instance.CameraTarget.position;
+
+            if (_instance._cameraConfiner != null && cameraBounds != default)
+                _instance._cameraConfiner.ConfinerBounds = cameraBounds;
             
             ActiveRoomCamera.Priority = ActivePriority;
             

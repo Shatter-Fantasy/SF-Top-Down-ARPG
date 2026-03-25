@@ -24,7 +24,7 @@ namespace ZTDREditor.CameraModule
             if (_confiner2D == null)
                 return;
 
-            ToolGUIUtilities.DrawBoundsIn2D(_confiner2D.transform.position, ref _confiner2D.ConfinerBounds);
+            ToolGUIUtilities.DrawBoundsIn2D(_confiner2D.OffsetOfBounds, ref _confiner2D.ConfinerBounds);
         }
     }
 
