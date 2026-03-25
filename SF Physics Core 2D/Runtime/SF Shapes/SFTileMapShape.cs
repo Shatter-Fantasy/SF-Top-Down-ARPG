@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using SF.Utilities;
 using Unity.Collections;
 using UnityEngine;
 using UnityEngine.LowLevelPhysics2D;
@@ -8,6 +7,8 @@ using UnityEngine.Tilemaps;
 
 namespace SF.PhysicsLowLevel
 {
+    using SF.Utilities;
+    
     [RequireComponent(typeof(Tilemap))]
     public class SFTileMapShape : SFShapeComponent
     {

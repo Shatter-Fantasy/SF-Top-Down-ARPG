@@ -66,12 +66,10 @@ namespace SF.PhysicsLowLevel
             if (checkValidation && !beginEvent.visitorShape.isValid)
                 return false;
 
-            if (beginEvent.visitorShape.callbackTarget is not T callbackTarget)
+            if (beginEvent.visitorShape.callbackTarget is not SFShapeComponent shapeComponent)
                 return false;
-
-            component = callbackTarget;
-
-            return true;
+            
+            return shapeComponent.TryGetComponent(out component);
         }
         
         public static T GetCallbackComponentOnTrigger<T>(this PhysicsEvents.TriggerBeginEvent beginEvent, bool checkValidation = false) where T : Component
