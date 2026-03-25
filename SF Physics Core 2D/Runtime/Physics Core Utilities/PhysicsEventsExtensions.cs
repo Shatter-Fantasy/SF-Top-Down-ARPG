@@ -15,7 +15,10 @@ namespace SF.U2D.Physics
         /// <param name="checkValidation"></param>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public static bool TryGetCallbackComponentOnVisitor<T>(this PhysicsEvents.TriggerBeginEvent beginEvent, out T component, bool checkValidation = false) where T : Component
+        public static bool TryGetCallbackComponentOnVisitor<T>(
+            this PhysicsEvents.TriggerBeginEvent beginEvent, 
+            out T component,
+            bool checkValidation = false) where T : Component
         {
             component = null;
             // Optional check for only using Component set as a callbackTarget for valid shapes.
