@@ -120,7 +120,7 @@ namespace SF.U2D.Physics
                 
                 var physicsShapeCount = tileSprite.GetPhysicsShapeCount();
                 if (physicsShapeCount == 0)
-                    return;
+                    continue;
                 
                 // Add all physic shape paths.
                 for (var j = 0; j < physicsShapeCount; ++j)
