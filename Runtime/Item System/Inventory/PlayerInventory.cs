@@ -12,7 +12,7 @@ namespace SF.ItemModule
     public class PlayerInventory : ItemContainer
     {
         
-        public List<CurrencyData> Currencies = new List<CurrencyData>();
+        //public List<CurrencyData> Currencies = new List<CurrencyData>();
         
         [NonSerialized] public List<ItemData> FilteredConsumable = new List<ItemData>();
         [NonSerialized] public List<Weapon> FilteredWeapons = new List<Weapon>();
@@ -23,7 +23,7 @@ namespace SF.ItemModule
         /// Does not activate when gaining items from shops, quest rewards, or from NPC dialogue interactions.
         /// </summary>
         public static Action<int> ItemPickedUpHandler;
-        public static Action<CurrencyData> CurrencyPickedUpHandler;
+        //public static Action<CurrencyData> CurrencyPickedUpHandler;
         
         private void Start()
         {
@@ -49,6 +49,7 @@ namespace SF.ItemModule
             ItemPickedUpHandler?.Invoke(itemID);
         }
         
+        /*
         public void AddItem(CurrencyData currencyData)
         {
             if (Currencies.Count < 1)
@@ -61,7 +62,7 @@ namespace SF.ItemModule
         {
             AddItem(currencyData);
             CurrencyPickedUpHandler?.Invoke(currencyData);
-        }
+        }*/
 
         public void FilterInventory()
         {
