@@ -24,6 +24,12 @@ namespace SF.U2D.Physics
 
         protected override void OnValidate()
         {
+
+#if UNITY_EDITOR
+            if (UnityEditor.BuildPipeline.isBuildingPlayer || Application.isBatchMode)
+                return;
+#endif
+            
             if (!isActiveAndEnabled || Application.isPlaying)
                 return;
             
@@ -153,6 +159,9 @@ namespace SF.U2D.Physics
                     vertexPath.Clear();
                 }
             }
+
+            if (!composer.isValid)
+                return;
             
             using var polygons = composer.CreatePolygonGeometry(vertexScale: transform.lossyScale, Allocator.Temp);
             

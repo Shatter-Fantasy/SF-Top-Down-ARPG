@@ -32,6 +32,36 @@ namespace SF.U2D.Physics
             return true;
         }
         
+        /// <summary>
+        /// Tries to get the <see cref="PhysicsEvents.TriggerBeginEvent.visitorShape"/> <see cref="PhysicsShape.callbackTarget"/>
+        /// as a certain type of component and returns true or false if that type of component was set for the callback target.
+        /// </summary>
+        /// <param name="beginEvent"></param>
+        /// <param name="component"></param>
+        /// <param name="checkValidation"></param>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public static bool TryGetComponentOnVisitorGameObject<T>(
+            this PhysicsEvents.TriggerBeginEvent beginEvent, 
+            out T component,
+            bool checkValidation = false) where T : Component
+        {
+            component = null;
+            // Optional check for only using Component set as a callbackTarget for valid shapes.
+            if (checkValidation && !beginEvent.visitorShape.isValid)
+                return false;
+
+            GameObject visitingGameObject = beginEvent.visitorShape.ownerUserData.objectValue as GameObject;
+            
+            if (visitingGameObject == null)
+                return false;
+            
+            if (!visitingGameObject.TryGetComponent(out component))
+                return false;
+            
+            return true;
+        }
+        
 
         /// <summary>
         /// Gets the <see cref="PhysicsEvents.TriggerBeginEvent"/> visiting <see cref="PhysicsShape.callbackTarget"/>
@@ -116,6 +146,59 @@ namespace SF.U2D.Physics
             return true;
         }
         
+        
+        /// <summary>
+        /// Tries to get a component on the <see cref="PhysicsShape.ownerUserData.objectValue"/> <see cref="PhysicsEvents.ContactBeginEvent.shapeA"/>
+        /// set <see cref="SFShapeComponent"/>
+        /// </summary>
+        /// <param name="beginEvent"></param>
+        /// <param name="component"></param>
+        /// <param name="checkValidation"></param>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public static bool TryGetComponentOnShapeAGameObject<T>(this PhysicsEvents.ContactBeginEvent beginEvent,out T component, bool checkValidation = false)
+        {
+            component = default(T);
+            // Optional check for only using Component set as a callbackTarget for valid shapes.
+            if (checkValidation && !beginEvent.shapeA.isValid)
+                return false;
+            GameObject shapeAObject = beginEvent.shapeA.ownerUserData.objectValue as GameObject;
+
+            if (shapeAObject == null)
+                return false;
+            
+            if (!shapeAObject.TryGetComponent(out component))
+                return false;
+            
+            return true;
+        }
+        
+        /// <summary>
+        /// Tries to get a component on the <see cref="PhysicsShape.ownerUserData.objectValue"/> <see cref="PhysicsEvents.ContactBeginEvent.shapeB"/>
+        /// set <see cref="SFShapeComponent"/>
+        /// </summary>
+        /// <param name="beginEvent"></param>
+        /// <param name="component"></param>
+        /// <param name="checkValidation"></param>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public static bool TryGetComponentOnShapeBGameObject<T>(this PhysicsEvents.ContactBeginEvent beginEvent,out T component, bool checkValidation = false)
+        {
+            component = default(T);
+            // Optional check for only using Component set as a callbackTarget for valid shapes.
+            if (checkValidation && !beginEvent.shapeB.isValid)
+                return false;
+            GameObject shapeAObject = beginEvent.shapeB.ownerUserData.objectValue as GameObject;
+
+            if (shapeAObject == null)
+                return false;
+            
+            if (!shapeAObject.TryGetComponent(out component))
+                return false;
+            
+            return true;
+        }
+        
         public static bool TryGetCallbackComponentOnShapeA<T>(this PhysicsEvents.ContactBeginEvent beginEvent,out T component, bool checkValidation = false)
         {
             component = default(T);
@@ -130,6 +213,7 @@ namespace SF.U2D.Physics
 
             return true;
         }
+        
 #endregion
     }
 }

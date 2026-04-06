@@ -7,6 +7,7 @@ namespace SF.U2D.Physics
     [ExecuteAlways]
     [AddComponentMenu("Physics 2D/LowLevel/SF Rectangle Shape", 22)]
     [Icon("Packages/shatterfantasy.sf-metroidvania/Editor/Icons/SceneBody.png")]
+    [DefaultExecutionOrder(PhysicsCore2DExecutionOrder.PhysicsBody)]
     public class SFRectangleShape : SFShapeComponent
     {
         [Header("Rectangle Properties")]

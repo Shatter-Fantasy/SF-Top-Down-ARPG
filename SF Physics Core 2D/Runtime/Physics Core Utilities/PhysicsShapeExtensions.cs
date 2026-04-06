@@ -1,13 +1,25 @@
+using System.Runtime.CompilerServices;
 using Unity.Burst;
 using Unity.U2D.Physics;
 using UnityEngine;
-
 
 namespace SF.U2D.Physics
 {
     [BurstCompile]
     public static class PhysicsShapeExtensions
     {
+
+        public static bool TryGetGameObjectOnOwner(this PhysicsShape shape,out GameObject gameObject)
+        {
+            if (shape.body.ownerUserData.objectValue is GameObject objectData)
+            {
+                gameObject = objectData;
+                return true;
+            }
+
+            gameObject = null;
+            return false;
+        }
         
 #region PhysicsShape Callbacks Targets
         public static bool TryGetCallbackComponent<T>(this PhysicsShape shape,out T component, bool checkShapeValidation = false) where T : Component
@@ -156,6 +168,23 @@ namespace SF.U2D.Physics
             PhysicsMask mask = filter.contacts;
             mask.SetBit(bitIndex);
             filter.contacts = mask;
+        }
+        
+        [BurstCompile]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void SetContactBit(this ref PhysicsShape shape, int bitIndex)
+        {
+            if (bitIndex < 0 || bitIndex > 63 /*0x3F*/)
+                return;
+            
+            /* Below is because PhysicsShape.ContactFilter.categories is a readonly getter.
+             * We take the mask set in the inspector and apply it on a PhysicsMask.
+             * Call SetBit method and make sure SFPhysicsManager.InteractableLayer is set.
+             * Than using the writable setter for PhysicsShape.ContactFilter.categories we set the modified _mask struct.  */
+            
+            PhysicsMask filter = shape.contactFilter.contacts;
+            filter.SetBit(SFPhysicsManager.InteractableLayer);
+            shape.contactFilter.contacts.SetBit(SFPhysicsManager.InteractableLayer);
         }
         
         [BurstCompile]

@@ -5,8 +5,10 @@ using Unity.Collections;
 using Unity.U2D.Physics;
 using UnityEngine;
 
+
 namespace SF.U2D.Physics
 {
+    using static PhysicsShapeExtensions;
     public interface IPreSolveShapeCallback
     {
         bool OnPreSolve2D(PhysicsEvents.PreSolveEvent preSolveEvent,SFShapeComponent callingShapeComponent);
@@ -38,12 +40,12 @@ namespace SF.U2D.Physics
     [ExecuteAlways]
     [BurstCompile]
     [Icon("Packages/shatterfantasy.sf-metroidvania/Editor/Icons/SceneBody.png")]
+    [DefaultExecutionOrder(PhysicsCore2DExecutionOrder.PhysicsBody)]
     public abstract class SFShapeComponent : MonoBehaviour, 
 
         ITriggerShapeCallback, PhysicsCallbacks.ITriggerCallback,
         IContactShapeCallback, PhysicsCallbacks.IContactCallback,
         IPreSolveShapeCallback, PhysicsCallbacks.IPreSolveCallback
-
     {
         public EntityId EntityId;
         #region Transform Cache - Temp fields
@@ -64,7 +66,8 @@ namespace SF.U2D.Physics
             Body.SetAndWriteTransform(physicsTransform);
         }
         #endregion
-        
+
+        public PhysicsShape.ContactFilter ContactFilter;
         protected PhysicsShape _shape;
         /// <summary>
         /// The completed physics shape data struct for the <see cref="SFShapeComponent"/>.
@@ -211,7 +214,6 @@ namespace SF.U2D.Physics
             PreDisable();
             DestroyBody();
             DestroyShape();
-            
         }
 
         protected virtual void OnValidate()
@@ -270,6 +272,13 @@ namespace SF.U2D.Physics
             if (!Shape.isValid)
                 return;
             
+            PhysicsUserData ownerData = new PhysicsUserData()
+            {
+                // Setting the owner data to be this SFShapeComponent Entity ID and the Gameobject it is on.
+                int64Value  = EntityId.ToULong(EntityId),
+                objectValue = gameObject,
+            };
+            _shape.SetOwnerUserData(ownerData);
             _shape.callbackTarget = this;
             ShapeCreatedHandler?.Invoke();
         }
@@ -304,6 +313,16 @@ namespace SF.U2D.Physics
                 // Set the transform object.
                 Body.transformObject      = transform;
                 Body.callbackTarget       = this;
+               
+
+                PhysicsUserData ownerData = new PhysicsUserData()
+                {
+                    // Setting the owner data to be this SFShapeComponent Entity ID and the Gameobject it is on.
+                    int64Value = EntityId.ToULong(EntityId),
+                    objectValue = gameObject,
+                };
+                
+                Body.SetOwnerUserData(ownerData);
                 Body.userData = new()
                 {
                     objectValue = gameObject
@@ -320,7 +339,10 @@ namespace SF.U2D.Physics
                     for (int i = 0; i < ShapesInComposite.Length; i++)
                     {
                         if (ShapesInComposite[i].isValid)
+                        {
                             ShapesInComposite[i].Destroy();
+                            ShapesInComposite[i] = default;
+                        }
                     }
                 }
                 ShapesInComposite.Dispose();
@@ -342,8 +364,6 @@ namespace SF.U2D.Physics
                 Body.Destroy();
                 Body         = default;
             }
-            
-
         }
 
 #region Physic Event Callbacks
@@ -474,7 +494,9 @@ namespace SF.U2D.Physics
             return true;
         }
 #endregion
-        
+
+#region Debugging
+
         /// <summary>
         /// If debugging is enabled in editor, a set of logs will be sent to console just in case something was not set right.
         /// </summary>
@@ -538,11 +560,12 @@ namespace SF.U2D.Physics
         [System.Diagnostics.Conditional("UNITY_EDITOR")]
         protected virtual void DebugPhysicsExtra(){}
 
+#endregion
+        
         public PhysicsAABB CalculateAABB()
         {
             return GetAABB(_shape);
         }
-        
         
         public static PhysicsAABB GetAABB(in PhysicsShape physicsShape)
         {
@@ -561,6 +584,21 @@ namespace SF.U2D.Physics
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+        }
+
+        public void SetContactBit(int bitIndex, bool checkValidShape = false)
+        {
+            if (checkValidShape && !_shape.isValid)
+                return;
+            
+            _shape.contactFilter.contacts.SetBit(SFPhysicsManager.InteractableLayer);
+            PhysicsShape.ContactFilter filter      = _shape.contactFilter;
+            PhysicsMask                contactMask = filter.contacts;
+            contactMask.SetBit(SFPhysicsManager.InteractableLayer);
+            filter.contacts               = contactMask;
+            ContactFilter                 = filter;
+            ShapeDefinition.contactFilter = filter;
+            _shape.contactFilter          = filter;
         }
 
 #if  UNITY_EDITOR

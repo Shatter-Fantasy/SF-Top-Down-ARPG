@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Unity.Collections;
 //using Unity.Tilemaps.Experimental;
 using UnityEngine;
@@ -69,7 +70,7 @@ namespace SF.Utilities
             return count;
         }
 #endif
-public static void GetUsedTileData(this Tilemap tilemap, out List<TileData> usedTileData)
+        public static void GetUsedTileData(this Tilemap tilemap, out List<TileData> usedTileData)
         {
             usedTileData = new();
 
@@ -90,6 +91,20 @@ public static void GetUsedTileData(this Tilemap tilemap, out List<TileData> used
                     usedTileData.Add(tileData);
                 }
             }
+        }
+
+        public static List<Tilemap> GetSiblingTilemaps(this Tilemap originalTilemap)
+        {
+            List<Tilemap> otherTileMaps = new();
+            var           tempTileMap   = originalTilemap.GetComponent<Tilemap>();
+            Tilemap[]     allTilesMaps  = tempTileMap.layoutGrid.gameObject.GetComponentsInChildren<Tilemap>();
+            
+            if (allTilesMaps is { Length: > 0 })
+            {
+                otherTileMaps = allTilesMaps.ToList();
+            }
+
+            return otherTileMaps;
         }
     }
 }
