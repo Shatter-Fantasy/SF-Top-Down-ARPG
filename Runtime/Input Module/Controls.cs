@@ -1072,17 +1072,37 @@ namespace SF.InputModule
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ExitGame"",
+                    ""type"": ""Button"",
+                    ""id"": ""7835fa50-173c-4252-847a-936d1f3fd4d0"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
                 {
                     ""name"": """",
                     ""id"": ""0310cc00-a869-4ae3-ab18-ae9fd19dea6b"",
-                    ""path"": """",
+                    ""path"": ""<Keyboard>/tab"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""PauseToggle"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""60f222d9-3204-4388-b856-087391bd91ef"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ExitGame"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -1177,6 +1197,7 @@ namespace SF.InputModule
             // GameControl
             m_GameControl = asset.FindActionMap("GameControl", throwIfNotFound: true);
             m_GameControl_PauseToggle = m_GameControl.FindAction("PauseToggle", throwIfNotFound: true);
+            m_GameControl_ExitGame = m_GameControl.FindAction("ExitGame", throwIfNotFound: true);
         }
 
         ~@Controls()
@@ -1628,6 +1649,7 @@ namespace SF.InputModule
         private readonly InputActionMap m_GameControl;
         private List<IGameControlActions> m_GameControlActionsCallbackInterfaces = new List<IGameControlActions>();
         private readonly InputAction m_GameControl_PauseToggle;
+        private readonly InputAction m_GameControl_ExitGame;
         /// <summary>
         /// Provides access to input actions defined in input action map "GameControl".
         /// </summary>
@@ -1643,6 +1665,10 @@ namespace SF.InputModule
             /// Provides access to the underlying input action "GameControl/PauseToggle".
             /// </summary>
             public InputAction @PauseToggle => m_Wrapper.m_GameControl_PauseToggle;
+            /// <summary>
+            /// Provides access to the underlying input action "GameControl/ExitGame".
+            /// </summary>
+            public InputAction @ExitGame => m_Wrapper.m_GameControl_ExitGame;
             /// <summary>
             /// Provides access to the underlying input action map instance.
             /// </summary>
@@ -1672,6 +1698,9 @@ namespace SF.InputModule
                 @PauseToggle.started += instance.OnPauseToggle;
                 @PauseToggle.performed += instance.OnPauseToggle;
                 @PauseToggle.canceled += instance.OnPauseToggle;
+                @ExitGame.started += instance.OnExitGame;
+                @ExitGame.performed += instance.OnExitGame;
+                @ExitGame.canceled += instance.OnExitGame;
             }
 
             /// <summary>
@@ -1686,6 +1715,9 @@ namespace SF.InputModule
                 @PauseToggle.started -= instance.OnPauseToggle;
                 @PauseToggle.performed -= instance.OnPauseToggle;
                 @PauseToggle.canceled -= instance.OnPauseToggle;
+                @ExitGame.started -= instance.OnExitGame;
+                @ExitGame.performed -= instance.OnExitGame;
+                @ExitGame.canceled -= instance.OnExitGame;
             }
 
             /// <summary>
@@ -1940,6 +1972,13 @@ namespace SF.InputModule
             /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
             /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
             void OnPauseToggle(InputAction.CallbackContext context);
+            /// <summary>
+            /// Method invoked when associated input action "ExitGame" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+            /// </summary>
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+            void OnExitGame(InputAction.CallbackContext context);
         }
     }
 }
