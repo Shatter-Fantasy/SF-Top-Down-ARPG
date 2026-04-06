@@ -5,12 +5,15 @@ namespace SF.SpawnModule
 {
     public class PlayerHealth : CharacterHealth
     {
-        public static Action<int> PlayerHealthChangedHandler;
+        /// <summary>
+        /// Allows objects to listen for a change in health and to see the new current health and the max health.
+        /// </summary>
+        public static Action<int,int> PlayerHealthChangedHandler;
 
         public override void TakeDamage(int damage, Vector2 knockback = new Vector2())
         {
             base.TakeDamage(damage, knockback);
-            PlayerHealthChangedHandler?.Invoke(CurrentHealth);
+            PlayerHealthChangedHandler?.Invoke(CurrentHealth,MaxHealth);
         }
 
         protected override void Kill(Vector2 knockback = new Vector2())
