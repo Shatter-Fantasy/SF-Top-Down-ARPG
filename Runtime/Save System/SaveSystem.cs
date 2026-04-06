@@ -222,7 +222,6 @@ namespace SF.DataManagement
             // Checkpoint manager will have an execution order after the script that calls load game.
 
             
-       
             BeforeLoadSaveDataHandler?.Invoke();
             LoadSaveDataHandler?.Invoke();
         }

@@ -1,12 +1,12 @@
-using SF.Characters;
 using UnityEngine;
 
 namespace SF.SpawnModule
 {
     using AudioModule;
+    using Characters;
     using Characters.Data;
-    using StateMachine.Core;
     using CommandModule;
+    using StateMachine.Core;
     
     public class CombatantHealth : CharacterHealth
     {
