@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace SF.AudioModule
@@ -6,44 +9,32 @@ namespace SF.AudioModule
     [RequireComponent(typeof(AudioSource))]
     public class AudioManager : MonoBehaviour
     {
-        private AudioSource _audioSource;
-
+        public List<AudioChannelSettings> AudioChannelSettingsList = new();
 
         private static AudioManager _instance;
+
         public static AudioManager Instance
         {
-            get 
+            get
             {
                 if (_instance == null)
                 {
                     _instance = FindFirstObjectByType<AudioManager>();
 
                     // If no AudioManager was found in the scene make one than set it as the instance for the AudioManager.
-                    if(_instance == null)
+                    if (_instance == null)
                     {
                         GameObject go = new GameObject("Audio Manager", typeof(AudioManager));
                         Instantiate(go);
                         _instance = go.GetComponent<AudioManager>();
                     }
-
-                    if(_instance._audioSource == null)
-                    {
-                        _instance._audioSource = _instance.GetComponent<AudioSource>();
-
-                        // If no AudioSource was found, make one.
-                        if(_instance._audioSource == null)
-                        {
-                            AudioSource audioSource = _instance.gameObject.AddComponent<AudioSource>();
-                            _instance._audioSource = audioSource;
-                        }
-                    }
                 }
 
-                return _instance; 
+                return _instance;
             }
-            set 
-            {   
-                if(_instance == null)
+            set
+            {
+                if (_instance == null)
                     _instance = value;
             }
         }
@@ -51,22 +42,58 @@ namespace SF.AudioModule
         private void Awake()
         {
             Instance = this;
-
-            if(_audioSource == null)
-                _audioSource = GetComponent<AudioSource>();
         }
 
         /// <summary>
         /// Plays a sound effect through the cached Audio Source in the Audio Manager.
         /// </summary>
         /// <param name="audioClip"></param>
-        /// <param name="volume"></param>
-        public void PlayOneShot(AudioClip audioClip, float volume = 0.75f)
+        /// <param name="audioChannelType"></param>
+        public void PlayOneShot(AudioClip audioClip, AudioChannelType audioChannelType = AudioChannelType.SFX)
         {
-            if(_audioSource == null)
+            if (_instance == null)
                 return;
 
-            _audioSource.PlayOneShot(audioClip, volume);
+            var audioChannel = GetAudioChannel(audioChannelType);
+            audioChannel.AudioSource.PlayOneShot(audioClip, audioChannel.Volume);
+        }
+
+        public static AudioChannelSettings GetAudioChannel(AudioChannelType audioChannelType)
+        {
+            return _instance.AudioChannelSettingsList
+                         .FirstOrDefault(setting => setting.AudioChannelType == audioChannelType);
+        }
+        
+        public static float GetChannelVolume(AudioChannelType audioChannelType)
+        {
+            return _instance.AudioChannelSettingsList
+                         .FirstOrDefault(setting => setting.AudioChannelType == audioChannelType)
+                         .Volume;
+        }
+
+        [Serializable]
+        public struct AudioChannelSettings
+        {
+            public float Volume;
+            public AudioSource AudioSource;
+            public AudioChannelType AudioChannelType;
+
+            public AudioChannelSettings(float volume = .75f, 
+                AudioChannelType audioChannelType = AudioChannelType.Music)
+            {
+                Volume           = volume;
+                AudioChannelType = audioChannelType;
+                AudioSource = null;
+            }
+        }
+        
+        public enum AudioChannelType : ushort
+        {
+            Master = 0,
+            Music = 1,
+            SFX = 2,
+            UI = 4,
+            Other = 8,
         }
     }
 }
