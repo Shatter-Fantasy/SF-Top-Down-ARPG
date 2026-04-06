@@ -65,7 +65,8 @@ namespace SF.Characters
 		private void OnAttackStateChanged(AttackState attackState)
 		{
 			//Plays the Attack Substate 
-			Animator.Play(_forcedStateHash,0);
+            if(Animator.HasState(0,_forcedStateHash))
+				Animator.Play(_forcedStateHash,0);
 		}
 
 		private void LateUpdate()
