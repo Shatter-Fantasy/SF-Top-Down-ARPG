@@ -41,6 +41,9 @@ namespace SF.DataModule
 
         public static TDatabase GetDatabase<TDatabase>() where TDatabase : SFDatabase
         {
+            if (_registry == null)
+                return null;
+            
             _registry.RegisteredDatabases.TryGetValue(typeof(TDatabase), out var database);
             return (TDatabase)database;
         }

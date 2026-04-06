@@ -1,4 +1,5 @@
 using System;
+using SF.DataModule;
 using UnityEngine;
 
 #if UNITY_EDITOR
@@ -38,6 +39,8 @@ namespace SF.SpawnModule
         private void Awake()
         {
             TryGetComponent(out _roomController);
+            if (CharacterDB == null)
+                CharacterDB = DatabaseRegistry.GetDatabase<CharacterDatabase>();
         }
         
         private void OnEnable()
@@ -72,6 +75,9 @@ namespace SF.SpawnModule
                 return;
 
             _roomCharacterCount = SpawnSets.Length;
+            
+            if(CharacterDB == null)
+                return;
             
             for (int i = 0; i < SpawnSets.Length; i++)
             {
