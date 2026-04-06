@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using SF.DataManagement;
+using SF.InputModule;
 using SF.Settings;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace SF.Managers
 {
@@ -66,19 +68,33 @@ namespace SF.Managers
                 DontDestroyOnLoad(gameObject); 
             }
             else
-                Destroy(gameObject); // We want to destroy the child object managers so they are not doubles as well.
+            {
+                Destroy(this);
+            } // We want to destroy the child object managers so they are not doubles as well.
         }
-        
+
         protected void OnEnable()
         {
+            if (SFInputManager.Instance != null)
+                SFInputManager.Controls.GameControl.ExitGame.performed += OnExitGame;
             //DialogueManager.DialogueStartedHandler += OnDialogueStarted;
             //DialogueManager.DialogueEndedHandler += OnDialogueEnded;
         }
 
+
+
         protected void OnDisable ()
         {
+            if (SFInputManager.Instance != null)
+                SFInputManager.Controls.GameControl.ExitGame.performed -= OnExitGame;
+            
             //DialogueManager.DialogueStartedHandler -= OnDialogueStarted;
             //DialogueManager.DialogueEndedHandler -= OnDialogueEnded;
+        }
+        
+        private void OnExitGame(InputAction.CallbackContext obj)
+        {
+            ExitGame();
         }
 
         /// <summary>

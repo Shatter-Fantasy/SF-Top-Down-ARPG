@@ -43,7 +43,7 @@ namespace SF.Managers
             // If one was already set and initialized do not reinit and load duplicate game managers.
             // Destroy this entire GameObject to prevent duplicate managers.
             if (Instance != null && Instance != this)
-                Destroy(gameObject);
+                Destroy(this);
             else
                 Instance = this;
             
