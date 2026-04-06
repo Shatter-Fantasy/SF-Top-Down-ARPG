@@ -26,7 +26,8 @@ namespace SF.DamageModule
         public Direction DamageDirection;
         public int DamageAmount = 1;
         [SerializeField] private Vector2 _knockBackForce;
-        
+
+        [SerializeField] private PhysicsMask _targetPhysicsMask = new (SFPhysicsManager.PlayerLayer);
         
         private void Start()
         {
@@ -56,12 +57,21 @@ namespace SF.DamageModule
         
         public void OnContactBegin2D(PhysicsEvents.ContactBeginEvent beginEvent, SFShapeComponent callingShapeComponent)
         {
-            // Alright this was broken by me. I should be grabbing the visiting physics shape IDamagable not the IDamagable for the attached component.
-            if (!beginEvent.TryGetCallbackComponentOnVisitor(out IDamagable damagable))
+            IDamagable damagable;
+            
+            if (beginEvent.shapeA.contactFilter.categories.IsBitSet(SFPhysicsManager.PlayerLayer))
+            {
+                if(beginEvent.TryGetComponentOnShapeAGameObject(out damagable))
+                    damagable.TakeDamage(DamageAmount,_knockBackForce);
+                
+                return; // If we already hit the target don't waste CPU on the second if statement.
+            }
+
+            if (!beginEvent.shapeB.contactFilter.categories.IsBitSet(SFPhysicsManager.PlayerLayer))
                 return;
             
-            Debug.Log(damagable);
-            damagable.TakeDamage(DamageAmount,_knockBackForce);
+            if(beginEvent.TryGetComponentOnShapeBGameObject(out damagable))
+                damagable.TakeDamage(DamageAmount,_knockBackForce);
         }
 
         public void OnContactEnd2D(PhysicsEvents.ContactEndEvent endEvent, SFShapeComponent callingShapeComponent)

@@ -7,8 +7,10 @@ namespace SF.Interactables
 {
     using InputModule;
     using SF.U2D.Physics;
-    
-    public class PlayerInteractionController : InteractionController, ITriggerShapeCallback
+    using PhysicsShapeExtensions = SF.U2D.Physics.PhysicsShapeExtensions;
+    public class PlayerInteractionController : InteractionController,
+        ITriggerShapeCallback,
+        IContactShapeCallback
     {
         private PlayerControllerBody2D _controller;
         
@@ -17,6 +19,8 @@ namespace SF.Interactables
             TryGetComponent(out _controller);
             if(_hitShape == null)
                 TryGetComponent(out _hitShape);
+
+      
         }
         
               
@@ -32,6 +36,12 @@ namespace SF.Interactables
                 _hitShape.Shape.contactFilter.contacts.SetBit(SFPhysicsManager.InteractableLayer);
                 _hitShape.Body.enabled  = false;
             }
+
+            if (_collisionShape != null)
+            {
+                _collisionShape.AddContactCallbackTarget(this);
+                _collisionShape.SetContactBit(SFPhysicsManager.InteractableLayer);
+            }
         }
 
         private void OnDisable()
@@ -42,6 +52,9 @@ namespace SF.Interactables
             SFInputManager.Controls.Player.Interact.started   -= OnInteractPerformed;
             if(_hitShape != null)
                 _hitShape.RemoveTriggerCallbackTarget(this);
+            if (_collisionShape != null)
+                _collisionShape.RemoveContactCallbackTarget(this);
+            
         }
         
         protected void OnInteractPerformed(InputAction.CallbackContext ctx)
@@ -93,6 +106,29 @@ namespace SF.Interactables
         }
 
         public void OnTriggerEnd2D(PhysicsEvents.TriggerEndEvent endEvent, SFShapeComponent callingShapeComponent)
+        {
+            // noop - No Operation
+        }
+
+        public void OnContactBegin2D(PhysicsEvents.ContactBeginEvent beginEvent, SFShapeComponent callingShapeComponent)
+        {
+            if (!beginEvent.shapeA.isValid 
+                || !beginEvent.shapeB.isValid)
+                return;
+            
+            if (beginEvent.shapeB.TryGetGameObjectOnOwner(out GameObject hitObject)
+                && hitObject.TryGetComponent(out IInteractable interactable)
+                && interactable.InteractableMode == InteractableMode.Collision)
+            {
+                if(interactable is IInteractable<PlayerControllerBody2D> interactableController
+                   && _controller is not null)
+                    interactableController.Interact(_controller);
+                else
+                    interactable.Interact();
+            }
+        }
+
+        public void OnContactEnd2D(PhysicsEvents.ContactEndEvent endEvent, SFShapeComponent callingShapeComponent)
         {
             // noop - No Operation
         }
