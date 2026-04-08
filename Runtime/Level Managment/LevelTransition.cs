@@ -1,27 +1,40 @@
+using System;
+using SF.U2D.Physics;
+using Unity.U2D.Physics;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace SF.LevelModule
 {
-    public class LevelTransition : MonoBehaviour
+    public class LevelTransition : MonoBehaviour, ITriggerShapeCallback
     {
         [SerializeField] private string _nextSceneName;
-        private Scene _nextScene;
+        private int _nextSceneIndex;
+        [SerializeField] private SFShapeComponent _shapeComponent;
+
+        private void Awake()
+        {
+            _shapeComponent ??= GetComponent<SFShapeComponent>();
+            
+            if(_shapeComponent != null)
+                _shapeComponent.AddTriggerCallbackTarget(this);
+        }
 
         private void Start()
         {
-            if(string.IsNullOrEmpty(_nextSceneName))
-            {
-                _nextScene = SceneManager.GetSceneByName(_nextSceneName);
-            }
+
+            if (!string.IsNullOrEmpty(_nextSceneName))
+                _nextSceneIndex = SceneUtility.GetBuildIndexByScenePath(_nextSceneName);
         }
 
-        private void OnTriggerEnter2D(Collider2D collision)
+        public void OnTriggerBegin2D(PhysicsEvents.TriggerBeginEvent beginEvent, SFShapeComponent callingShapeComponent)
         {
-            if(_nextScene == null)
-                return;
+            SceneManager.LoadSceneAsync(_nextSceneIndex);
+        }
 
-            SceneManager.LoadScene(_nextSceneName);
+        public void OnTriggerEnd2D(PhysicsEvents.TriggerEndEvent endEvent, SFShapeComponent callingShapeComponent)
+        {
+            
         }
     }
 }
