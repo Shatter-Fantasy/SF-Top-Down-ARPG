@@ -41,7 +41,14 @@ namespace SF.AudioModule
 
         private void Awake()
         {
-            Instance = this;
+            if (_instance != null && _instance != this)
+            {
+                // We destroy the Audio Manager Gameobject to make sure we clean up the Audio Source components as well.
+                // If we don't than the music will persist from scene to new scene.
+                Destroy(_instance.gameObject);
+            }
+
+            _instance = this;
         }
 
         /// <summary>
