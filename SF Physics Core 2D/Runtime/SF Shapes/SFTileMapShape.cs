@@ -119,7 +119,8 @@ namespace SF.U2D.Physics
             Sprite tileSprite; 
             for (int i = 0; i < _tilesInBlock.Count; i++)
             {
-                if(_tilesInBlock[i].sprite == null)
+                if(_tilesInBlock[i].sprite == null 
+                   || _tilesInBlock[i].colliderType == Tile.ColliderType.None)
                     continue;
 
                 tileSprite = _tilesInBlock[i].sprite;
@@ -143,9 +144,9 @@ namespace SF.U2D.Physics
                         {
                             // The (Vector2)_tilesInBlock[i].transform.MultiplyPoint3x4 below matches the tiles rotation or scale value of the placed tile data.
 #if UNITY_6000_4_OR_NEWER
-                        vertexPath.Add((Vector2)_tilesInBlock[i].transform.MultiplyPoint3x4(_physicsShapeVertex[v]) + tilePosition[i].ToVector2Int() + (Vector2)_tilemap.tileAnchor);
+                            vertexPath.Add((Vector2)_tilesInBlock[i].transform.MultiplyPoint3x4(_physicsShapeVertex[v]) + tilePosition[i].ToVector2Int() + (Vector2)_tilemap.tileAnchor);
 #else
-                        vertexPath.Add((Vector2)_tilesInBlock[i].transform.MultiplyPoint3x4(_physicsShapeVertex[v])+ positions[i].ToVector2Int() + (Vector2)_tilemap.tileAnchor);
+                            vertexPath.Add((Vector2)_tilesInBlock[i].transform.MultiplyPoint3x4(_physicsShapeVertex[v])+ positions[i].ToVector2Int() + (Vector2)_tilemap.tileAnchor);
 #endif
                         }
                         
