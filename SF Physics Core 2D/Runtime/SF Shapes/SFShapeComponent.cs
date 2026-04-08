@@ -42,30 +42,18 @@ namespace SF.U2D.Physics
     [Icon("Packages/shatterfantasy.sf-metroidvania/Editor/Icons/SceneBody.png")]
     [DefaultExecutionOrder(PhysicsCore2DExecutionOrder.PhysicsBody)]
     public abstract class SFShapeComponent : MonoBehaviour, 
-
+        PhysicsCallbacks.ITransformChangedCallback,
         ITriggerShapeCallback, PhysicsCallbacks.ITriggerCallback,
         IContactShapeCallback, PhysicsCallbacks.IContactCallback,
         IPreSolveShapeCallback, PhysicsCallbacks.IPreSolveCallback
     {
         public EntityId EntityId;
-        #region Transform Cache - Temp fields
-
-        [HideInInspector] public bool UpdateTransform;
-        protected Vector2 _lastPhysicsPosition;
-        protected bool IsPositionChanged
-            => _lastPhysicsPosition != (Vector2)transform.position;
-
-        public void CacheTransform()
-        {
-            _lastPhysicsPosition = transform.position;
-        }
         
-        public void ApplyTransform()
+        public void OnTransformChanged(PhysicsEvents.TransformChangeEvent transformChangeEvent)
         {
             var physicsTransform = new PhysicsTransform(transform.position, PhysicsRotate.identity);
             Body.SetAndWriteTransform(physicsTransform);
         }
-        #endregion
 
         public PhysicsShape.ContactFilter ContactFilter;
         protected PhysicsShape _shape;
@@ -188,12 +176,12 @@ namespace SF.U2D.Physics
         public Action ShapeDestroyedHandler;
         protected void OnEnable()
         {
+            
             EntityId = GetEntityId();
+            PhysicsWorld.RegisterTransformChange(transform,this);
             
             PreEnabled();
             CreateShape();
-            ApplyTransform();
-            CacheTransform();
             
             DebugPhysics();
         }
@@ -211,6 +199,7 @@ namespace SF.U2D.Physics
         
         protected void OnDisable()
         {
+            PhysicsWorld.UnregisterTransformChange(transform,this);
             PreDisable();
             DestroyBody();
             DestroyShape();
@@ -223,18 +212,6 @@ namespace SF.U2D.Physics
             
             CreateShape();
             DebugPhysics();
-        }
-
-        protected void FixedUpdate()
-        {
-            if(!UpdateTransform)
-                return;
-            
-            if (!IsPositionChanged)
-                return;
-            
-            ApplyTransform();
-            CacheTransform();
         }
 
         /// <summary>
