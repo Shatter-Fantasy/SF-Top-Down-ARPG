@@ -1,5 +1,3 @@
-using System;
-using SF.DataModule;
 using UnityEngine;
 
 #if UNITY_EDITOR
@@ -9,6 +7,7 @@ using UnityEngine;
 namespace SF.SpawnModule
 {
     using Characters.Data;
+    using SF.DataModule;
     using RoomModule;
     using StatModule;
     
@@ -144,6 +143,8 @@ namespace SF.SpawnModule
         /// </summary>
         private void RespawnCharacters()
         {
+            _roomCharacterCount = SpawnSets.Length;
+            
             for (int i = 0; i < SpawnSets.Length; i++)
             {
                 if(SpawnSets[i].SpawnedCharacter == null)
