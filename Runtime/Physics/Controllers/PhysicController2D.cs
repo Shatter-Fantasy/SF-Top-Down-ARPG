@@ -209,6 +209,11 @@ namespace SF.U2D.Physics
             Direction = new Vector2(newDirection, 0);
         }
         
+        public void SetDirection(Vector2 newDirection)
+        {
+            Direction = newDirection;
+        }
+        
         public virtual void UpdatePhysicsProperties(MovementProperties movementProperties, 
             PhysicsVolumeType volumeType = PhysicsVolumeType.None)
         {
