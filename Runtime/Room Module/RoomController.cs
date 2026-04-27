@@ -135,9 +135,8 @@ namespace SF.RoomModule
 
         public void OnRoomCleared()
         {
-            if (_roomClearedExtensions.Count < 1)
-                return;
-
+            if (_roomClearedExtensions == null) return;
+            
             for (int i = 0; i < _roomClearedExtensions.Count; i++)
             {
                 _roomClearedExtensions[i].Process();
