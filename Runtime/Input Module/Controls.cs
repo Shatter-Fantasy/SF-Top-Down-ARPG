@@ -183,6 +183,24 @@ namespace SF.InputModule
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""EquipmentOne"",
+                    ""type"": ""Button"",
+                    ""id"": ""5ddcba42-6c23-4b88-a81a-f4fc94905048"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""EquipmentTwo"",
+                    ""type"": ""Button"",
+                    ""id"": ""7f672735-e472-4b4f-b5b4-203be84b68a3"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -579,6 +597,50 @@ namespace SF.InputModule
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Glide"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""8b1ac370-acc0-41de-9ff4-2c679b03d253"",
+                    ""path"": ""<Gamepad>/buttonNorth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""EquipmentOne"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""733602bc-1acd-422e-b93c-7d4a6d5f9161"",
+                    ""path"": ""<Keyboard>/r"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""EquipmentOne"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""040eff61-cf1a-459f-96c7-6dcdfa9bd5c8"",
+                    ""path"": ""<Gamepad>/buttonWest"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""EquipmentTwo"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""b29956f5-7b5b-4a3c-a48c-60770050d067"",
+                    ""path"": ""<Keyboard>/q"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""EquipmentTwo"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -1184,6 +1246,8 @@ namespace SF.InputModule
             m_Player_Next = m_Player.FindAction("Next", throwIfNotFound: true);
             m_Player_Running = m_Player.FindAction("Running", throwIfNotFound: true);
             m_Player_Glide = m_Player.FindAction("Glide", throwIfNotFound: true);
+            m_Player_EquipmentOne = m_Player.FindAction("EquipmentOne", throwIfNotFound: true);
+            m_Player_EquipmentTwo = m_Player.FindAction("EquipmentTwo", throwIfNotFound: true);
             // UI
             m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
             m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -1290,6 +1354,8 @@ namespace SF.InputModule
         private readonly InputAction m_Player_Next;
         private readonly InputAction m_Player_Running;
         private readonly InputAction m_Player_Glide;
+        private readonly InputAction m_Player_EquipmentOne;
+        private readonly InputAction m_Player_EquipmentTwo;
         /// <summary>
         /// Provides access to input actions defined in input action map "Player".
         /// </summary>
@@ -1341,6 +1407,14 @@ namespace SF.InputModule
             /// Provides access to the underlying input action "Player/Glide".
             /// </summary>
             public InputAction @Glide => m_Wrapper.m_Player_Glide;
+            /// <summary>
+            /// Provides access to the underlying input action "Player/EquipmentOne".
+            /// </summary>
+            public InputAction @EquipmentOne => m_Wrapper.m_Player_EquipmentOne;
+            /// <summary>
+            /// Provides access to the underlying input action "Player/EquipmentTwo".
+            /// </summary>
+            public InputAction @EquipmentTwo => m_Wrapper.m_Player_EquipmentTwo;
             /// <summary>
             /// Provides access to the underlying input action map instance.
             /// </summary>
@@ -1397,6 +1471,12 @@ namespace SF.InputModule
                 @Glide.started += instance.OnGlide;
                 @Glide.performed += instance.OnGlide;
                 @Glide.canceled += instance.OnGlide;
+                @EquipmentOne.started += instance.OnEquipmentOne;
+                @EquipmentOne.performed += instance.OnEquipmentOne;
+                @EquipmentOne.canceled += instance.OnEquipmentOne;
+                @EquipmentTwo.started += instance.OnEquipmentTwo;
+                @EquipmentTwo.performed += instance.OnEquipmentTwo;
+                @EquipmentTwo.canceled += instance.OnEquipmentTwo;
             }
 
             /// <summary>
@@ -1438,6 +1518,12 @@ namespace SF.InputModule
                 @Glide.started -= instance.OnGlide;
                 @Glide.performed -= instance.OnGlide;
                 @Glide.canceled -= instance.OnGlide;
+                @EquipmentOne.started -= instance.OnEquipmentOne;
+                @EquipmentOne.performed -= instance.OnEquipmentOne;
+                @EquipmentOne.canceled -= instance.OnEquipmentOne;
+                @EquipmentTwo.started -= instance.OnEquipmentTwo;
+                @EquipmentTwo.performed -= instance.OnEquipmentTwo;
+                @EquipmentTwo.canceled -= instance.OnEquipmentTwo;
             }
 
             /// <summary>
@@ -1893,6 +1979,20 @@ namespace SF.InputModule
             /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
             /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
             void OnGlide(InputAction.CallbackContext context);
+            /// <summary>
+            /// Method invoked when associated input action "EquipmentOne" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+            /// </summary>
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+            void OnEquipmentOne(InputAction.CallbackContext context);
+            /// <summary>
+            /// Method invoked when associated input action "EquipmentTwo" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+            /// </summary>
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+            void OnEquipmentTwo(InputAction.CallbackContext context);
         }
         /// <summary>
         /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "UI" which allows adding and removing callbacks.
