@@ -52,7 +52,12 @@ namespace SF.U2D.Physics
         public void OnTransformChanged(PhysicsEvents.TransformChangeEvent transformChangeEvent)
         {
             var physicsTransform = new PhysicsTransform(transform.position, PhysicsRotate.identity);
+            
+#if !UNITY_6000_6_OR_NEWER
             Body.SetAndWriteTransform(physicsTransform);
+#else
+            Body.transform = physicsTransform;
+#endif
         }
 
         public PhysicsShape.ContactFilter ContactFilter;
