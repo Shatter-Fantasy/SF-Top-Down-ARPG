@@ -24,8 +24,10 @@ namespace SF.SpawnModule
         
         protected override void Kill(Vector2 knockback = new Vector2())
          {
-            // TODO: Will need checks later for allies and summonings to not grant experience.
-            //  Grant the player his experience from the enemy kill.
+             // TODO: Knockback - in a contact or trigger begin event used the normal
+             //     of the contacts position point and times that by a float value for
+             //     calculating normal knockback
+             
                 
             if (_combatantData?.EnemyLootTable != null)
             {

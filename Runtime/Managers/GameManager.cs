@@ -1,13 +1,14 @@
 using System;
 using System.Collections.Generic;
-using SF.DataManagement;
-using SF.InputModule;
-using SF.Settings;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 namespace SF.Managers
 {
+    using SF.DataManagement;
+    using SF.InputModule;
+    using SF.Settings;
+    
 	/// <summary>
 	/// The current state that is controlling the games input and actions. 
 	/// </summary>

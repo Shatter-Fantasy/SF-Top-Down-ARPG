@@ -174,7 +174,7 @@ namespace SF.SpawnModule
         {
             RoomCharacterSpawner t = target as RoomCharacterSpawner;
             
-            if (t == null || t.SpawnSets?.Length < 1)
+            if (t is null || t.SpawnSets?.Length < 1)
                 return;
 
             if (_lastFramePosition != _target.transform.position)
