@@ -78,26 +78,26 @@ namespace SF.RoomModule
             if (_physicsShapeComponent != null)
                 _physicsShapeComponent.AddTriggerCallbackTarget(this);
 
-            if (RegionSystem.RegionDatabase.UseRegionDatabase)
+            if (!RegionSystem.UsingRegionDatabase()) 
+                return;
+            
+            if (RoomSystem.LoadedRegion == null)
             {
-                if (RoomSystem.LoadedRegion == null)
-                {
 #if UNITY_EDITOR
-                    Debug.LogWarning($"There is no region data set in the {nameof(RoomSystem)}");
-                    return;
+                Debug.LogWarning($"There is no region data set in the {nameof(RoomSystem)}");
+                return;
 #endif
-                }
-
-                if (RoomSystem.LoadedRegion[RoomID] == null)
-                {
-                    Debug.LogWarning(
-                        $"A room with the RoomIDInLoadingRegion of {RoomID} was not found in the RoomDatabase. Check if there was a room with the id of {RoomID} set inside the RoomDatabase");
-                    return;
-                }
-
-                RoomIdsToLoadOnEnter = RoomSystem.LoadedRegion[RoomID].ConnectedRoomsIDs;
-                RoomSystem.LoadRoom(RoomID, loadDynamically: false, spawnedInstance: gameObject);
             }
+
+            if (RoomSystem.LoadedRegion[RoomID] == null)
+            {
+                Debug.LogWarning(
+                    $"A room with the RoomIDInLoadingRegion of {RoomID} was not found in the RoomDatabase. Check if there was a room with the id of {RoomID} set inside the RoomDatabase");
+                return;
+            }
+
+            RoomIdsToLoadOnEnter = RoomSystem.LoadedRegion[RoomID].ConnectedRoomsIDs;
+            RoomSystem.LoadRoom(RoomID, loadDynamically: false, spawnedInstance: gameObject);
         }
 
         private void OnDestroy()
