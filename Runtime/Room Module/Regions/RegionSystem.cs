@@ -1,3 +1,4 @@
+using Unity.Scripting.LifecycleManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -8,14 +9,14 @@ namespace SF.RoomModule.RegionModule
     using SF.SpawnModule;
     public static partial class RegionSystem
     {
-        
         /// <summary>
         /// The Region data asset for the scene the current <see cref="LevelLoader"/> is in.
         /// Set this in the inspector to update 
         /// </summary>
         public static RegionDataAsset LoadedRegionDataAsset;
         public static RegionDataAsset PreviousRegionDataAsset;
-        public static RegionDatabase RegionDatabase;
+        
+        [NoAutoStaticsCleanup] public static RegionDatabase RegionDatabase;
 
         [OnExitingPlayMode]
         static void OnExitingPlayMode()
