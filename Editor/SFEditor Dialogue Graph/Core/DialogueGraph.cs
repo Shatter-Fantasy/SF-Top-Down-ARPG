@@ -8,6 +8,7 @@ namespace SFEditor.Dialogue.Graphs
 	using SF.DialogueModule;
 	using SF.DialogueModule.Nodes;
 	using SFEditor.DialogueModule;
+    
 	[Serializable]
 	public abstract class SFGraphBase : Graph
 	{
@@ -38,7 +39,11 @@ namespace SFEditor.Dialogue.Graphs
 		/// </summary>
 		[NonSerialized] public DialogueNodeProcessor NodeProcessor;
 		
-	    [MenuItem("SF/Dialogue System/Dialogue Graph", false)]
+		/// <summary> <remarks>
+		/// This has to start with Assets/Create. In scriptable objects you don't have to worry about
+		/// manually declaring Assets/Create/ but graphs are custom asset file extentions.
+		/// </remarks> </summary>
+	    [MenuItem("Assets/Create/SF/Dialogue System/Dialogue Graph", false)]
 	    static void CreateAssetFile()
 	    {
 		    GraphDatabase.PromptInProjectBrowserToCreateNewAsset<DialogueGraph>();
