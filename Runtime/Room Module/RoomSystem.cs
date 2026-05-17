@@ -120,7 +120,8 @@ namespace SF.RoomModule
         /// <returns></returns>
         public static bool IsRoomLoaded(int roomID)
         {
-            if (LoadedRegion == null || LoadedRegion.Rooms.Count < 1)
+            if (RegionSystem.UsingRegionDatabase()
+                && (LoadedRegion == null || LoadedRegion.Rooms.Count < 1))
             {
                 LoggingSystem.LogMessage("When checking if a room was loaded the LoadedRegion was either null or had no rooms in it's list.", LoadedRegion);
                 return false;

@@ -18,6 +18,16 @@ namespace SF.RoomModule.RegionModule
         
         public static RegionDatabase RegionDatabase;
 
+        /// <summary>
+        /// Checks to make sure an active <see cref="RegionDatabase"/> was set and if that database has
+        /// <see cref="RegionDatabase.UseRegionDatabase"/> set to true. 
+        /// </summary>
+        /// <returns></returns>
+        public static bool UsingRegionDatabase()
+        {
+            return RegionDatabase != null && RegionDatabase.UseRegionDatabase;
+        }
+            
         [OnExitingPlayMode]
         static void OnExitingPlayMode()
         {
