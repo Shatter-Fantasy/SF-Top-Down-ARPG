@@ -1,12 +1,12 @@
 using UnityEngine;
-using SF.DataModule;
 
 namespace SF.ItemModule
 {
+    using SF.DataModule;
     /// <summary>
     /// The scriptable object data asset that makes keeps track of an item inside the item databases.
     /// </summary>
-    [CreateAssetMenu(fileName = "New Item", menuName = "SF/Inventory/ItemData")]
+    [CreateAssetMenu(fileName = "New Item", menuName = "SF/Item System/Item Data/Base Item Data")]
     public class ItemDTO : DTOAssetBase
     {
         public Sprite ItemIcon;

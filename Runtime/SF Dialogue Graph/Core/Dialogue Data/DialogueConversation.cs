@@ -6,14 +6,14 @@ using UnityEngine.Serialization;
 
 namespace SF.DialogueModule
 {
-    using DataModule;
-    using DialogueModule.Nodes;
+    using SF.DataModule;
+    using SF.DialogueModule.Nodes;
     
     /// <summary>
     /// Data container for an entire conversation of a dialogue sequence.
     /// Including dialogue entries, actor data, and event details related to the dialogue.
     /// </summary>
-    [CreateAssetMenu(menuName = "SF/Dialogue/Dialogue Conversation", fileName = "SF Conversation")]
+    [CreateAssetMenu(menuName = "SF/Dialogue System/Dialogue Conversation", fileName = "SF Conversation")]
     public class DialogueConversation : DTOAssetBase
     {
         /// <summary>

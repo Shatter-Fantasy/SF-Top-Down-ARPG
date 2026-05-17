@@ -1,10 +1,9 @@
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace SF.DialogueModule
 {
     using SF.DataModule;
-    [CreateAssetMenu(fileName = "Dialogue Database", menuName = "SF/Dialogue/Dialogue Database")]
+    [CreateAssetMenu(fileName = "Dialogue Database", menuName = "SF/Dialogue System/Dialogue Database")]
     public class DialogueDatabase : SFAssetDatabase<DialogueConversation>
     {
         public bool GetConversation(int guid, out DialogueConversation conversation)

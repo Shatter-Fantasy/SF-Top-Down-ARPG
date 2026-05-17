@@ -1,9 +1,10 @@
 using UnityEngine;
-using SF.DataModule;
+
 namespace SF.LootModule
 {
-
-	[CreateAssetMenu(fileName = "Region Table Data", menuName = "SF/Loot/Region Table Data")]
+	using SF.DataModule;
+	
+	[CreateAssetMenu(fileName = "Region Table Data", menuName = "SF/Item System/Loot Data/Region Table Data")]
 	public class RegionalLootTableData : DTOAssetBase
 	{
 		public string Region;
