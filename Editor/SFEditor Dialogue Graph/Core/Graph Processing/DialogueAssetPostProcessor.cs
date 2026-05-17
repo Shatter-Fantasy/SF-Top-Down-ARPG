@@ -82,7 +82,7 @@ namespace SFEditor.DialogueModule
 #endif   
             
             DialogueConversation _dialogueConversation = ScriptableObject.CreateInstance<DialogueConversation>();
-            _dialogueConversation.GUID = Guid.NewGuid().GetHashCode();
+            _dialogueConversation.GUID = Mathf.Abs(Guid.NewGuid().GetHashCode());
             AssetDatabase.CreateAsset(_dialogueConversation,stringBuilder.ToString());
             AssetDatabase.SetLabels(_dialogueConversation,new string[] {AssetLabel});
             dialogueGraph.LinkedConversationAsset = _dialogueConversation;
