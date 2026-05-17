@@ -6,8 +6,8 @@ namespace SF.ItemModule
 {
     using DataModule;
     
-    [CreateAssetMenu(fileName = "Item Database", menuName = "SF/Data/Item Database")]
-    public class ItemDatabase : SFDatabase<ItemDTO>
+    [CreateAssetMenu(fileName = "Item Database", menuName = "SF/Item System/Item Database")]
+    public class ItemDatabase : SFAssetDatabase<ItemDTO>
     {
         public readonly Dictionary<EquipmentType, List<EquipmentDTO>> EquipmentDictionary = new();
         
