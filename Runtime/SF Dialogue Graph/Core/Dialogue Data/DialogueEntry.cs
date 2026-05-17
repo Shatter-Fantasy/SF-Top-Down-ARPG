@@ -1,9 +1,8 @@
 using System;
-using SF.DialogueModule.Nodes;
-using UnityEngine;
 
 namespace SF.DialogueModule
 {
+    using SF.DialogueModule.Nodes;
     /// <summary>
     /// The individual parts of a full dialogue conversations including events to activate once the dialogue happens, starts, or ends.
     /// </summary>

@@ -3,8 +3,8 @@ using Unity.U2D.Physics;
 
 namespace SF.Weapons
 {
-    using Characters;
-    using U2D.Physics;
+    using SF.Characters;
+    using SF.U2D.Physics;
     
     public enum AttackState
     {
