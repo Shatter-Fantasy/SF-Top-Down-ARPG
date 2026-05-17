@@ -20,10 +20,12 @@
   "_upm": {
     "changelog": "### Created the package"
   },
-  "unity": "6000.3",
+  "unity": "6000.5",
   "dependencies": {
-    "com.unity.inputsystem": "1.16.0",
-    "com.unity.cinemachine": "3.1.4"
+    "com.unity.2d.tilemap": "1.0.0",
+    "com.unity.inputsystem": "1.19.0",
+    "com.unity.cinemachine": "3.1.6"
   },
-  "hideInEditor": false
+  "hideInEditor": false,
+  "unityRelease": "0b8"
 }
