@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+
 using UnityEngine;
 using Unity.U2D.Physics;
 using UnityEngine.Serialization;
@@ -10,6 +11,7 @@ namespace SF.RoomModule
 {
     using CameraModule;
     using Managers;
+    using SF.RoomModule.RegionModule;
     using U2D.Physics;
     
     public class RoomController : MonoBehaviour, 
@@ -73,24 +75,29 @@ namespace SF.RoomModule
 
         private void Start()
         {
-            if(_physicsShapeComponent != null)
+            if (_physicsShapeComponent != null)
                 _physicsShapeComponent.AddTriggerCallbackTarget(this);
-            
-            if (RoomSystem.LoadedRegion == null)
+
+            if (RegionSystem.RegionDatabase.UseRegionDatabase)
             {
+                if (RoomSystem.LoadedRegion == null)
+                {
 #if UNITY_EDITOR
-                Debug.LogWarning($"There is no region data set in the {nameof(RoomSystem)}");
-                return;
+                    Debug.LogWarning($"There is no region data set in the {nameof(RoomSystem)}");
+                    return;
 #endif
+                }
+
+                if (RoomSystem.LoadedRegion[RoomID] == null)
+                {
+                    Debug.LogWarning(
+                        $"A room with the RoomIDInLoadingRegion of {RoomID} was not found in the RoomDatabase. Check if there was a room with the id of {RoomID} set inside the RoomDatabase");
+                    return;
+                }
+
+                RoomIdsToLoadOnEnter = RoomSystem.LoadedRegion[RoomID].ConnectedRoomsIDs;
+                RoomSystem.LoadRoom(RoomID, loadDynamically: false, spawnedInstance: gameObject);
             }
-            if (RoomSystem.LoadedRegion[RoomID] == null)
-            {
-                Debug.LogWarning($"A room with the RoomIDInLoadingRegion of {RoomID} was not found in the RoomDatabase. Check if there was a room with the id of {RoomID} set inside the RoomDatabase");
-                return;
-            }
-            RoomIdsToLoadOnEnter = RoomSystem.LoadedRegion[RoomID].ConnectedRoomsIDs;
-        
-            RoomSystem.LoadRoom(RoomID, loadDynamically: false, spawnedInstance: gameObject);
         }
 
         private void OnDestroy()
@@ -152,9 +159,9 @@ namespace SF.RoomModule
 
             PhysicsAABB aabb   = callingShapeComponent.Body.GetAABB();
             RoomCameraBounds = new Bounds(aabb.center,aabb.extents * 2);
-            //CameraController.UpdateRectangleConfiner(_roomCameraBounds);
+            CameraController.UpdateRectangleConfiner(RoomCameraBounds);
             MakeCurrentRoom();
-            CameraController.UpdateActiveCameraBounds(transform.position,RoomCameraBounds.size, RoomCameraBounds.center);
+            //CameraController.UpdateActiveCameraBounds(transform.position,RoomCameraBounds.size, RoomCameraBounds.center);
         }
 
         public void OnTriggerEnd2D(PhysicsEvents.TriggerEndEvent endEvent, SFShapeComponent callingShapeComponent)

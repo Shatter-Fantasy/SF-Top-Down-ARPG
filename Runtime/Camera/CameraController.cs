@@ -2,6 +2,7 @@ using Unity.Cinemachine;
 using UnityEngine;
 
 using SF.SpawnModule;
+using Unity.Scripting.LifecycleManagement;
 
 namespace SF.CameraModule
 {
@@ -9,7 +10,7 @@ namespace SF.CameraModule
     /// The manager for the active main camera in playable levels.
     /// Contains helper methods for switching active cameras.
     /// </summary>
-    public class CameraController : MonoBehaviour
+    public partial class CameraController : MonoBehaviour
     {
         /// <summary>
         /// This is the default priority that is set on the old virtual cameras that are being switched away from.
@@ -30,12 +31,17 @@ namespace SF.CameraModule
         /// How far away the virtual cameras camera is set 
         /// </summary>
         public const int CameraDistance = 10;
+        
+        [SerializeField] private CinemachineCamera _startingPlayerCamera;
+        [SerializeField] private CinemachineRectangleConfiner2D _playerCamConfiner;
+        public Transform CameraTarget;
+
         public static CameraController Instance
         {
             get 
             {
                 if (_instance == null)
-                    _instance = FindFirstObjectByType<CameraController>();
+                    _instance = FindAnyObjectByType<CameraController>();
 
                 if(_instance == null)
                     _instance = Camera.main?.gameObject.AddComponent<CameraController>();
@@ -44,14 +50,12 @@ namespace SF.CameraModule
             }
             set { _instance = value; }
         }
-        private static CameraController _instance;
-
-        public Transform CameraTarget;
-
-        public static Camera MainCamera;
-        public static CinemachineBrain MainCameraBrain;
-        public static CinemachineCamera ActiveRoomCamera;
-        public static CinemachineCamera ActiveCutsceneCamera;
+        [AutoStaticsCleanup] private static CameraController _instance;
+        
+        [AutoStaticsCleanup] public static Camera MainCamera;
+        [AutoStaticsCleanup] public static CinemachineBrain MainCameraBrain;
+        [AutoStaticsCleanup] public static CinemachineCamera PlayerCamera;
+        [AutoStaticsCleanup] public static CinemachineCamera ActiveCutsceneCamera;
 
         [SerializeField] private CinemachineRectangleConfiner2D _cameraConfiner; 
 
@@ -69,6 +73,9 @@ namespace SF.CameraModule
             if (MainCamera != null)
                 MainCamera.TryGetComponent(out MainCameraBrain);
             
+            if (_startingPlayerCamera != null)
+                PlayerCamera = _startingPlayerCamera;
+            
             SpawnSystem.InitialPlayerSpawnHandler += SetInitialCameraTarget;
         }
         
@@ -79,7 +86,7 @@ namespace SF.CameraModule
             CameraTarget = null;
             MainCamera = null;
             MainCameraBrain = null;
-            ActiveRoomCamera = null;
+            PlayerCamera = null;
             ActiveCutsceneCamera = null;
             
             SpawnSystem.InitialPlayerSpawnHandler -= SetInitialCameraTarget;
@@ -91,15 +98,11 @@ namespace SF.CameraModule
         /// <param name="spawnedPlayer"></param>
         private void SetInitialCameraTarget(GameObject spawnedPlayer = null)
         {
-            if (SpawnSystem.SpawnedPlayer == null && spawnedPlayer == null)
-                return;
+            _instance.CameraTarget = spawnedPlayer?.transform;
             
-            _instance.CameraTarget = SpawnSystem.SpawnedPlayer.transform;
-            
-            if(MainCameraBrain != null 
-               && MainCameraBrain.ActiveVirtualCamera as CinemachineCamera != null
+            if(PlayerCamera != null
                && _instance.CameraTarget != null)
-                SwitchPlayerCMCamera(MainCameraBrain.ActiveVirtualCamera as CinemachineCamera);
+                SwitchPlayerCMCamera(PlayerCamera);
         }
 
         public static void UpdateActiveCameraBounds(Vector3 centerOfBounds,Vector3 sizeOfBounds, Vector2 offsetOfBounds )
@@ -111,8 +114,13 @@ namespace SF.CameraModule
             }
         }
         
+        public static void UpdateRectangleConfiner(Bounds cameraBounds)
+        {
+            _instance._playerCamConfiner.ConfinerBounds = cameraBounds;
+        }
+        
         /// <summary>
-        /// Switches between the current <see cref="ActiveRoomCamera"/> and makes a new room camera the <see cref="ActiveRoomCamera"/>.
+        /// Switches between the current <see cref="PlayerCamera"/> and makes a new room camera the <see cref="PlayerCamera"/>.
         /// </summary>
         /// <param name="cmCamera"></param>
         /// <param name="cameraBounds"></param>
@@ -126,30 +134,30 @@ namespace SF.CameraModule
             if (cmCamera.TryGetComponent(out CinemachinePositionComposer positionComposer))
                 positionComposer.CameraDistance = CameraDistance;
 
-            if (ActiveRoomCamera != null)
+            if (PlayerCamera != null)
             {
                 // Reset the previous/old virtual camera priority.
-                // At this point Instance.ActiveRoomCamera is still the old camera.
+                // At this point Instance.PlayerCamera is still the old camera.
                 // We also clear the old camera follow to prevent it from following the player while not the active camera.
-                ActiveRoomCamera.Follow = null;
-                ActiveRoomCamera.Priority = DeactivatedPriority;
+                PlayerCamera.Follow = null;
+                PlayerCamera.Priority = DeactivatedPriority;
             }
             
-            ActiveRoomCamera = cmCamera;        
+            PlayerCamera = cmCamera;        
             
-            // From here Instance.ActiveRoomCamera is the new camera.
+            // From here Instance.PlayerCamera is the new camera.
             if(Instance.CameraTarget != null)
-                ActiveRoomCamera.transform.position = Instance.CameraTarget.position;
+                PlayerCamera.transform.position = Instance.CameraTarget.position;
 
             if (_instance._cameraConfiner != null && cameraBounds != default)
                 _instance._cameraConfiner.ConfinerBounds = cameraBounds;
             
-            ActiveRoomCamera.Priority = ActivePriority;
+            PlayerCamera.Priority = ActivePriority;
             
-            // We don't add setting the ActiveRoomCamera.Follow in the null check above for when we need to do cutscenes and not have a follow target
-            ActiveRoomCamera.Follow = Instance.CameraTarget;  
-            ActiveRoomCamera.Target.TrackingTarget = Instance.CameraTarget;  
-            ActiveRoomCamera.Target.LookAtTarget = Instance.CameraTarget;  
+            // We don't add setting the PlayerCamera.Follow in the null check above for when we need to do cutscenes and not have a follow target
+            PlayerCamera.Follow = Instance.CameraTarget;  
+            PlayerCamera.Target.TrackingTarget = Instance.CameraTarget;  
+            PlayerCamera.Target.LookAtTarget = Instance.CameraTarget;  
         }
         public static void ActivateCutsceneCMCamera(CinemachineCamera cmCamera)
         {
