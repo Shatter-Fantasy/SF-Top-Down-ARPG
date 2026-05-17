@@ -1,0 +1,31 @@
+{
+    "name": "SF.Core.PhysicsLowLevel",
+    "rootNamespace": "",
+    "references": [
+        "GUID:e0cd26848372d4e5c891c569017e11f1"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "UNITY_6000_3",
+        "UNITY_COLLLECTIONS",
+        "UNITY_PHYSICS_2D"
+    ],
+    "versionDefines": [
+        {
+            "name": "com.unity.collections",
+            "expression": "2.6.2",
+            "define": "UNITY_COLLLECTIONS"
+        },
+        {
+            "name": "com.unity.modules.physics2d",
+            "expression": "1.0.0",
+            "define": "UNITY_PHYSICS_2D"
+        }
+    ],
+    "noEngineReferences": false
+}
