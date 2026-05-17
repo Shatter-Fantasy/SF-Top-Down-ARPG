@@ -16,7 +16,7 @@ namespace SF.RoomModule.RegionModule
         public static RegionDataAsset LoadedRegionDataAsset;
         public static RegionDataAsset PreviousRegionDataAsset;
         
-        [NoAutoStaticsCleanup] public static RegionDatabase RegionDatabase;
+        public static RegionDatabase RegionDatabase;
 
         [OnExitingPlayMode]
         static void OnExitingPlayMode()
