@@ -19,6 +19,7 @@ namespace SF.DataModule
         public DTOBase BaseData;
         
         // TODO: Replace the below with either ItemData or Item
+        //  I might replace the use of IDs with EntityID since each scriptable object now has an assigned EntityID built in.
         public int ID = 0;
         public string Name;
         public string Description;

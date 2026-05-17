@@ -21,7 +21,7 @@ namespace SF.DataModule
         public static DatabaseRegistry Registry
         {
             get => _registry;
-            set => _registry = value;
+            private set => _registry = value;
         }
 
         private void Awake()
@@ -35,6 +35,9 @@ namespace SF.DataModule
 
         private void OnEnable()
         {
+            if(_registry == null)
+                _registry = this;
+            
             List<SFDatabase> nullSetDatabases = new List<SFDatabase>();
             for (int i = 0; i < PreloadedDatabase.Count; i++)
             {
