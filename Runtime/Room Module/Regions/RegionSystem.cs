@@ -59,7 +59,7 @@ namespace SF.RoomModule.RegionModule
                                                           .Find(transitionData =>
                                                                   transitionData.TransitionID ==
                                                                   regionTransitionConnection.TransitionIDToGoTo);
-            SpawnSystem.CurrentSpawnPosition = transitionData.LocalSpawnPositionInCurrentRoom;
+            //SpawnSystem.CurrentSpawnPosition = transitionData.LocalSpawnPositionInCurrentRoom;
             RoomSystem.StartingRoomId        = transitionData.RoomIDInLoadingRegion;
             
             SceneManager.LoadSceneAsync(regionTransitionConnection.RegionToTransitionTo.SceneIndex);

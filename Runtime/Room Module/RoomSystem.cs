@@ -6,7 +6,7 @@ using Object = UnityEngine.Object;
 
 namespace SF.RoomModule
 {
-    using SF.LoggingModule;
+    //using SF.LoggingModule;
     using RegionModule;
     /// <summary>
     /// Used to allow interactions between the in game systems and the rooms in the current loaded region. <see cref="RegionSystem.LoadedRegionDataAsset"/>.
