@@ -1,4 +1,4 @@
-using Unity.Scripting.LifecycleManagement;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -23,6 +23,7 @@ namespace SF.RoomModule.RegionModule
         /// <see cref="RegionDatabase.UseRegionDatabase"/> set to true. 
         /// </summary>
         /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool UsingRegionDatabase()
         {
             return RegionDatabase != null && RegionDatabase.UseRegionDatabase;
