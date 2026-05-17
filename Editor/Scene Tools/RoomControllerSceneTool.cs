@@ -25,7 +25,7 @@ namespace ZTDREditor.CameraModule
             if (_roomController == null)
                 return;
 
-            ToolGUIUtilities.DrawBoundsIn2D(_roomController.transform.position, ref _roomController.CameraBounds);
+            ToolGUIUtilities.DrawBoundsIn2D(_roomController.transform.position, ref _roomController.RoomCameraBounds);
         }
     }
 }
