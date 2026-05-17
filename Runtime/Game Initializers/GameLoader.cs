@@ -20,11 +20,6 @@ namespace SF.Managers
 
         public static GameLoader Instance;
         public static bool WasGameInitialized = false;
-        /* Since Scriptable Objects don't have their lifecycle events done until they are referenced in scene,
-         we set them up via the GameLoader Scriptable Object with a RuntimeInitializeOnLoadMethod
-         which set the values of the GameManager on first scene load. */
-        [Header("Required Databases DB ")]
-        [SerializeField] private RoomDB _roomDB;
         
         /// <summary>
         /// This data object that keeps track of references needed to be loaded in playable levels before anything else.
@@ -65,9 +60,6 @@ namespace SF.Managers
             Thus, we should also check if WasGameInitialized was set to true already in a different GameLoader InitializeGame call.*/
             if (WasGameInitialized)
                 return;
-            
-            if (_roomDB != null)
-                RoomSystem.RoomDB = _roomDB;
             
             if (_levelPlayData != null)
                 LevelPlayData.Instance = _levelPlayData;
