@@ -35,9 +35,28 @@ namespace SF.DataModule
 
         private void OnEnable()
         {
+            List<SFDatabase> nullSetDatabases = new List<SFDatabase>();
             for (int i = 0; i < PreloadedDatabase.Count; i++)
             {
+                if (PreloadedDatabase[i] == null)
+                {
+                    /* If for some reason a database was originally added to the Database Registry scriptable object
+                     * than that database object was deleted from the project it would leave a null value that can
+                     * cause a null reference error in the RegisterDatabase method call.*/
+                    nullSetDatabases.Add(PreloadedDatabase[i]);
+                    continue;
+                }
+
                 RegisterDatabase(PreloadedDatabase[i]);
+            }
+            
+            if(nullSetDatabases.Count < 1)
+                return;
+
+            // Remove any previously found databases that were set to null.
+            foreach (var database in nullSetDatabases)
+            {
+                PreloadedDatabase.Remove(database);
             }
         }
         
@@ -62,12 +81,27 @@ namespace SF.DataModule
             _registry.RegisteredDatabases.TryGetValue(typeof(TDatabase), out var database);
             return (TDatabase)database;
         }
+        
+        public static bool TryGetDatabase<TDatabase>(out TDatabase foundDatabase) where TDatabase : SFDatabase
+        {
+            foundDatabase = null;
+            
+            if (_registry == null)
+                return false;
+
+            if (!_registry.RegisteredDatabases.TryGetValue(typeof(TDatabase), out var database)) 
+                return false;
+            
+            foundDatabase = (TDatabase)database;
+            return true;
+        }
 
         public static void RegisterDatabase<TDatabase>(TDatabase database) where TDatabase : SFDatabase
         {
-            // We use the Registry property with the getter just in
-            // case we need to create an instance before registering a database.
-            if (Registry.RegisteredDatabases.TryAdd(database.GetType(),database))
+            if (_registry == null || database == null)
+                return;
+            
+            if (_registry.RegisteredDatabases.TryAdd(database.GetType(),database))
             { 
                 database.OnRegisterDatabase();
             }
@@ -81,9 +115,10 @@ namespace SF.DataModule
         
         public static void DeregisterDatabase<TDatabase>(TDatabase database) where TDatabase : SFDatabase
         {
-            // We use the Registry property with the getter just in
-            // case we need to create an instance before even attempting to do unregistering.
-            if (Registry.RegisteredDatabases.Remove(typeof(TDatabase)))
+            if (_registry == null || database == null)
+                return;
+            
+            if (_registry.RegisteredDatabases.Remove(typeof(TDatabase)))
             {
                 database.OnDeregisterDatabase();
             }

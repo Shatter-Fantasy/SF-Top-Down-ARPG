@@ -10,6 +10,11 @@ namespace SF.DataModule
     /// </summary>
     public abstract class SFDatabase : ScriptableObject
     {
+        /// <summary>
+        /// The order of important in which databases are loaded. Allows making sure certain databases are loaded first.
+        /// The lower the number the earlier it is loaded.
+        /// </summary>
+        public int DatabaseLoadOrder;
         
         /// <summary>
         /// SFDatabases are registered by the <see cref="DatabaseRegistry"/> which is loaded during the player start up
