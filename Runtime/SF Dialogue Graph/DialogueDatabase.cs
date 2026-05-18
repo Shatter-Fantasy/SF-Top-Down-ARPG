@@ -14,12 +14,7 @@ namespace SF.DialogueModule
 
             return conversation != null;
         }
-
-        public override void AddData(DialogueConversation dataEntry)
-        {
-            base.AddData(dataEntry);
-        }
-
+        
         public override void OnRegisterDatabase()
         {
             ActiveDialogueDatabase = this;
@@ -31,5 +26,14 @@ namespace SF.DialogueModule
             if(ActiveDialogueDatabase == this)
                 ActiveDialogueDatabase = null; 
         }
+        
+        
+#if UNITY_EDITOR
+        [ContextMenu("Set Data Ids")]
+        private void ResetIds()
+        {
+            SetDataIdsByListIndex<DialogueDatabase>();
+        }
+#endif
     }
 }
