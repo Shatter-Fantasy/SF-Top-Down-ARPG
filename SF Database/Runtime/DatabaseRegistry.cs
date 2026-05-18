@@ -98,6 +98,21 @@ namespace SF.DataModule
             foundDatabase = (TDatabase)database;
             return true;
         }
+        
+        public static bool TryGetDatabase<TDatabase>(Type databaseType, out TDatabase foundDatabase) where TDatabase : SFDatabase
+        {
+            foundDatabase = null;
+            
+            if (_registry == null)
+                return false;
+
+            if (!_registry.RegisteredDatabases.TryGetValue(databaseType, out var database)) 
+                return false;
+            
+            foundDatabase = (TDatabase)database;
+            return true;
+        }
+
 
         public static void RegisterDatabase<TDatabase>(TDatabase database) where TDatabase : SFDatabase
         {
@@ -136,8 +151,8 @@ namespace SF.DataModule
         
 #if UNITY_EDITOR
         
-        [ContextMenu("SF/Data/Register Preloaded Databases")]
-        public static void PreloadDatabases()
+        [ContextMenu("Register Preloaded Databases")]
+        public void PreloadDatabases()
         {
             var databaseRegistry = DatabaseRegistry.Registry;
 
