@@ -23,7 +23,7 @@ namespace SF.DialogueModule
         /// <summary>
         /// The unique identifier for a <see cref="DialogueConversation"/>.
         /// </summary>
-        public int GUID;
+        [HideInInspector] public int GUID;
 
         [SerializeReference]
         public List<IRuntimeNode> Nodes = new();
