@@ -73,13 +73,8 @@ namespace SFEditor.DialogueModule
         {
             // Default make the conversation asset and put it in the same folder as the graph it is linked to.
             StringBuilder stringBuilder = new(assetPath);
-#if UNITY_6000_4_OR_NEWER
             stringBuilder.Replace($"{dialogueGraph.Name}.{DialogueGraph.AssetExtension}", "");
             stringBuilder.Append($"{dialogueGraph.Name} Conversation.asset");
-#else
-				stringBuilder.Replace($"{dialogueGraph.name}.{DialogueGraph.AssetExtension}", "");
-			    stringBuilder.Append($"{dialogueGraph.name} Conversation.asset");
-#endif   
             
             DialogueConversation _dialogueConversation = ScriptableObject.CreateInstance<DialogueConversation>();
             _dialogueConversation.GUID = Mathf.Abs(Guid.NewGuid().GetHashCode());

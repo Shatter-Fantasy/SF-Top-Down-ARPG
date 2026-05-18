@@ -63,11 +63,7 @@ namespace SFEditor.Dialogue.Graphs
 					.TryGetValue(out dialogueConversation.ConversationName);
 			}
 			
-#if UNITY_6000_4_OR_NEWER
-						for(int i = 0; i < BlockCount; i++) 
-#else
-			for(int i = 0; i < blockCount; i++) 
-#endif
+			for(int i = 0; i < BlockCount; i++) 
 			{
 				var conversationNode = GetBlock(i);
 						    
