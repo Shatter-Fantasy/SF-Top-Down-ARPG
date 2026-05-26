@@ -14,7 +14,7 @@ namespace SF.DataModule
         /// Any database set in here will have the 
         /// </summary>
         public List<SFDatabase> PreloadedDatabase = new List<SFDatabase>();
-        public Dictionary<Type, SFDatabase> RegisteredDatabases = new();
+        [NonSerialized] public Dictionary<Type, SFDatabase> RegisteredDatabases = new();
 
         private static DatabaseRegistry _registry;
 
