@@ -20,16 +20,16 @@ namespace SF.DialogueModule
         }
     }
     
+    [Serializable]
     public class ConversationPropertyPair
     {
-        
         public string PropertyName;
         /// <summary>
         /// The object that is the value in the property pair.
         /// </summary>
-        public object Value;
+        [NonSerialized] public object Value;
 
-        public Type ValueType;
+        [NonSerialized] public Type ValueType;
 
         public ConversationPropertyPair(Component value, string name)
         {
