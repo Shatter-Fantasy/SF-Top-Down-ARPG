@@ -2,6 +2,3 @@
 
 @import url("CommonUSS.uss");
 @import url("SFComponents.uss");
-
-
-VisualElement {}

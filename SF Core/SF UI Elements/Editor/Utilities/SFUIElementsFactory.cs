@@ -17,7 +17,7 @@ namespace SFEditor.UIElements.Utilities
         /// The root path to SF UI Elements is a sub package directory inside of the SF Core package.
         /// </remarks>
         /// </summary>
-        public const string SFUIElementsRootPath = "Packages/shatterfantasy.sf-core/SF UI Elements";
+        public const string SFUIElementsRootPath = "Packages/shatterfantasy.sf-topdown-arpg/SF Core/SF UI Elements";
         public static readonly string SFCommonStyleSheetAssetPath = $"{SFUIElementsRootPath}/Runtime/Styles/CommonUSS.uss";
 
         private static StyleSheet _sfCommonStyleSheet;
