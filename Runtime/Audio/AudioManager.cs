@@ -19,7 +19,7 @@ namespace SF.AudioModule
             {
                 if (_instance == null)
                 {
-                    _instance = FindFirstObjectByType<AudioManager>();
+                    _instance = FindAnyObjectByType<AudioManager>();
 
                     // If no AudioManager was found in the scene make one than set it as the instance for the AudioManager.
                     if (_instance == null)
@@ -69,6 +69,19 @@ namespace SF.AudioModule
         {
             return _instance.AudioChannelSettingsList
                          .FirstOrDefault(setting => setting.AudioChannelType == audioChannelType);
+        }
+
+        public static void SetAudioChannelAudioClip(AudioChannelType audioChannelType, AudioClip newAudioClip)
+        {
+            if (newAudioClip == null)
+                return;
+
+            var audioChannel = GetAudioChannel(audioChannelType);
+            if (audioChannel.AudioSource != null)
+            {
+                audioChannel.AudioSource.clip = newAudioClip;
+                audioChannel.AudioSource.Play();
+            }
         }
         
         public static float GetChannelVolume(AudioChannelType audioChannelType)

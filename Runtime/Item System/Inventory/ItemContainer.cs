@@ -4,17 +4,33 @@ using UnityEngine;
 namespace SF.ItemModule
 {
     using Managers;
-    public class ItemContainer : MonoBehaviour
+    public abstract class ItemContainer<TItemDataType> : MonoBehaviour
     {
-        public List<ItemData> Items = new List<ItemData>();
-        
-        public virtual void AddItem(int itemID)
+        public List<TItemDataType> Items = new List<TItemDataType>();
+
+        public abstract void AddItem(int itemID, int amount = 1);
+        public abstract void RemoveItem(int itemID, int amount = 1);
+    }
+
+    public class ItemContainer : ItemContainer<ItemData> 
+    {
+        public override void AddItem(int itemID, int amount = 1)
         {
             var item = GameLoader.Instance?.ItemDatabase[itemID];
             
             if (item != null)
             {
                 Items.Add(item);
+            }
+        }
+        
+        public override void RemoveItem(int itemID, int amount = 1)
+        {
+            var item = GameLoader.Instance?.ItemDatabase[itemID];
+            
+            if (item != null)
+            {
+                Items.Remove(item);
             }
         }
     }

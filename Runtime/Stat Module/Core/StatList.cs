@@ -22,6 +22,7 @@ namespace SF.StatModule
         public ElementalStatList ElementalAffinities;
     }
 
+    [System.Serializable]
     public abstract class StatDataList<T> where T : StatData
     {
         public List<StatMediator<T>> StatMediators = new List<StatMediator<T>>();

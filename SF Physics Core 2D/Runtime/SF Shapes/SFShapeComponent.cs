@@ -5,10 +5,8 @@ using Unity.Collections;
 using Unity.U2D.Physics;
 using UnityEngine;
 
-
 namespace SF.U2D.Physics
 {
-    using static PhysicsShapeExtensions;
     public interface IPreSolveShapeCallback
     {
         bool OnPreSolve2D(PhysicsEvents.PreSolveEvent preSolveEvent,SFShapeComponent callingShapeComponent);
@@ -47,20 +45,30 @@ namespace SF.U2D.Physics
         IContactShapeCallback, PhysicsCallbacks.IContactCallback,
         IPreSolveShapeCallback, PhysicsCallbacks.IPreSolveCallback
     {
+        /// <summary>
+        /// The <see cref="EntityId"/> of the <see cref="SFShapeComponent"/>.
+        /// <remarks>
+        /// The <see cref="Body"/> <see cref="PhysicsBody.userData"/> contains the
+        /// <see cref="EntityId"/> converted into a ULong if needed during physics events.
+        /// </remarks> </summary>
         public EntityId EntityId;
         
+        /// <summary>
+        /// Syncs the PhysicsTransform of the <see cref="SFShapeComponent"/> when something outside of the Physics simulation
+        /// changes the GameObject's Transform.
+        /// <remarks>
+        /// The <see cref="PhysicsWorld.RegisterTransformChange"/> has the <see cref="SFShapeComponent"/> tranform
+        /// registered when the <see cref="Body"/> is created and is valid. 
+        /// </remarks> </summary>
+        /// <param name="transformChangeEvent"></param>
         public void OnTransformChanged(PhysicsEvents.TransformChangeEvent transformChangeEvent)
         {
             var physicsTransform = new PhysicsTransform(transform.position, PhysicsRotate.identity);
-            
-#if !UNITY_6000_6_OR_NEWER
-            Body.SetAndWriteTransform(physicsTransform);
-#else
             Body.transform = physicsTransform;
-#endif
         }
 
         public PhysicsShape.ContactFilter ContactFilter;
+        
         protected PhysicsShape _shape;
         /// <summary>
         /// The completed physics shape data struct for the <see cref="SFShapeComponent"/>.
@@ -111,7 +119,7 @@ namespace SF.U2D.Physics
             }
         }
 
-        public NativeList<PhysicsShape> ShapesInComposite;
+        [NonSerialized] public NativeList<PhysicsShape> ShapesInComposite;
         
         /// <summary>
         /// The definition for the <see cref="Shape"/> for the <see cref="SFShapeComponent"/>.

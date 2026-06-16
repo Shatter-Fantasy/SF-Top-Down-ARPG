@@ -1,6 +1,5 @@
 using Unity.Scripting.LifecycleManagement;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 namespace SF
 {
@@ -17,14 +16,20 @@ namespace SF
         
     }
     
-    public abstract partial class ManagerBaseStaticCleanUp<T> : MonoBehaviour
+    public abstract partial class ManagerBaseStaticCleanUp<T> : MonoBehaviour where T : Object
     {
         [AutoStaticsCleanup]
         protected static T _instance;
 
-        public static T  Manager
+        public static T Instance
         {
-            get => _instance;
+            get
+            {
+                if (_instance == null)
+                    _instance = FindAnyObjectByType<T>();
+                
+                return _instance;
+            } 
             set => _instance = value;
         }
     }

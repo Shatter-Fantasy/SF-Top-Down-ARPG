@@ -71,7 +71,7 @@ namespace SF.Weapons
         /// Syncs all the attack timers to match the length of the animation clip length for that attack animation.
         /// </summary>
         [ContextMenu("Sync attack and animation timers.")]
-        protected virtual void SetAllAttacksTimerViaAnimation()
+        protected override void SetAllAttacksTimerViaAnimation()
         {
             AnimationClip clip;
             

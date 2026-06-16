@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace SF.CommandModule
@@ -6,6 +7,8 @@ namespace SF.CommandModule
     {
         
     }
+    
+    [Serializable]
     public abstract class CommandBase
     {
         public string Name;

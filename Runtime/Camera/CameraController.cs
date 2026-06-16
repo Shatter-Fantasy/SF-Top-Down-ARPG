@@ -105,6 +105,17 @@ namespace SF.CameraModule
                 SwitchPlayerCMCamera(PlayerCamera);
         }
 
+        /// <summary>
+        /// Used to teleport the camera to the player along side the player if they get teleported.
+        /// </summary>
+        public static void TeleportCameraToPlayer(Vector3 deltaPosition)
+        {
+            if (PlayerCamera == null || PlayerCamera.Target.TrackingTarget == null)
+                return;
+
+            PlayerCamera.OnTargetObjectWarped(PlayerCamera.Target.TrackingTarget,deltaPosition);
+        }
+
         public static void UpdateActiveCameraBounds(Vector3 centerOfBounds,Vector3 sizeOfBounds, Vector2 offsetOfBounds )
         {
             if (_instance._cameraConfiner != null && sizeOfBounds != default)

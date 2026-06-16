@@ -31,7 +31,7 @@ namespace SF.DialogueModule
 
         public void OnTriggerBegin2D(PhysicsEvents.TriggerBeginEvent beginEvent, SFShapeComponent callingShapeComponent)
         {
-            if(_dialogueConversation != null)
+            if(_dialogueConversation != null && InteractableMode == InteractableMode.Collision)
                 DialogueManager.TriggerConversation(_dialogueConversation,this);
         }
 

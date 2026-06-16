@@ -5,6 +5,7 @@ using UnityEngine.InputSystem;
 namespace SF.InputModule
 {
 	using SF.Managers;
+	[DefaultExecutionOrder(-5)]
     public partial class SFInputManager : MonoBehaviour
     {
 		[AutoStaticsCleanup] private static SFInputManager _instance;

@@ -614,7 +614,7 @@ namespace SF.InputModule
                 {
                     ""name"": """",
                     ""id"": ""733602bc-1acd-422e-b93c-7d4a6d5f9161"",
-                    ""path"": ""<Keyboard>/r"",
+                    ""path"": ""<Keyboard>/q"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -636,7 +636,7 @@ namespace SF.InputModule
                 {
                     ""name"": """",
                     ""id"": ""b29956f5-7b5b-4a3c-a48c-60770050d067"",
-                    ""path"": ""<Keyboard>/q"",
+                    ""path"": ""<Keyboard>/r"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -718,6 +718,24 @@ namespace SF.InputModule
                     ""type"": ""PassThrough"",
                     ""id"": ""0489e84a-4833-4c40-bfae-cea84b696689"",
                     ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""EquipmentOne"",
+                    ""type"": ""Button"",
+                    ""id"": ""59d42b9d-d3ba-4af9-9aa7-ca16d061cde7"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""EquipmentTwo"",
+                    ""type"": ""Button"",
+                    ""id"": ""ee7ccdd5-581a-438f-aec3-cad1b66bdf96"",
+                    ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
@@ -1100,6 +1118,50 @@ namespace SF.InputModule
                 },
                 {
                     ""name"": """",
+                    ""id"": ""4dde380d-4456-4dd5-8679-629d9c81cb50"",
+                    ""path"": ""<Gamepad>/buttonNorth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""EquipmentOne"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""6a38657b-cc0b-4d72-889b-32eea8ce3aa8"",
+                    ""path"": ""<Keyboard>/r"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""EquipmentOne"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""7e7890dd-f97c-49d8-ba9e-69c1455b0bba"",
+                    ""path"": ""<Gamepad>/buttonWest"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""EquipmentTwo"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""610deb02-5a29-4333-96be-63b634005963"",
+                    ""path"": ""<Keyboard>/q"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""EquipmentTwo"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
                     ""id"": ""4c191405-5738-4d4b-a523-c6a301dbf754"",
                     ""path"": ""<Mouse>/rightButton"",
                     ""interactions"": """",
@@ -1149,7 +1211,7 @@ namespace SF.InputModule
                 {
                     ""name"": """",
                     ""id"": ""0310cc00-a869-4ae3-ab18-ae9fd19dea6b"",
-                    ""path"": ""<Keyboard>/tab"",
+                    ""path"": ""<Keyboard>/i"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -1258,6 +1320,8 @@ namespace SF.InputModule
             m_UI_RightClick = m_UI.FindAction("RightClick", throwIfNotFound: true);
             m_UI_MiddleClick = m_UI.FindAction("MiddleClick", throwIfNotFound: true);
             m_UI_ScrollWheel = m_UI.FindAction("ScrollWheel", throwIfNotFound: true);
+            m_UI_EquipmentOne = m_UI.FindAction("EquipmentOne", throwIfNotFound: true);
+            m_UI_EquipmentTwo = m_UI.FindAction("EquipmentTwo", throwIfNotFound: true);
             // GameControl
             m_GameControl = asset.FindActionMap("GameControl", throwIfNotFound: true);
             m_GameControl_PauseToggle = m_GameControl.FindAction("PauseToggle", throwIfNotFound: true);
@@ -1569,6 +1633,8 @@ namespace SF.InputModule
         private readonly InputAction m_UI_RightClick;
         private readonly InputAction m_UI_MiddleClick;
         private readonly InputAction m_UI_ScrollWheel;
+        private readonly InputAction m_UI_EquipmentOne;
+        private readonly InputAction m_UI_EquipmentTwo;
         /// <summary>
         /// Provides access to input actions defined in input action map "UI".
         /// </summary>
@@ -1612,6 +1678,14 @@ namespace SF.InputModule
             /// Provides access to the underlying input action "UI/ScrollWheel".
             /// </summary>
             public InputAction @ScrollWheel => m_Wrapper.m_UI_ScrollWheel;
+            /// <summary>
+            /// Provides access to the underlying input action "UI/EquipmentOne".
+            /// </summary>
+            public InputAction @EquipmentOne => m_Wrapper.m_UI_EquipmentOne;
+            /// <summary>
+            /// Provides access to the underlying input action "UI/EquipmentTwo".
+            /// </summary>
+            public InputAction @EquipmentTwo => m_Wrapper.m_UI_EquipmentTwo;
             /// <summary>
             /// Provides access to the underlying input action map instance.
             /// </summary>
@@ -1662,6 +1736,12 @@ namespace SF.InputModule
                 @ScrollWheel.started += instance.OnScrollWheel;
                 @ScrollWheel.performed += instance.OnScrollWheel;
                 @ScrollWheel.canceled += instance.OnScrollWheel;
+                @EquipmentOne.started += instance.OnEquipmentOne;
+                @EquipmentOne.performed += instance.OnEquipmentOne;
+                @EquipmentOne.canceled += instance.OnEquipmentOne;
+                @EquipmentTwo.started += instance.OnEquipmentTwo;
+                @EquipmentTwo.performed += instance.OnEquipmentTwo;
+                @EquipmentTwo.canceled += instance.OnEquipmentTwo;
             }
 
             /// <summary>
@@ -1697,6 +1777,12 @@ namespace SF.InputModule
                 @ScrollWheel.started -= instance.OnScrollWheel;
                 @ScrollWheel.performed -= instance.OnScrollWheel;
                 @ScrollWheel.canceled -= instance.OnScrollWheel;
+                @EquipmentOne.started -= instance.OnEquipmentOne;
+                @EquipmentOne.performed -= instance.OnEquipmentOne;
+                @EquipmentOne.canceled -= instance.OnEquipmentOne;
+                @EquipmentTwo.started -= instance.OnEquipmentTwo;
+                @EquipmentTwo.performed -= instance.OnEquipmentTwo;
+                @EquipmentTwo.canceled -= instance.OnEquipmentTwo;
             }
 
             /// <summary>
@@ -2057,6 +2143,20 @@ namespace SF.InputModule
             /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
             /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
             void OnScrollWheel(InputAction.CallbackContext context);
+            /// <summary>
+            /// Method invoked when associated input action "EquipmentOne" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+            /// </summary>
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+            void OnEquipmentOne(InputAction.CallbackContext context);
+            /// <summary>
+            /// Method invoked when associated input action "EquipmentTwo" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+            /// </summary>
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+            void OnEquipmentTwo(InputAction.CallbackContext context);
         }
         /// <summary>
         /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "GameControl" which allows adding and removing callbacks.
