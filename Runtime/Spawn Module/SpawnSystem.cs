@@ -32,11 +32,28 @@ namespace SF.SpawnModule
         /// The spawned root gameobject of the player.
         /// </summary>
         public static GameObject SpawnedPlayer;
-        
+
+        private static TopdownControllerBody2D _spawnedPlayerController;
+
         /// <summary>
         /// The <see cref="ControllerBody2D"/> of the <see cref="SpawnedPlayer"/>.
         /// </summary>
-        public static TopdownControllerBody2D SpawnedPlayerController;
+        public static TopdownControllerBody2D SpawnedPlayerController
+        {
+            get
+            {
+                if (_spawnedPlayerController == null)
+                {
+                    _spawnedPlayerController = FindAnyObjectByType<PlayerControllerBody2D>();
+                }
+
+                return _spawnedPlayerController;
+            }
+            set
+            {
+                _spawnedPlayerController = value;
+            }
+        }
         
         public static event Action<GameObject> InitialPlayerSpawnHandler;
         public static event Action PlayerRespawnHandler;
@@ -63,7 +80,7 @@ namespace SF.SpawnModule
             
             // Instead of the RoomSystem current room we should use the active spawn point.
             //SpawnedPlayer.transform.position = RoomSystem.CurrentRoom.SpawnedInstance.transform.position;
-            SpawnedPlayer.TryGetComponent(out SpawnedPlayerController);
+            SpawnedPlayer.TryGetComponent(out _spawnedPlayerController);
             
             InitialPlayerSpawnHandler?.Invoke(SpawnedPlayer);
             
