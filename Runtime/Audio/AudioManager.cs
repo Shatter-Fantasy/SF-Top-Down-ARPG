@@ -70,6 +70,19 @@ namespace SF.AudioModule
             return _instance.AudioChannelSettingsList
                          .FirstOrDefault(setting => setting.AudioChannelType == audioChannelType);
         }
+
+        public static void SetAudioChannelAudioClip(AudioChannelType audioChannelType, AudioClip newAudioClip)
+        {
+            if (newAudioClip == null)
+                return;
+
+            var audioChannel = GetAudioChannel(audioChannelType);
+            if (audioChannel.AudioSource != null)
+            {
+                audioChannel.AudioSource.clip = newAudioClip;
+                audioChannel.AudioSource.Play();
+            }
+        }
         
         public static float GetChannelVolume(AudioChannelType audioChannelType)
         {
