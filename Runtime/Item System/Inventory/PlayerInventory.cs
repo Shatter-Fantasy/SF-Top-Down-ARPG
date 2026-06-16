@@ -9,7 +9,7 @@ namespace SF.ItemModule
     using Managers;
     
     [Serializable]
-    public class PlayerInventory : ItemContainer
+    public class PlayerInventory : InventoryBase
     {
         
         //public List<CurrencyData> Currencies = new List<CurrencyData>();
@@ -18,11 +18,7 @@ namespace SF.ItemModule
         [NonSerialized] public List<Weapon> FilteredWeapons = new List<Weapon>();
         [NonSerialized] public List<Armor> FilteredArmor = new List<Armor>();
 
-        /// <summary>
-        /// Invoked event when an item has been picked up off the ground.
-        /// Does not activate when gaining items from shops, quest rewards, or from NPC dialogue interactions.
-        /// </summary>
-        public static Action<int> ItemPickedUpHandler;
+  
         //public static Action<CurrencyData> CurrencyPickedUpHandler;
         
         private void Start()
