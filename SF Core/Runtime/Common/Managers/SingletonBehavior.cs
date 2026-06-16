@@ -14,7 +14,7 @@ namespace SF.Utilities
                 if (_instance == null)
                 {
                     // Try to find an object with a component already attached.
-                    _instance = FindFirstObjectByType<TSingleton>();
+                    _instance = FindAnyObjectByType<TSingleton>();
                     
                     // If none are found create a game object called SF Singleton and add the component to it. 
                     // Set the Singleton value as the newly created component on the Object.
