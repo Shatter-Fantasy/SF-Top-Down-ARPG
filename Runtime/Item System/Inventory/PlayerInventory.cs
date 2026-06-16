@@ -26,7 +26,7 @@ namespace SF.ItemModule
             MetroidvaniaSaveManager.PlayerInventory = this;
         }
         
-        public override void AddItem(int itemID)
+        public override void AddItem(int itemID, int amount = 1)
         {
             var item = GameLoader.Instance?.ItemDatabase[itemID];
             ItemData itemData = new ItemData();
@@ -39,12 +39,7 @@ namespace SF.ItemModule
             Items.Add(itemData);
         }
 
-        public void PickUpItem(int itemID)
-        {
-            AddItem(itemID);
-            ItemPickedUpHandler?.Invoke(itemID);
-        }
-        
+       
         /*
         public void AddItem(CurrencyData currencyData)
         {
