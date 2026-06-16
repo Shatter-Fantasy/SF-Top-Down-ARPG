@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace SF.Characters
@@ -36,7 +37,7 @@ namespace SF.Characters
 		private static readonly int DeathAnimationHash = Animator.StringToHash(nameof(CharacterStatus.Dead));
 		//[SerializeField] private bool _hasForcedState;
 
-		public AnimatorControllerParameter[] AnimatorParameters;
+		[NonSerialized] public AnimatorControllerParameter[] AnimatorParameters;
 		#region Lifecycle Functions  
 		private void Awake()
 		{
