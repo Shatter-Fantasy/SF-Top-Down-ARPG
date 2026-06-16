@@ -1,11 +1,10 @@
-using System;
-using SF.U2D.Physics;
 using Unity.U2D.Physics;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace SF.LevelModule
 {
+    using SF.U2D.Physics;
     public class LevelTransition : MonoBehaviour, ITriggerShapeCallback
     {
         [SerializeField] private string _nextSceneName;

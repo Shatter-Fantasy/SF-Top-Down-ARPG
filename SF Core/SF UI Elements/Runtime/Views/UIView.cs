@@ -20,7 +20,7 @@ namespace SF.UIModule
 	[Serializable]
     public class UIView : IUIView, IDisposable
     {
-	    [SerializeField] protected bool _hideOnAwake = true;
+	    [SerializeField] protected bool _hideOnAwake;
 	    
 	    // Properties
 	    public VisualElement RootElement { get; protected set; }
