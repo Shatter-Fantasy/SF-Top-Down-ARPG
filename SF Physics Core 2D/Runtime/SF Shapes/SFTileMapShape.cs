@@ -102,14 +102,9 @@ namespace SF.U2D.Physics
             
             using var   vertexPath        = new NativeList<Vector2>(Allocator.Temp);
             
-            Profiler.BeginSample("Getting Tile Data");
-#if UNITY_6000_4_OR_NEWER
+            Profiler.BeginSample("SFTileMapShape Tile Data");
             Tilemap.PositionArray tilePosition = new Tilemap.PositionArray();
             _tilemap.GetUsedTileData(out _tilesInBlock, out tilePosition);
-#else
-            _tilemap.GetUsedTileData(out _tilesInBlock);
-            using var positions = _tilemap.GetTileCellPositions();
-#endif
             Profiler.EndSample();
             
             Profiler.BeginSample("SFTileMapShape Geometry",this);
@@ -143,11 +138,14 @@ namespace SF.U2D.Physics
                         for (int v = 0; v <  _physicsShapeVertex.Count; v++)
                         {
                             // The (Vector2)_tilesInBlock[i].transform.MultiplyPoint3x4 below matches the tiles rotation or scale value of the placed tile data.
-#if UNITY_6000_4_OR_NEWER
-                            vertexPath.Add((Vector2)_tilesInBlock[i].transform.MultiplyPoint3x4(_physicsShapeVertex[v]) + tilePosition[i].ToVector2Int() + (Vector2)_tilemap.tileAnchor);
-#else
-                            vertexPath.Add((Vector2)_tilesInBlock[i].transform.MultiplyPoint3x4(_physicsShapeVertex[v])+ positions[i].ToVector2Int() + (Vector2)_tilemap.tileAnchor);
-#endif
+                            
+                            vertexPath.Add((Vector2)_tilesInBlock[i].transform.MultiplyPoint3x4(_physicsShapeVertex[v]) 
+                                           + tilePosition[i].ToVector2Int() 
+                                           + (Vector2)_tilemap.tileAnchor
+                                           // This makes the physics shape take into account a non centered sprite pivot.
+                                           // Note the pivot is in pixels int not percent floats so we have to divide by PPU to get the value between 0 and 1.
+                                           + (tileSprite.pivot / tileSprite.pixelsPerUnit)  - new Vector2(.5f,.5f) 
+                                           );
                         }
                         
                         PhysicsTransform tileTransform = PhysicsTransform.identity;
