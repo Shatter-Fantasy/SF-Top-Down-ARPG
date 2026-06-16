@@ -1,9 +1,10 @@
-using SFEditor.Nodes;
-using SF.DialogueModule.Nodes;
 using Unity.GraphToolkit.Editor;
 
 namespace SFEditor.Dialogue.Graphs
 {
+	using SFEditor.Nodes;
+	using SF.DialogueModule.Nodes;
+	
 	[System.Serializable]
     [UseWithContext(typeof(ConversationContextNode))] 
 	[UseWithGraph(typeof(DialogueGraph))]
@@ -11,12 +12,10 @@ namespace SFEditor.Dialogue.Graphs
     {
 	    public string ExecutionPortName { get; } = "Conversation Entry";
 	    public string SpeakerOptionsName { get; } = "Speaker";
-	    public const string AnimationParameterOptionsName = "Animation Parameter";
 	    protected override void OnDefineOptions(IOptionDefinitionContext  context)
 	    {		    
 		    context.AddOption<string>(SpeakerOptionsName);
-		    context.AddOption<string>(ExecutionPortName);
-		    context.AddOption<string>(AnimationParameterOptionsName);
+		    context.AddOption<string>(ExecutionPortName).AsTextArea().Build();
 	    }
 
 	    public IRuntimeNode ConvertToRuntimeNode()

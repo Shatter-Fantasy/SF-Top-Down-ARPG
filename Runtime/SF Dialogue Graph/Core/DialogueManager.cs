@@ -1,13 +1,15 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using SF.InputModule;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 namespace SF.DialogueModule
 {
     using SF.DialogueModule.Nodes;
+    using SF.InputModule;
+    using SF.Managers;
+    
     /// <summary>
     /// The in scene manager that controls the way DialogueConversations are run and set up.
     /// </summary>
@@ -158,7 +160,10 @@ namespace SF.DialogueModule
 
         public virtual void StartConversation(DialogueConversation newConversation)
         {
-            RecentConversation = newConversation;
+            if(GameManager.Instance != null)
+                GameManager.Instance.ControlState = GameControlState.Dialogue;
+            
+            RecentConversation                 = newConversation;
         }
         public static void StopConversation()
         {
@@ -167,6 +172,8 @@ namespace SF.DialogueModule
                 || RecentConversation == null)
                 return;
 
+            if(GameManager.Instance != null)
+                GameManager.Instance.ControlState = GameControlState.Player;
             DialogueEndedHandler?.Invoke();
             RecentConversation = null;
         } 

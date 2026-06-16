@@ -66,7 +66,7 @@ namespace SF.RoomModule
         private static Room LoadRoomDynamically(int roomID)
         {
             
-            if (LoadedRegion[roomID]?.RoomPrefab == null)
+            if (LoadedRegion == null || LoadedRegion[roomID].RoomPrefab == null)
                 return null;
             
             // Load the connected rooms.
@@ -166,7 +166,10 @@ namespace SF.RoomModule
         /// </summary>
         public static void SetInitialRoom(int roomID)
         {
-            LoadRoom(roomID); 
+            if(RegionSystem.LoadedRegionDataAsset == null)
+                return;
+            
+            LoadRoom(roomID,loadDynamically: false); 
             LoadedRegion[roomID]?.SpawnedRoomController?.MakeCurrentRoom();
         }
         public static void CleanUpRoom(int roomId)

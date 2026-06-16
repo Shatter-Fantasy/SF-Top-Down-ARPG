@@ -23,9 +23,7 @@ namespace SF.DialogueModule
         /// <summary>
         /// The unique identifier for a <see cref="DialogueConversation"/>.
         /// </summary>
-        public int GUID;
-        
-        //public List<DialogueEntry> DialogueEntries = new();
+        [HideInInspector] public int GUID;
 
         [SerializeReference]
         public List<IRuntimeNode> Nodes = new();
@@ -49,6 +47,7 @@ namespace SF.DialogueModule
         [NonSerialized] public int DialogueEntryIndex = -1;
         
         public List<ConversationPropertyPair> Properties = new();
+
         /// <summary>
         ///  Blank constructor for allowing new conversations when none in the database is found with a matching guid.
         /// </summary>

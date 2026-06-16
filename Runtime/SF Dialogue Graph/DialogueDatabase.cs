@@ -6,26 +6,34 @@ namespace SF.DialogueModule
     [CreateAssetMenu(fileName = "Dialogue Database", menuName = "SF/Dialogue System/Dialogue Database")]
     public class DialogueDatabase : SFAssetDatabase<DialogueConversation>
     {
+        public static DialogueDatabase ActiveDialogueDatabase;
+        
         public bool GetConversation(int guid, out DialogueConversation conversation)
         {
             conversation = DataEntries.Find(x => x.GUID == guid);
 
             return conversation != null;
         }
-
-        public override void AddData(DialogueConversation dataEntry)
-        {
-            base.AddData(dataEntry);
-        }
-
+        
         public override void OnRegisterDatabase()
-        {   
-            // Not implemented Yet
+        {
+            ActiveDialogueDatabase = this;
         }
 
         public override void OnDeregisterDatabase()
         {
-            // Not implemented Yet
+            // ActiveDialogueDatabase should always == this, but for safety adding the check.
+            if(ActiveDialogueDatabase == this)
+                ActiveDialogueDatabase = null; 
         }
+        
+        
+#if UNITY_EDITOR
+        [ContextMenu("Set Data Ids")]
+        private void ResetIds()
+        {
+            SetDataIdsByListIndex<DialogueDatabase>();
+        }
+#endif
     }
 }

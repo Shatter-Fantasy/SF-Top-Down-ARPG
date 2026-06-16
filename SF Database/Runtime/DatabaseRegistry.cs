@@ -14,14 +14,14 @@ namespace SF.DataModule
         /// Any database set in here will have the 
         /// </summary>
         public List<SFDatabase> PreloadedDatabase = new List<SFDatabase>();
-        public Dictionary<Type, SFDatabase> RegisteredDatabases = new();
+        [NonSerialized] public Dictionary<Type, SFDatabase> RegisteredDatabases = new();
 
         private static DatabaseRegistry _registry;
 
         public static DatabaseRegistry Registry
         {
             get => _registry;
-            set => _registry = value;
+            private set => _registry = value;
         }
 
         private void Awake()
@@ -35,6 +35,9 @@ namespace SF.DataModule
 
         private void OnEnable()
         {
+            if(_registry == null)
+                _registry = this;
+            
             List<SFDatabase> nullSetDatabases = new List<SFDatabase>();
             for (int i = 0; i < PreloadedDatabase.Count; i++)
             {
@@ -95,6 +98,21 @@ namespace SF.DataModule
             foundDatabase = (TDatabase)database;
             return true;
         }
+        
+        public static bool TryGetDatabase<TDatabase>(Type databaseType, out TDatabase foundDatabase) where TDatabase : SFDatabase
+        {
+            foundDatabase = null;
+            
+            if (_registry == null)
+                return false;
+
+            if (!_registry.RegisteredDatabases.TryGetValue(databaseType, out var database)) 
+                return false;
+            
+            foundDatabase = (TDatabase)database;
+            return true;
+        }
+
 
         public static void RegisterDatabase<TDatabase>(TDatabase database) where TDatabase : SFDatabase
         {
@@ -133,8 +151,8 @@ namespace SF.DataModule
         
 #if UNITY_EDITOR
         
-        [ContextMenu("SF/Data/Register Preloaded Databases")]
-        public static void PreloadDatabases()
+        [ContextMenu("Register Preloaded Databases")]
+        public void PreloadDatabases()
         {
             var databaseRegistry = DatabaseRegistry.Registry;
 

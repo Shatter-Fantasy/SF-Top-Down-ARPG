@@ -1,15 +1,10 @@
-<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-         xmlns:ui="UnityEngine.UIElements" 
-         noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" 
-         editor-extension-mode="False">
-    
-    <Style src="Packages/shatterfantasy.sf-metroidvania/Editor/SFEditor Dialogue Graph/Assets/Dialogue UI Toolkit/Dialogue.uss?fileID=7433441132597879392&amp;guid=79607fbc43a543640ad0ecd804c9fc51&amp;type=3#Dialogue" />
-    <ui:VisualElement name="dialogue__view">
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:VisualElement name="dialogue__view" style="background-image: url(&quot;project://database/Assets/Imported%20Assets/Art/UI%20Sprites/UI%20Panels%20Sprites.png?fileID=-1432545014&amp;guid=9b1581b633da07b4dac0a79b3e8bab94&amp;type=3#UI Panel_00&quot;); -unity-background-scale-mode: stretch-to-fill; min-height: 20%; padding-top: 20px; padding-right: 25px; padding-bottom: 20px; padding-left: 25px; -unity-font-style: bold; font-size: 18px;">
         <ui:VisualElement name="dialogue-speaker__container" style="background-image: none;">
-            <ui:Label name="dialogue-speaker__label" text="Office Employee" class="overlay__label" />
+            <ui:Label name="dialogue-speaker__label" text="" class="overlay__label" style="color: rgb(255, 255, 255);"/>
         </ui:VisualElement>
         <ui:VisualElement name="dialogue-speech__container" class="overlay-content__container dialogue-speech__container">
-            <ui:Label name="overlay-dialogue__label" text="I think Sergey&apos;s rat got some fur in this cofee." class="overlay__label" />
+            <ui:Label name="overlay-dialogue__label" text="" class="overlay__label" style="color: rgb(255, 255, 255);"/>
         </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>

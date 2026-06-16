@@ -1,12 +1,13 @@
-using SF.Managers;
+using Unity.Scripting.LifecycleManagement;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 namespace SF.InputModule
 {
-    public class SFInputManager : MonoBehaviour
+	using SF.Managers;
+    public partial class SFInputManager : MonoBehaviour
     {
-		private static SFInputManager _instance;
+		[AutoStaticsCleanup] private static SFInputManager _instance;
 		public static SFInputManager Instance
 		{
 			get

@@ -24,6 +24,7 @@ namespace SF.DataModule
         public virtual void OnRegisterDatabase() { }
 
         public virtual void OnDeregisterDatabase(){ }
+        
     }
     
     /// <summary>
@@ -38,8 +39,9 @@ namespace SF.DataModule
         {
             if(dataEntry == null)
                 return;
-
+            
             DataEntries.Add(dataEntry);
+            dataEntry.BaseData.ID = DataEntries.Count - 1;
         }
 
         public void RemoveData(T dataEntry)
@@ -74,6 +76,29 @@ namespace SF.DataModule
                 return DataEntries.Find( data => data.ID == itemId);
             }
         }
+        
+#if UNITY_EDITOR
+        protected void SetDataIdsByListIndex<TDatabaseType>() where TDatabaseType : SFAssetDatabase<T> 
+        {
+            var databaseRegistry = DatabaseRegistry.Registry;
+            
+            if (databaseRegistry == null)
+                return;
+
+            if (!DatabaseRegistry.TryGetDatabase(out TDatabaseType foundDatabase))
+                return;
+
+            for (int i = 0; i < foundDatabase.DataEntries.Count; i++)
+            {
+                foundDatabase.DataEntries[i].ID = i;
+            }
+        }
+        
+        protected virtual void SetCommonDataFields<TDatabaseType>() where TDatabaseType : SFAssetDatabase<T> 
+        {
+            
+        }
+#endif
     }
     
     /// <summary>

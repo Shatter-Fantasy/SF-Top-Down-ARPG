@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -40,18 +41,25 @@ namespace SF.DialogueModule.Nodes
 
         public override async void ProcessNode()
         {
-            bool isPaused = false;
-            foreach (var node in RuntimeNodes)
+            try
             {
-                node.ProcessNode();
-                DialogueManager.Instance.RuntimeGraph.IsPaused = node.ShouldPauseGraphProcessing;
-                
-                while (DialogueManager.Instance.RuntimeGraph.IsPaused)
+                foreach (var node in RuntimeNodes)
                 {
-                    await Awaitable.NextFrameAsync();
+                    node.ProcessNode();
+                    DialogueManager.Instance.RuntimeGraph.IsPaused = node.ShouldPauseGraphProcessing;
+                
+                    while (DialogueManager.Instance.RuntimeGraph.IsPaused)
+                    {
+                        await Awaitable.NextFrameAsync();
+                    }
                 }
             }
-        
+            catch (Exception e)
+            {
+                Debug.Log(e);
+                throw;
+            }
+            
             ExecutionNode?.ProcessNode();
         }
     }

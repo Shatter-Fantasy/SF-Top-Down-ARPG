@@ -1,4 +1,3 @@
-@import url("project://database/Packages/shatter-fantasy.sf-ui-elements/Runtime/Styles/SFComponents.uss?fileID=7433441132597879392&guid=488fb1b25321c294aa62f34cdc142c25&type=3#SFComponents");
 :root {
     --dark-grey-background: rgb(40, 40, 40);
 }

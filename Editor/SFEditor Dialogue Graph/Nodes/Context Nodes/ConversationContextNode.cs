@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using Unity.GraphToolkit.Editor;
-using UnityEngine;
 
 namespace SFEditor.Dialogue.Graphs
 {
@@ -34,25 +33,27 @@ namespace SFEditor.Dialogue.Graphs
 		protected override void OnDefinePorts(IPortDefinitionContext context)
 		{
 			context.AddInputPort<string>("Input Node").Build();
-		    
 			context.AddOutputPort<string>(ExecutionPortName).Build();
 		}
 
 		public IRuntimeNode ConvertToRuntimeNode()
 		{
 			RuntimeNodes = ConvertToRuntimeNodes(Conversation);
-
-#if UNITY_6000_4_OR_NEWER
+			
 			var executionNode = GetOutputPortByName(ExecutionPortName).FirstConnectedPort.GetNode();
-#else
-			var executionNode = GetOutputPortByName(ExecutionPortName).firstConnectedPort.GetNode();
-#endif
+			
 			if (executionNode is INodeConvertor nodeConvertor)
 			{
-				return new ConversationRuntimeNode(RuntimeNodes,nodeConvertor.ConvertToRuntimeNode());
+				return new ConversationRuntimeNode(RuntimeNodes,nodeConvertor.ConvertToRuntimeNode())
+				{
+					ShouldPauseGraphProcessing = true
+				};
 			}
 			
-			return new ConversationRuntimeNode(RuntimeNodes);
+			return new ConversationRuntimeNode(RuntimeNodes)
+			{
+				ShouldPauseGraphProcessing = true
+			};
 		}
 
 		public List<IRuntimeNode> ConvertToRuntimeNodes(DialogueConversation dialogueConversation)
@@ -63,11 +64,8 @@ namespace SFEditor.Dialogue.Graphs
 					.TryGetValue(out dialogueConversation.ConversationName);
 			}
 			
-#if UNITY_6000_4_OR_NEWER
-						for(int i = 0; i < BlockCount; i++) 
-#else
-			for(int i = 0; i < blockCount; i++) 
-#endif
+			RuntimeNodes.Clear();
+			for(int i = 0; i < BlockCount; i++) 
 			{
 				var conversationNode = GetBlock(i);
 						    
