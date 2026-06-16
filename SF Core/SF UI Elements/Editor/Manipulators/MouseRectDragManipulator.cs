@@ -1,9 +1,8 @@
 using System;
-
 using UnityEngine;
 using UnityEngine.UIElements;
 
-// TODO: Shove this into the SFEditor.UIElements instead.
+
 namespace SFEditor.UIElements.Utilities
 {
     public class MouseRectDragManipulator : MouseManipulator
@@ -36,6 +35,7 @@ namespace SFEditor.UIElements.Utilities
         public bool StopDragOnMouseLeave = true;
 
         private float _mouseDownDuration = 0;
+        private float _mouseDownDurationLeft = 0;
 
         public MouseRectDragManipulator(MouseButton mouseButton,float mouseDownDuration, EventModifiers eventModifiers = EventModifiers.None)
         {
@@ -45,7 +45,8 @@ namespace SFEditor.UIElements.Utilities
                 modifiers = eventModifiers
             });
 
-            _mouseDownDuration = mouseDownDuration;
+            _mouseDownDuration     = mouseDownDuration;
+            _mouseDownDurationLeft = _mouseDownDuration;
         }
 
         public MouseRectDragManipulator(MouseButton mouseButton,float mouseDownDuration ,EventModifiers eventModifiers = EventModifiers.None, Action<Rect> onDragStarted = null, Action<Rect> onDragMoved = null, Action<Rect> onDragEnded = null)
@@ -56,8 +57,8 @@ namespace SFEditor.UIElements.Utilities
                 modifiers = eventModifiers
             });
 
-            _mouseDownDuration = mouseDownDuration;
-
+            _mouseDownDuration     = mouseDownDuration;
+            _mouseDownDurationLeft = _mouseDownDuration;
             if(onDragStarted != null)
                 OnDragStartHandler += onDragStarted;
             if(onDragMoved != null)
@@ -76,7 +77,7 @@ namespace SFEditor.UIElements.Utilities
 
             if(CanStartManipulation(evt) && IsDragging == false && CanDrag == false)
             {
-                if(_mouseDownDuration < 0)
+                if(_mouseDownDurationLeft <= 0)
                 {
                     CanDrag = true;
                     StartingPosition = evt.mousePosition;
@@ -86,7 +87,7 @@ namespace SFEditor.UIElements.Utilities
                 }
                 else
                 {
-                    _mouseDownDuration -= Time.deltaTime;
+                    _mouseDownDurationLeft -= Time.deltaTime;
                 }
             }
         }
@@ -120,9 +121,10 @@ namespace SFEditor.UIElements.Utilities
             IsDragging = false;
             CanDrag = false;
 
-            EndingPosition = evt.mousePosition;
-            DeltaPosition = EndingPosition - StartingPosition;
-            DragRect = new Rect(StartingPosition, DeltaPosition);
+            EndingPosition         = evt.mousePosition;
+            DeltaPosition          = EndingPosition - StartingPosition;
+            DragRect               = new Rect(StartingPosition, DeltaPosition);
+            _mouseDownDurationLeft = _mouseDownDuration;
             OnDragEndHandler?.Invoke(DragRect);
             target.ReleaseMouse();
             evt.StopPropagation();
