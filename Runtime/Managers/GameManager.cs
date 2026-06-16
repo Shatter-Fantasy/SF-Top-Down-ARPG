@@ -117,13 +117,13 @@ namespace SF.Managers
 
         protected static void Pause()
         {
-            Instance._controlState = GameControlState.Menu;
+            Instance.ControlState = GameControlState.Menu;
             GamePausedHandler?.Invoke();
         }
 
         protected static void Unpause()
         {
-            Instance._controlState = GameControlState.Player;
+            Instance.ControlState = GameControlState.Player;
             GameUnpausedHandler?.Invoke();
         }
         
