@@ -118,7 +118,32 @@ namespace SF.UIElements.Utilities
 
             return parent;
         }
-
+        
+    #if UNITY_6000_6_OR_NEWER
+#region Memory Performant USS Class Methods
+    
+        /// Important Note: As of Unity 6.6 alpha 7 the IsEmpty and IsNUll has not been added yet in engine, but is 
+        /// already in the documentation. They are being added in near future alphas.
+    
+        /// <summary>
+        /// Adds a uss class to the <see cref="target"/> using <see cref="UniqueStyleString"/> for improved
+        /// memory allocations and better performance compared to adding a uss class by string
+        /// </summary>
+        /// <param name="target"></param>
+        /// <param name="classNameUnique"></param>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public static T AddClass<T>(this T target, UniqueStyleString classNameUnique) where T : VisualElement
+        {
+            target.AddToClassList(classNameUnique);
+            return target;
+        }
+#endregion
+        
+    #endif
+        
+        
+        
         public static T AddClass<T>(this T target, string className) where T : VisualElement
         {
             if(!string.IsNullOrEmpty(className))
@@ -126,7 +151,7 @@ namespace SF.UIElements.Utilities
             return target;
         }
         /// <summary>
-        /// Adds an every class name in the passed array to the class name list for the targetted visual element.
+        /// Adds every class name in the passed array to the class name list for the targetted visual element.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="target"></param>
