@@ -127,6 +127,18 @@ namespace SF.CameraModule
         
         public static void UpdateRectangleConfiner(Bounds cameraBounds)
         {
+            // Try to find a camera confiner if one is null and exit method if can't find one in scene.
+            if (_instance._playerCamConfiner == null)
+            {
+                if (PlayerCamera != null)
+                {
+                    if(!PlayerCamera.TryGetComponent(out _instance._playerCamConfiner))
+                        _instance._playerCamConfiner = PlayerCamera.gameObject.AddComponent<CinemachineRectangleConfiner2D>();
+                }
+                else
+                    return;
+            }
+            
             _instance._playerCamConfiner.ConfinerBounds = cameraBounds;
         }
         
