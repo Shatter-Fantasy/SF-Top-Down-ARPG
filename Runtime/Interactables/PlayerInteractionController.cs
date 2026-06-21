@@ -95,7 +95,7 @@ namespace SF.Interactables
             
             if (objectData is GameObject hitObject
                 && hitObject.TryGetComponent(out IInteractable interactable)
-                && interactable.InteractableMode == InteractableMode.Collision)
+                && interactable.InteractableMode == InteractableMode.TriggerBegin)
             {
                 if(interactable is IInteractable<PlayerControllerBody2D> interactableController
                    && _controller is not null)
@@ -118,7 +118,7 @@ namespace SF.Interactables
             
             if (beginEvent.shapeB.TryGetGameObjectOnOwner(out GameObject hitObject)
                 && hitObject.TryGetComponent(out IInteractable interactable)
-                && interactable.InteractableMode == InteractableMode.Collision)
+                && interactable.InteractableMode == InteractableMode.TriggerBegin)
             {
                 if(interactable is IInteractable<PlayerControllerBody2D> interactableController
                    && _controller is not null)

@@ -1,11 +1,14 @@
+using System;
+
 namespace SF.Interactables
 {
-	public enum InteractableMode
+	[Flags]
+	public enum InteractableMode : int
 	{
-		Collision,
-		Input,
-		RayCast, // Used to do interaction during ray cast checks only.
-		ItemUse
+		TriggerBegin = 1, // Allows a TriggerBegin2D event to start the interaction.
+		Input = 2,
+		RayCast = 4, // Used to do interaction during ray cast checks only.
+		ItemUse = 8,
 	}
 
 	/// <summary>
