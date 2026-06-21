@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-
 namespace SF.StateMachine.Core
 {
 	using U2D.Physics;
@@ -23,6 +22,12 @@ namespace SF.StateMachine.Core
         public GameObject ControlledGameObject;
         [SerializeField] protected List<StateCore> _states = new();
 
+        /// <summary>
+        /// The rate that the <see cref="StateMachineBrain"/> will update state checks measured in seconds.
+        /// </summary>
+        [SerializeField] private float _tickRate = 0.5f;
+        private float _tickDelta;
+        
         protected TopdownControllerBody2D _controllerBody2D;
 		private void Awake()
 		{
@@ -49,6 +54,13 @@ namespace SF.StateMachine.Core
 		}
 		private void Update()
 		{
+			if (_tickDelta < _tickRate)
+			{
+				_tickDelta += Time.deltaTime;
+				return;
+			}
+			
+			_tickDelta = 0;
             UpdateState();
 		}
         /// <summary>
