@@ -187,6 +187,7 @@ namespace SF.U2D.Physics
 
         public Action ShapeCreatedHandler;
         public Action ShapeDestroyedHandler;
+        
         protected void OnEnable()
         {
             
@@ -554,7 +555,7 @@ namespace SF.U2D.Physics
         
         public PhysicsAABB CalculateAABB()
         {
-            return GetAABB(_shape);
+            return Body.GetAABB();
         }
         
         public static PhysicsAABB GetAABB(in PhysicsShape physicsShape)
