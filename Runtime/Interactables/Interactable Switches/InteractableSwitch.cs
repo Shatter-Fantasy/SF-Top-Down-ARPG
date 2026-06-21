@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-
+using Unity.U2D.Physics;
 using UnityEngine;
 
 namespace SF.Interactables
@@ -7,20 +7,37 @@ namespace SF.Interactables
     using InputModule;
     using U2D.Physics;
     
-    public class InteractableSwitch : MonoBehaviour, IInteractable
+    public class InteractableSwitch : MonoBehaviour, IInteractable, ITriggerShapeCallback
     {
-
         public List<ActivableWrapper> Activatables = new List<ActivableWrapper>();
 
         [SerializeField] private bool _oneTimeUse = false;
-        private bool _wasUsed = false;
+        protected bool _wasUsed = false;
 
         [field: SerializeField] public InteractableMode InteractableMode { get; set; }
+        protected SFShapeComponent _hitboxInteractable;
 
-
-        public void Interact()
+        protected void Awake()
         {
-            if(InteractableMode != InteractableMode.Input && !SFInputManager.Controls.Player.Interact.WasPressedThisFrame())
+            _hitboxInteractable ??= GetComponent<SFShapeComponent>();
+        }
+
+        protected void OnEnable()
+        {
+            if(_hitboxInteractable != null && (InteractableMode & InteractableMode.TriggerBegin) > 0)
+                _hitboxInteractable.AddTriggerCallbackTarget(this);
+        }
+        
+        protected void OnDisable()
+        {
+            if(_hitboxInteractable != null)
+                _hitboxInteractable.RemoveTriggerCallbackTarget(this);
+        }
+
+        public virtual void Interact()
+        {
+            if(InteractableMode == InteractableMode.Input 
+               && !SFInputManager.Controls.Player.Interact.WasPressedThisFrame())
                 return;
 
             if(_oneTimeUse && _wasUsed)
@@ -41,6 +58,15 @@ namespace SF.Interactables
         public void Interact(PlayerControllerBody2D controller)
         {
             Interact();
+        }
+
+        public void OnTriggerBegin2D(PhysicsEvents.TriggerBeginEvent beginEvent, SFShapeComponent callingShapeComponent)
+        {
+            Interact();
+        }
+
+        public void OnTriggerEnd2D(PhysicsEvents.TriggerEndEvent endEvent, SFShapeComponent callingShapeComponent)
+        {
         }
     }
 }
