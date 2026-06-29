@@ -8,6 +8,8 @@ using UnityEngine.Tilemaps;
 namespace SF.U2D.Physics
 {
     using SF.Utilities;
+
+    [ExecuteAlways]
     [RequireComponent(typeof(Tilemap))]
     public class SFTileMapShape : SFShapeComponent
     {
@@ -137,15 +139,15 @@ namespace SF.U2D.Physics
                         // Add to something we can use.
                         for (int v = 0; v <  _physicsShapeVertex.Count; v++)
                         {
+                            var pivotOffSet = tileSprite.pivot / tileSprite.rect.size;
                             // The (Vector2)_tilesInBlock[i].transform.MultiplyPoint3x4 below matches the tiles rotation or scale value of the placed tile data.
-                            
                             vertexPath.Add((Vector2)_tilesInBlock[i].transform.MultiplyPoint3x4(_physicsShapeVertex[v]) 
                                            + tilePosition[i].ToVector2Int() 
                                            + (Vector2)_tilemap.tileAnchor
                                            // This makes the physics shape take into account a non centered sprite pivot.
                                            // Note the pivot is in pixels int not percent floats so we have to divide by PPU to get the value between 0 and 1.
-                                           + (tileSprite.pivot / tileSprite.pixelsPerUnit)  - new Vector2(.5f,.5f) 
-                                           );
+                                           - (new Vector2(0.5f,0.5f) / tileSprite.pixelsPerUnit) * (tileSprite.rect.size / tileSprite.pixelsPerUnit)
+                                           + Offset);
                         }
                         
                         PhysicsTransform tileTransform = PhysicsTransform.identity;
