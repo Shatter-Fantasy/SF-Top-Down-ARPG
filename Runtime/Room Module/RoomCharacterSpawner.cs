@@ -91,7 +91,7 @@ namespace SF.SpawnModule
 
                 stats.CharacterStatList                          =  spawnedCharacterData.Stats;
                 SpawnSets[i].SpawnedHealth                       =  stats.CharacterHealth;
-                SpawnSets[i].SpawnedHealth.CharacterDeathHandler += OnCharacterDeath;
+                SpawnSets[i].SpawnedHealth.DeathHandler += OnCharacterDeath;
                 SpawnSets[i].SpawnedHealth.Respawn();
                 
 
@@ -115,7 +115,7 @@ namespace SF.SpawnModule
             _alreadySpawned = true;
         }
 
-        private void OnCharacterDeath(CharacterHealth obj)
+        private void OnCharacterDeath(Health health)
         {
             _roomCharacterCount--;
 

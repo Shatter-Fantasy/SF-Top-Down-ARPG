@@ -25,6 +25,8 @@ namespace SF.RoomModule
             We might have to make one room round using ceiling and one round using floor depending on the values.         */
         [FormerlySerializedAs("_roomCameraBounds")] 
         public Bounds RoomCameraBounds;
+
+        public Vector2 RoomTileSize = new Vector2(15, 11);
         
         /// <summary>
         /// The id for the room's spawned instance the RoomController is controlling.
@@ -158,7 +160,7 @@ namespace SF.RoomModule
             }
 
             PhysicsAABB aabb   = callingShapeComponent.Body.GetAABB();
-            RoomCameraBounds = new Bounds(aabb.center,aabb.extents * 2);
+            RoomCameraBounds = new Bounds(aabb.center,(aabb.extents * 2) + new Vector2(2,2));
             CameraController.UpdateRectangleConfiner(RoomCameraBounds);
             MakeCurrentRoom();
             //CameraController.UpdateActiveCameraBounds(transform.position,RoomCameraBounds.size, RoomCameraBounds.center);

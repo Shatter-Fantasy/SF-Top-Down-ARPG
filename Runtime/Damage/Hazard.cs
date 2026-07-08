@@ -20,7 +20,6 @@ namespace SF.DamageModule
         IDamage, 
         ITriggerShapeCallback,
         IContactShapeCallback
-        
     {
         private Vector2 _collisionNormal;
         public Direction DamageDirection;
@@ -58,6 +57,9 @@ namespace SF.DamageModule
         public void OnContactBegin2D(PhysicsEvents.ContactBeginEvent beginEvent, SFShapeComponent callingShapeComponent)
         {
             IDamagable damagable;
+
+            if (!beginEvent.shapeA.isValid || !beginEvent.shapeB.isValid)
+                return;
             
             if (beginEvent.shapeA.contactFilter.categories.IsBitSet(SFPhysicsManager.PlayerLayer))
             {

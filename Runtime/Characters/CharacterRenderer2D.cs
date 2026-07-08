@@ -59,7 +59,6 @@ namespace SF.Characters
 				return;
 			
 			_controllerBody2D.OnDirectionChanged += OnDirectionChanged;
-			// TODO: Make the attacking change the state the animation state to attacking. 
 			_controllerBody2D.CharacterState.AttackStateChangedHandler += OnAttackStateChanged;
 		}
 
@@ -102,10 +101,13 @@ namespace SF.Characters
 			bool idle = Mathf.Approximately(direction.x, 0) && Mathf.Approximately(direction.y, 0);
 			
 			Animator.SetBool("Idle", idle);
-			
-			Animator.SetFloat("LastX", Mathf.Abs(_controllerBody2D.DirectionLastFrame.x));
-			Animator.SetFloat("LastY", _controllerBody2D.DirectionLastFrame.y);
-			
+
+			if (!_controllerBody2D.IsFrozen || !_controllerBody2D.IsDirectionFrozen)
+			{
+				Animator.SetFloat("LastX", Mathf.Abs(_controllerBody2D.DirectionLastFrame.x));
+				Animator.SetFloat("LastY", _controllerBody2D.DirectionLastFrame.y);
+			}
+
 			// Grounded States
 			//Animator.SetBool("IsGrounded", _controllerBody2D.CollisionInfo.IsGrounded);
 			

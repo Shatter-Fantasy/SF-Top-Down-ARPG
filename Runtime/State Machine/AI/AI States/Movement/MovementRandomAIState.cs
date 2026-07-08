@@ -12,6 +12,7 @@ namespace ZTDR.StateMachine
     {
         [SerializeField] private Vector2 _randomMovementRange = new Vector2(1.5f,1.5f);
         [SerializeField] private float _stopDistance = .5f;
+        [SerializeField] private bool _allowDiagonalMovement;
         
         private PhysicsBody _physicsBody;
         private Vector2 _targetPosition;
@@ -41,8 +42,18 @@ namespace ZTDR.StateMachine
         {
             if(!_physicsBody.isValid)
                 return;
+            
             _lastPositionDelta = _physicsBody.position - _targetPosition;
-            Move(_stopDistance,ref _randomMovementRange, ref _physicsBody, ref _targetPosition);
+            
+            if(_allowDiagonalMovement)
+                Move(_stopDistance,ref _randomMovementRange, ref _physicsBody, ref _targetPosition);
+            else
+            {
+                Vector2 lockedDirection = Random.value >= 0.5f
+                    ? new Vector2(_randomMovementRange.x, 0)
+                    : new Vector2(0, _randomMovementRange.x);
+                Move(_stopDistance,ref lockedDirection, ref _physicsBody, ref _targetPosition);
+            }
         }
 
         [BurstCompile]
@@ -76,6 +87,9 @@ namespace ZTDR.StateMachine
 
         public void OnContactBegin2D(PhysicsEvents.ContactBeginEvent beginEvent, SFShapeComponent callingShapeComponent)
         {
+            if (!_physicsBody.isValid)
+                return;
+            
             _targetPosition = _physicsBody.position + _lastPositionDelta;
         }
 

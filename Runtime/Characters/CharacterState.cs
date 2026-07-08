@@ -46,7 +46,9 @@ namespace SF.Characters
         Berserk = 1,
 		Weakened = 2,
 		Bleeding = 4,
-		Confused = 8
+		Confused = 8,
+		Slowed = 16,
+		Burning = 32
     }
     
     /// <summary>

@@ -12,7 +12,7 @@ namespace SF.DialogueModule
 
         private DialogueEntry _currentEntry;
 
-        private void OnDialogueUIReloaded(PanelRenderer panelRenderer, VisualElement rootElement)
+        private void OnDialogueUIReloaded(PanelRenderer panelRenderer, VisualElement rootElement, int version)
         {
             _dialogueView  = rootElement.Q<VisualElement>(name: "dialogue__view");
             _dialogueLabel = rootElement.Q<Label>(name: "overlay-dialogue__label");

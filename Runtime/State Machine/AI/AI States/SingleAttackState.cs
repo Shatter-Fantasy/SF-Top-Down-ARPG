@@ -28,7 +28,7 @@ namespace SF.StateMachine
                 return;
             
             _weapon.Use();
-            _controllerBody2D.FreezeController();
+            _controllerBody2D.FreezeController(true);
         }
 
         protected void OnUseCompleted()

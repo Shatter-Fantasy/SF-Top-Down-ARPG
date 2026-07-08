@@ -17,21 +17,21 @@ namespace SF.StatModule
         /// </summary>
         [CreateProperty] public CharacterHealth CharacterHealth;
 
-        public int CalculateDamage(int preDamage)
+        protected virtual void Awake()
         {
-            return preDamage;
-        }
-
-        protected void Awake()
-        {
-            CharacterHealth  =  CharacterHealth != null 
-                ? CharacterHealth 
-                : GetComponent<CharacterHealth>();
+            CharacterHealth ??= GetComponent<CharacterHealth>();
 
             // Make sure a component was find just in case the above was null.
             // IUf it is not null tell it is being externally controlled.
             if(CharacterHealth != null)
                 CharacterHealth.DamageController = this;
+        }
+
+        public int Damage { get; }
+
+        public int CalculateDamage(int preDamage)
+        {
+            return preDamage;
         }
     }
 }

@@ -32,7 +32,7 @@ namespace SF.AbilityModule.Characters
 		        return;
 	        }
 
-			_controller2d.Direction =context.ReadValue<Vector2>();
+			_controller2d.Direction = context.ReadValue<Vector2>();
 		}
         private void OnMoveInputRun(InputAction.CallbackContext context)
         {

@@ -19,6 +19,7 @@ namespace SF.Weapons
         public int WeaponDamage = 1;
         
         [SerializeField] protected Vector2 _knockBackForce;
+        protected Vector2 _knockbackDirection;
         [SerializeField] protected CharacterRenderer2D _character2D;
         [SerializeField] protected TopdownControllerBody2D _controllerBody2D;
         

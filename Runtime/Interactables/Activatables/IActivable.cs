@@ -20,15 +20,6 @@ namespace SF.Interactables
         /// </example>
         /// </summary>
         public event Action OnResetActivableHandler;
-        
-        public void OnActivation()
-        {
-
-        }
-        public void OnDeactivate()
-        {
-
-        }
     }
 
     public interface IResetActivable : IActivableEventHandler
@@ -58,6 +49,45 @@ namespace SF.Interactables
                 _activated = value;
             }
         }
+
+        protected virtual void OnActivation()
+        {
+
+        }
+        protected virtual void OnDeactivate()
+        {
+
+        }
+    }
+    
+    public abstract class ActivableEventHandlerWrapper : MonoBehaviour, IActivableEventHandler
+    {
+        [field: SerializeField]
+        private bool _activated;
+        public bool Activated
+        {
+            get => _activated;
+            set
+            {
+                // If we are activating while currently not already active.
+                if(value && !_activated)
+                {
+                    OnActivation();
+                    OnActivationHandler?.Invoke();
+                }
+                // If we are deactivating it while it is currently activated
+                else if(!value && _activated)
+                {
+                    OnDeactivate();
+                    OnDeactivationHandler?.Invoke();
+                }
+                _activated = value;
+            }
+        }
+
+        public event Action OnActivationHandler;
+        public event Action OnDeactivationHandler;
+        public event Action OnResetActivableHandler;
 
         protected virtual void OnActivation()
         {

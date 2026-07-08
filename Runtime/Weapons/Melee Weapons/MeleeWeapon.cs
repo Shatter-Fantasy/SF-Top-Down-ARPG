@@ -87,9 +87,9 @@ namespace SF.Weapons
                         0
                     );
             }
-
-
-            _hitBox.Body.position = (Vector2)transform.position + offset ;
+            
+            _controllerBody2D?.FreezeController(true);
+            _hitBox.Body.position = (Vector2)transform.position + offset;
             _hitBox.Body.enabled  = true;
             
             _character2D.CharacterState.AttackState = AttackState.Attacking;
@@ -128,13 +128,15 @@ namespace SF.Weapons
                 if (result[i].shape.callbackTarget is SFShapeComponent shapeComponent 
                     && shapeComponent.TryGetComponent(out IDamagable damageable))
                 {
-                    damageable.TakeDamage(WeaponDamage,_knockBackForce);
+                    _hitBox.Body.GetDirectionToNormalized(shapeComponent.Body, ref _knockbackDirection);
+                    damageable.TakeDamage(WeaponDamage,_knockBackForce * _knockbackDirection * -1);
                 }
             }
         }
         
         protected virtual void OnUseComplete()
         {
+            _controllerBody2D.UnfreezeController();
             _controllerBody2D.CharacterState.AttackState = AttackState.NotAttacking;
             _hitBoxTimer.StopTimer();
             _attackTimer.StopTimer();
@@ -142,8 +144,6 @@ namespace SF.Weapons
             OnCooldown           = false;
             _hitBox.Body.enabled = false;
         }
-
-       
         
         #if UNITY_EDITOR
         /// <summary>

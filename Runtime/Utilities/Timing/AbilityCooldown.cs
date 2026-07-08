@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace SF.AbilityModule
@@ -7,6 +8,7 @@ namespace SF.AbilityModule
     /// This will allow for abilities to have cooldowns for a variety of 
     /// cases such as ability reactivation, ability delay for going from one ability to another, and ability activation delay when leaving certain character states. Think of a delay on ability activation after being damaged of stunned.
     /// </summary>
+    [Serializable]
     public class AbilityCooldown
     {
         /// <summary>
@@ -18,19 +20,36 @@ namespace SF.AbilityModule
         /// Is the ability currently on cooldown.
         /// </summary>
         public bool IsOnCooldown = false;
+        
+        private Action _onCooldownCompleted;
 
-        public void Start()
+        public AbilityCooldown(float cooldownTime = 2.5f, Action onCooldownCompleted = null)
         {
-            CoolDownTimer = new Timer(3);
-            StartCooldown();
+            _onCooldownCompleted = onCooldownCompleted;
+            CoolDownTimer = new Timer(cooldownTime, _onCooldownCompleted);
         }
-
-        private async void StartCooldown()
+        
+        public void Start(bool bypassCooldown = false)
         {
-            // First set it to false
-            IsOnCooldown = false;
-            // The CooldownTimer awaitable will return true when the timer finishes.
-            IsOnCooldown = await CoolDownTimer.StartTimerAsync();
+            if (IsOnCooldown && !bypassCooldown)
+                return;
+            
+            StartCooldownAsync();
+        }
+        
+        private async void StartCooldownAsync()
+        {
+            try
+            {
+                // First set it to false
+                IsOnCooldown = true;
+                // The CooldownTimer awaitable will return true when the timer finishes and after the onCompleted is run./
+                IsOnCooldown = !await CoolDownTimer.StartTimerAsync();
+            }
+            catch (Exception e)
+            {
+                Debug.LogException(e);
+            }
         }
     }
 }

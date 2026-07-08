@@ -6,7 +6,10 @@ namespace SF.AbilityModule
 	using Managers;
 	using U2D.Physics;
 
-	public abstract class AbilityBase : MonoBehaviour, IAbility
+	/// <summary>
+	/// Base class for any ability that is a MonoBehavior.
+	/// </summary>
+	public abstract class AbilityBehaviorBase : MonoBehaviour, IAbility
 	{
 		protected bool _isInitialized;		
 
@@ -91,7 +94,7 @@ namespace SF.AbilityModule
 	/// Abilities contain the data for what actions can do and how they do them.
 	/// Use this if you need to worry about Unity's Update callbacks. 
 	/// </summary>
-    public abstract class AbilityCore : AbilityBase
+    public abstract class AbilityCore : AbilityBehaviorBase
     {
 
 		public void PreUpdate() 
