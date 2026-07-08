@@ -8,7 +8,19 @@ namespace SF.U2D.Physics
     [BurstCompile]
     public static class PhysicsShapeExtensions
     {
-
+        
+        /// <summary>
+        /// Returns the <see cref="EntityId"/> of the <see cref="PhysicsBody"/> on a <see cref="SFShapeComponent"/>
+        /// <param name="shapeComponent"></param>
+        /// This method only works if the <see cref="comparedShape"/> is on a <see cref="SFShapeComponent"/>.
+        /// <returns></returns>
+        /// </summary>
+        public static bool CompareShapeEntityID(this SFShapeComponent shapeComponent, PhysicsShape comparedShape)
+        {
+            // If the comparedShape didn't have it's ownerUserData.objectValueId set to the SFShapeComponent this will cause bugs.
+            return shapeComponent.EntityId == comparedShape.ownerUserData.objectValueId;
+        }
+        
         public static bool TryGetGameObjectOnOwner(this PhysicsShape shape,out GameObject gameObject)
         {
             if (shape.body.ownerUserData.objectValue is GameObject objectData)

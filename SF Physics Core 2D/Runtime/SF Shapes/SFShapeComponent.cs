@@ -12,13 +12,6 @@ namespace SF.U2D.Physics
         bool OnPreSolve2D(PhysicsEvents.PreSolveEvent preSolveEvent,SFShapeComponent callingShapeComponent);
     }
     
-    public interface IContactShapeCallback
-    {
-        void OnContactBegin2D(PhysicsEvents.ContactBeginEvent beginEvent, SFShapeComponent callingShapeComponent);
-
-        void OnContactEnd2D(PhysicsEvents.ContactEndEvent endEvent, SFShapeComponent callingShapeComponent);
-    }
-    
     public interface ITriggerShapeCallback
     {
         void OnTriggerBegin2D(PhysicsEvents.TriggerBeginEvent beginEvent, SFShapeComponent callingShapeComponent);
@@ -45,29 +38,28 @@ namespace SF.U2D.Physics
         IContactShapeCallback, PhysicsCallbacks.IContactCallback,
         IPreSolveShapeCallback, PhysicsCallbacks.IPreSolveCallback
     {
+        
+#region C# Object Data
         /// <summary>
         /// The <see cref="EntityId"/> of the <see cref="SFShapeComponent"/>.
         /// <remarks>
         /// The <see cref="Body"/> <see cref="PhysicsBody.userData"/> contains the
         /// <see cref="EntityId"/> converted into a ULong if needed during physics events.
         /// </remarks> </summary>
-        public EntityId EntityId;
-        
-        /// <summary>
-        /// Syncs the PhysicsTransform of the <see cref="SFShapeComponent"/> when something outside of the Physics simulation
-        /// changes the GameObject's Transform.
-        /// <remarks>
-        /// The <see cref="PhysicsWorld.RegisterTransformChange"/> has the <see cref="SFShapeComponent"/> tranform
-        /// registered when the <see cref="Body"/> is created and is valid. 
-        /// </remarks> </summary>
-        /// <param name="transformChangeEvent"></param>
-        public void OnTransformChanged(PhysicsEvents.TransformChangeEvent transformChangeEvent)
-        {
-            var physicsTransform = new PhysicsTransform(transform.position, PhysicsRotate.identity);
-            Body.transform = physicsTransform;
-        }
+        [NonSerialized] public EntityId EntityId;
 
-        public PhysicsShape.ContactFilter ContactFilter;
+        /// <summary>
+        /// This is the <see cref="PhysicsUserData"/> specifically for this component.
+        /// When doing checks for certain user data such as <see cref="EntityId"/> you should use this not
+        /// the <see cref="PhysicsBody.ownerUserData"/> or the <see cref="PhysicsShape.ownerUserData"/>.
+        /// The SF Packages will not guarantee any of them match this value because users can override the others.
+        /// </summary>
+        [NonSerialized] public PhysicsUserData PhysicsUserData;
+#endregion
+        
+
+
+        [NonSerialized] public PhysicsShape.ContactFilter ContactFilter;
         
         protected PhysicsShape _shape;
         /// <summary>
@@ -155,21 +147,27 @@ namespace SF.U2D.Physics
         /// </summary>
         public List<IPhysicsShapeContained> ContainedPhysicsShapes = new();
 
-        public PhysicsBody Body;
+        [NonSerialized] public PhysicsBody Body;
         public PhysicsBodyDefinition BodyDefinition = PhysicsBodyDefinition.defaultDefinition;
-
-        public PhysicsWorld PhysicsWorld;
+        [NonSerialized] public PhysicsWorld PhysicsWorld;
+        private Transform _cachedTransformObject;
 
         /// <summary>
         /// Is the <see cref="Shape"/> created by multiple separate <see cref="PhysicsShape"/>?
         /// </summary>
         [HideInInspector] public bool IsCompositeShape;
-        
+
+
         /// <summary>
-        /// Should the <see cref="Shape"/> size be scaled with the game objects transform.
+        /// Should the <see cref="Shape"/> size be scaled with the game objects <see cref="Transform.localScale"/>.
         /// </summary>
+        [Header("Scale Properties")]
         public bool ScaleSize = true;
-        
+
+        /// <summary>
+        /// Allows doing additional scaling on top of the object <see cref="Transform.localScale"/>
+        /// </summary>
+        public Vector2 ScaleMultiplier = Vector2.one;
         public Vector2 Offset = Vector2.zero; 
         
         /// <summary>
@@ -190,9 +188,10 @@ namespace SF.U2D.Physics
         
         protected void OnEnable()
         {
-            
             EntityId = GetEntityId();
-            PhysicsWorld.RegisterTransformChange(transform,this);
+            //If we set one from a different class don't override it and we set this in start to allow other classes a chance to set it before registering a callback.
+            _cachedTransformObject ??= transform;
+            PhysicsWorld.RegisterTransformChange(_cachedTransformObject,this);
             
             PreEnabled();
             CreateShape();
@@ -213,7 +212,7 @@ namespace SF.U2D.Physics
         
         protected void OnDisable()
         {
-            PhysicsWorld.UnregisterTransformChange(transform,this);
+            PhysicsWorld.UnregisterTransformChange(_cachedTransformObject,this);
             PreDisable();
             DestroyBody();
             DestroyShape();
@@ -262,14 +261,8 @@ namespace SF.U2D.Physics
             // Make sure the shape is valid.
             if (!Shape.isValid)
                 return;
-            
-            PhysicsUserData ownerData = new PhysicsUserData()
-            {
-                // Setting the owner data to be this SFShapeComponent Entity ID and the Gameobject it is on.
-                int64Value  = EntityId.ToULong(EntityId),
-                objectValue = gameObject,
-            };
-            _shape.SetOwnerUserData(ownerData);
+   
+            _shape.SetOwnerUserData(PhysicsUserData);
             _shape.callbackTarget = this;
             ShapeCreatedHandler?.Invoke();
         }
@@ -304,22 +297,21 @@ namespace SF.U2D.Physics
                 // Set the transform object.
                 Body.transformObject      = transform;
                 Body.callbackTarget       = this;
-               
-
-                PhysicsUserData ownerData = new PhysicsUserData()
+                            
+                PhysicsUserData =  new PhysicsUserData()
                 {
-                    // Setting the owner data to be this SFShapeComponent Entity ID and the Gameobject it is on.
-                    int64Value = EntityId.ToULong(EntityId),
-                    objectValue = gameObject,
+                    // Setting the objectValue also sets an objectValueID which is the object's EntityID
+                    objectValue = this,
                 };
                 
-                Body.SetOwnerUserData(ownerData);
+                Body.SetOwnerUserData(PhysicsUserData);
                 Body.userData = new()
                 {
                     objectValue = gameObject
                 };
             }
         }
+
         protected virtual void DestroyShape()
         {
             if (IsCompositeShape 
@@ -552,6 +544,42 @@ namespace SF.U2D.Physics
         protected virtual void DebugPhysicsExtra(){}
 
 #endregion
+
+#region Transaform Syncing
+        /// <summary>
+        /// Syncs the PhysicsTransform of the <see cref="SFShapeComponent"/> when something outside of the Physics simulation
+        /// changes the GameObject's Transform.
+        /// <remarks>
+        /// The <see cref="PhysicsWorld.RegisterTransformChange"/> has the <see cref="SFShapeComponent"/> tranform
+        /// registered when the <see cref="Body"/> is created and is valid. 
+        /// </remarks> </summary>
+        /// <param name="transformChangeEvent"></param>
+        public void OnTransformChanged(PhysicsEvents.TransformChangeEvent transformChangeEvent)
+        {
+            // Can happen if the Body is destroyed for instance like an enemy despawning on the same frame.
+            if (!Body.isValid)
+                return;
+
+            Body.transform =  new PhysicsTransform(transformChangeEvent.transform.position, PhysicsRotate.FromDegrees(transformChangeEvent.transform.rotation.eulerAngles.z));
+        }
+
+        public void SetTransformObject(Transform transformObject,bool updatePosition = true)
+        {
+            if (!Body.isValid || transformObject == null)
+                return;
+            
+            if(_cachedTransformObject != null)
+                PhysicsWorld.UnregisterTransformChange(_cachedTransformObject,this);
+            
+            _cachedTransformObject = transformObject;
+            Body.transformObject = _cachedTransformObject;
+            PhysicsWorld.RegisterTransformChange(_cachedTransformObject,this);
+            
+            if(updatePosition)
+                Body.position = transformObject.position;
+        }
+#endregion
+
         
         public PhysicsAABB CalculateAABB()
         {
@@ -592,6 +620,14 @@ namespace SF.U2D.Physics
             _shape.contactFilter          = filter;
         }
 
+#region PhysicsTransform
+
+        public void MoveBodyTowards(Vector2 targetPosition, float maxDistanceDelta)
+        {
+            Body.position = Vector2.MoveTowards(Body.transform.position, targetPosition, maxDistanceDelta);
+        }
+#endregion
+        
 #if  UNITY_EDITOR
         public void TransformChanged()
         {

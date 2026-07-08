@@ -11,7 +11,13 @@ namespace SF.Utilities
     public static class VectorExtensions
     {
 
-        #region Vector 2 Extensions
+#region Vector 2 Extensions
+
+        public static Vector2 GetNormalizedDirection(Vector2 fromPosition, Vector2 toPosition)
+        {
+           return (fromPosition - toPosition).normalized;
+        }
+            
         public static Vector3[] ToVector3Array(this Vector2[] vectors) =>
             vectors.Cast<Vector3>().ToArray();
         
@@ -51,7 +57,7 @@ namespace SF.Utilities
             else
                 return new Vector2Int(Mathf.CeilToInt(vector2.x), Mathf.CeilToInt(vector2.y));
         }
-        #endregion
+#endregion
 
         #region Vector 3 Extensions
         public static Vector2[] ToVector2Array(this Vector3[] vectors)

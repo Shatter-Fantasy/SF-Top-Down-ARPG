@@ -48,28 +48,34 @@ namespace SF.Utilities
             return tilePositions;
         }
         
-#if UNITY_6000_4_OR_NEWER
         public static int GetUsedTileData(this Tilemap tilemap, out List<TileData> usedTileData, out Tilemap.PositionArray positionArray)
         {
             usedTileData  = new();
             positionArray = new Tilemap.PositionArray();
-            
+
+            if (tilemap == null)
+                return 0;
+
             // This can not be called during awake, CheckConsistency, or OnValidate.
             //tilemap.CompressBounds();
             BoundsInt bounds             = tilemap.cellBounds;
-            int count = tilemap.GetTiles(bounds,out positionArray, out var tilesArray, withinBounds: true);
+            int count = tilemap.GetTiles(bounds,out positionArray, out Tilemap.TileArray tilesArray, withinBounds: true);
 
             for (int i = 0; i < tilesArray.Length; i++)
             {
                 var tileData = new TileData();
+
+                if(tilesArray[i] == null) // If the tile data in the array was removed it can caused a null if not checked before memory is cleaned up.
+                    continue;
+
                 tilesArray[i].GetTileData(positionArray[i],tilemap, ref tileData);
+                
                 usedTileData.Add(tileData);
             }
             
            
             return count;
         }
-#endif
         public static void GetUsedTileData(this Tilemap tilemap, out List<TileData> usedTileData)
         {
             usedTileData = new();
