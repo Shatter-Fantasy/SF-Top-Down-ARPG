@@ -41,6 +41,8 @@ namespace SF.SpawnModule
             // This empty ovveride prevents the base health script from deactivating the player.
             // Only needed for a bit before the next update to the player spawn system is done.
         }
+
+
         protected override void OnEnable()
         {
             base.OnEnable();

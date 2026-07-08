@@ -36,9 +36,6 @@ namespace SF.U2D.Physics
             get { return _direction; }
             set
             {
-                if (_previousDirection != value)
-                    _previousDirection = _direction;
-                
                 value.x = Mathf.RoundToInt(value.x);
                 value.y = Mathf.RoundToInt(value.y);
                 
@@ -49,10 +46,6 @@ namespace SF.U2D.Physics
         
         [SerializeField] protected Vector2 _direction;
         public Vector2 DirectionLastFrame;
-        /// <summary>
-        /// Used to keep track of the direction to restore after unfreezing the Controller2D.
-        /// </summary>
-        protected Vector2 _previousDirection;
         
         public EventHandler<Vector2> OnDirectionChanged;
       
@@ -72,6 +65,10 @@ namespace SF.U2D.Physics
         #endregion
 
         public bool IsFrozen;
+        /// <summary>
+        /// If the direction is frozen than changing input to change direction won't do anything till the controller unfreezes.
+        /// </summary>
+        public bool IsDirectionFrozen;
 
         #region Lifecycle Methods
         private void Awake()
@@ -156,14 +153,16 @@ namespace SF.U2D.Physics
         protected abstract void CalculateHorizontal();
         protected abstract void CalculateVertical();
         
-        public virtual void FreezeController()
+        public virtual void FreezeController(bool freezeDirection = true)
         {
-            _calculatedVelocity.x = 0;
-            _externalVelocity.x = 0;
+            IsDirectionFrozen = freezeDirection;
+            _calculatedVelocity = Vector2.zero;
+            _externalVelocity = Vector2.zero;
             IsFrozen = true;
         }
         public virtual void UnfreezeController()
         {
+            IsDirectionFrozen = false;
             IsFrozen = false;
         }
         public void SetExternalVelocity(Vector2 force)

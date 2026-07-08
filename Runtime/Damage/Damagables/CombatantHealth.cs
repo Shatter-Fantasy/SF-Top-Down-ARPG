@@ -14,12 +14,15 @@ namespace SF.SpawnModule
         private StateMachineBrain _combatantStateBrain;
 
         [SerializeField] protected SpriteBlinkCommand _spriteBlink;
+        
         protected override void Awake()
         {
             base.Awake();
             _combatantData       = GetComponent<CombatantData>();
             _combatantStateBrain = GetComponentInChildren<StateMachineBrain>();
             _currentHealth       = MaxHealth;
+
+            TryGetComponent(out _spriteBlink.SpriteRenderer);
         }
         
         protected override void Kill(Vector2 knockback = new Vector2())
@@ -37,15 +40,13 @@ namespace SF.SpawnModule
             if (_controllerBody2D != null)
             {
                 _controllerBody2D.CharacterState.CharacterStatus = CharacterStatus.Dead;
-                _controllerBody2D.AddVelocity(knockback);
+                _controllerBody2D?.SetExternalVelocity(knockback);
             }
             
             if(_deathSFX != null)
                 AudioManager.Instance.PlayOneShot(_deathSFX);
-            
-            CharacterDeathHandler?.Invoke(this);
-            
-            _ = _spriteBlink.Use();
+
+            //_ = _spriteBlink.Use();
             _ = _deathTimer.StartTimerAsync();
         }
 

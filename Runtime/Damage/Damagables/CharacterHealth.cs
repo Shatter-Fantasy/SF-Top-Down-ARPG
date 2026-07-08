@@ -24,8 +24,7 @@ namespace SF.SpawnModule
         public float HitAnimationDuration = 0.3f;
         
         //public SpriteBlinkCommand DamageBlink;
-
-        public Action<CharacterHealth> CharacterDeathHandler;
+        
         protected TopdownControllerBody2D _controllerBody2D;
         protected CharacterRenderer2D _character2D;
 
@@ -42,7 +41,6 @@ namespace SF.SpawnModule
             if(_controllerBody2D != null)
                 _controllerBody2D.CharacterState.CharacterStatus = CharacterStatus.Dead;
             
-            CharacterDeathHandler?.Invoke(this);
             //DamageBlink.StopInteruptBlinking();
             
             base.Kill(knockback);
@@ -67,7 +65,10 @@ namespace SF.SpawnModule
             
             if(_character2D != null && !string.IsNullOrEmpty(HitAnimationName))
                 _character2D.SetAnimationState(HitAnimationName, HitAnimationDuration);
-
+            
+            if(knockback != Vector2.zero)
+                _controllerBody2D?.SetExternalVelocity(knockback);
+            
             base.TakeDamage(damage,knockback);
             //_ = DamageBlink.Use();
             
@@ -75,7 +76,6 @@ namespace SF.SpawnModule
             
             _activeInvicibility = true;
             _ = _invicibilityTimer.StartTimerAsync();
-
         }
 
         protected void OnInvicibilityTimerCompleted()

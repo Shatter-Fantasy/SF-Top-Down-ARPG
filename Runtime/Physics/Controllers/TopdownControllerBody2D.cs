@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace SF.U2D.Physics
 {
-    using Characters;
+    using SF.Characters;
     
     /// <summary>
     /// Base class for all topdown style physic controllers.
@@ -64,11 +64,10 @@ namespace SF.U2D.Physics
             if (ShapeComponent == null
                 || !ShapeComponent.Shape.isValid)
                 return;
-            
-            if(IsFrozen
-               || CharacterState.CharacterStatus == CharacterStatus.Dead)
+
+            if (IsFrozen || CharacterState.CharacterStatus == CharacterStatus.Dead)
                 _calculatedVelocity = Vector2.zero;
-            
+
             if (_externalVelocity != Vector2.zero)
             {
                 _calculatedVelocity = _externalVelocity;
@@ -81,7 +80,7 @@ namespace SF.U2D.Physics
         protected override void CalculateHorizontal()
         {
             // TODO: Check if climbing up a vie or something.
-
+            
             if (Direction.x != 0)
             {
                 ReferenceSpeed = Mathf.Clamp(ReferenceSpeed, 0, CurrentPhysics.GroundMaxSpeed);

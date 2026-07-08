@@ -38,7 +38,7 @@ namespace SF.SpawnModule
             }
         }
         public Action<int> HealthChangedCallback;
-        public Action WasKilledCallback;
+        public Action<Health> DeathHandler;
         
         public int MaxHealth = 10;
 
@@ -50,7 +50,7 @@ namespace SF.SpawnModule
         /// Timer that allows a delay before deactivating a game object when <see cref="Kill"/> is called.
         /// This allows for having events or animations play first, then despawning the object. 
         /// </summary>
-        [SerializeField] protected Timer _deathTimer;
+        [SerializeField] protected Timer _deathTimer = new Timer(0.5f);
         public virtual void TakeDamage(int damage, Vector2 knockback = new Vector2())
         {
             if(DamageController != null)
@@ -71,10 +71,19 @@ namespace SF.SpawnModule
             }
         }
 
-        public virtual void FullHeal()
+        public virtual void FullHeal() => CurrentHealth = MaxHealth;
+
+        /// <summary>
+        /// Updates the <see cref="MaxHealth"/> and optionally allows setting the <see cref="CurrentHealth"/> to it.
+        /// <example>Can be used for updat8ing health during levels ups or buff changes.</example>
+        /// </summary>
+        /// <param name="amount"></param>
+        /// <param name="resetCurrentToMaxHp"></param>
+        public void ChangeMaxHp(int amount = 5, bool resetCurrentToMaxHp = false)
         {
-           
-            CurrentHealth = MaxHealth;
+            MaxHealth += amount;
+            if (resetCurrentToMaxHp)
+                CurrentHealth = MaxHealth;
         }
 
         public virtual void InstantKill()
@@ -87,7 +96,7 @@ namespace SF.SpawnModule
         {
             if(_deathSFX != null)
                 AudioManager.Instance.PlayOneShot(_deathSFX);
-            WasKilledCallback?.Invoke();
+            
             _ = _deathTimer.StartTimerAsync();
         }
         
@@ -99,6 +108,7 @@ namespace SF.SpawnModule
 
         public virtual void Despawn()
         {
+            DeathHandler?.Invoke(this);
             gameObject.SetActive(false);
         }
 
