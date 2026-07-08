@@ -9,6 +9,8 @@ namespace SF.DamageModule
     {
         protected CharacterStats _characterStats;
 
+        public int Damage { get; }
+
         public int CalculateDamage(int damage)
         {
             return damage;
