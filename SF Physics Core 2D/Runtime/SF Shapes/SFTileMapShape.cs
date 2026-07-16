@@ -121,16 +121,24 @@ namespace SF.U2D.Physics
                     continue;
 
                 tileSprite = _tilesInBlock[i].sprite;
-                
+
+#if UNITY_6000_7_OR_NEWER
+                var physicsShapeCount = tileSprite.GetPhysicsOutlineCount();
+#else
                 var physicsShapeCount = tileSprite.GetPhysicsShapeCount();
+#endif
                 if (physicsShapeCount == 0)
                     continue;
                 
                 // Add all physic shape paths.
                 for (var j = 0; j < physicsShapeCount; ++j)
                 {
+#if UNITY_6000_7_OR_NEWER
                     // Get the physics shape.
+                    if (tileSprite.GetPhysicsOutline(j, _physicsShapeVertex) > 0)
+#else
                     if (tileSprite.GetPhysicsShape(j, _physicsShapeVertex) > 0)
+#endif
                     {
                         // TODO: The below really should be moved into a IJob struct for calculating the vertex path position to speed up.
                         //  We should calculate the final position of the vertexes in a job because when loading a bigger tilemap room we could have hundreds of tiles

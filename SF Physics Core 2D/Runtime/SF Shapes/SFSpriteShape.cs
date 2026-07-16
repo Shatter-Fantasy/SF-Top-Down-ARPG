@@ -23,11 +23,15 @@ namespace SF.U2D.Physics
         {
             if(_spriteRenderer == null || _sprite == null)
                 return;
-            
+
+#if UNITY_6000_7_OR_NEWER
+            var physicsShapeCount = _sprite.GetPhysicsOutlineCount();
+#else
             var physicsShapeCount = _sprite.GetPhysicsShapeCount();
+#endif
             if (physicsShapeCount == 0)
                 return;
-            
+
             var composer = PhysicsComposer.Create();
             composer.useDelaunay = _useDelaunay;
 
@@ -36,7 +40,11 @@ namespace SF.U2D.Physics
             // Add all physic shape paths.
             for (var i = 0; i < physicsShapeCount; ++i)
             {
+#if UNITY_6000_7_OR_NEWER
+                if (_sprite.GetPhysicsOutline(i, _physicsShapeVertex) > 0)
+#else
                 if (_sprite.GetPhysicsShape(i, _physicsShapeVertex) > 0)
+#endif
                 {
                     // Add to something we can use.
                     for (int v = 0; v < _physicsShapeVertex.Count; v++)

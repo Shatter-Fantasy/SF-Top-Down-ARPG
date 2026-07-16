@@ -287,8 +287,10 @@ namespace SF.U2D.Physics
                 PhysicsWorld = PhysicsWorld.defaultWorld;
             }
             // Sync the shape position with the component's transform position.
+            // TODO: Look into using the writePose method instead with PhysicsBody after creation. Only fear is there could be a frame it is in the wrong position.
             BodyDefinition.position = PhysicsMath.ToPosition2D(transform.position, PhysicsWorld.transformPlane);
-            BodyDefinition.rotation = new PhysicsRotate(PhysicsMath.ToRotation2D(transform.rotation, PhysicsWorld.transformPlane));
+            BodyDefinition.rotation =
+                PhysicsRotate.FromRadians(PhysicsMath.ToRotation2D(transform.rotation, PhysicsWorld.transformPlane));
             
             // Create the physics body to inject into the shape when creating it.
             Body = PhysicsBody.Create(world:PhysicsWorld, definition: BodyDefinition);
