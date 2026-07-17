@@ -77,7 +77,11 @@ namespace SF.Managers
         protected void OnEnable()
         {
             if (SFInputManager.Instance != null)
+            {
+                SFInputManager.Controls.GameControl.Enable();
                 SFInputManager.Controls.GameControl.ExitGame.performed += OnExitGame;
+
+            }
             //DialogueManager.DialogueStartedHandler += OnDialogueStarted;
             //DialogueManager.DialogueEndedHandler += OnDialogueEnded;
         }
@@ -121,7 +125,7 @@ namespace SF.Managers
             GamePausedHandler?.Invoke();
         }
 
-        protected static void Unpause()
+        public static void Unpause()
         {
             Instance.ControlState = GameControlState.Player;
             GameUnpausedHandler?.Invoke();
