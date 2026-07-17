@@ -74,6 +74,11 @@ namespace SF.U2D.Physics
 
         public PhysicsWorld World => Body.isValid ? Body.world : PhysicsWorld.defaultWorld;
 
+        /// <summary>
+        /// Use this PhysicsWorld when needing to pass by ref.
+        /// </summary>
+        [NonSerialized] public PhysicsWorld PhysicsWorld;
+
         public virtual void SetShape<TGeometryType>(TGeometryType geometryType) where  TGeometryType : struct
         {
             if (!_shape.isValid)
@@ -149,7 +154,7 @@ namespace SF.U2D.Physics
 
         [NonSerialized] public PhysicsBody Body;
         public PhysicsBodyDefinition BodyDefinition = PhysicsBodyDefinition.defaultDefinition;
-        [NonSerialized] public PhysicsWorld PhysicsWorld;
+
         private Transform _cachedTransformObject;
 
         /// <summary>

@@ -44,16 +44,6 @@ namespace SF.UIModule
 			    _uiController = uiController;
 		    
 		    RootElement = rootElement;
-		    
-		    /*	Might be able to use Template instances inside the UXML instead.
-				Basically the UIDocument component has the root UIViews VisualTreeAset and
-				inside of it's uxml structure the templates that contain the structure for sub views are in it.
-				We use the Query system to get the roots for each UIView and go from there.
-		     
-		    if(_mainViewTreeAsset == null || RootElement == null)
-			    return;
-		    _mainViewTreeAsset.CloneTree(RootElement);
-		    */
 
 		    if(_hideOnAwake)
 		    {

@@ -8,7 +8,7 @@ namespace SF
     {
         public float Duration = 3;
         public float RemainingTime;
-        public float ElapsedTimer = 0;
+        [NonSerialized] public float ElapsedTimer = 0;
         /// <summary>
         /// An Action that is called at the end when the Timer hits 0.
         /// </summary>
