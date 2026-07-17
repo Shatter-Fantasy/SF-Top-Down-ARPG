@@ -43,6 +43,7 @@ namespace SF.U2D.Physics
         //public const int UILayer = 8;
         
         public const int PlayerLayer = 10;
+        public const int PlayerBitmask = 1024;
         public const int EnemiesLayer = 11;
         public const int FriendliesLayer = 12;
         

@@ -1,5 +1,6 @@
 using System.Runtime.CompilerServices;
 using Unity.Burst;
+using Unity.Collections;
 using Unity.U2D.Physics;
 using UnityEngine;
 
@@ -212,5 +213,31 @@ namespace SF.U2D.Physics
         
 #endregion
 
+        public static float GetAngleToPointInDegrees(this ref PhysicsShape shape, Vector2 referencePosition)
+        {
+            Vector2 deltaPos;
+            deltaPos.x = shape.transform.position.x - referencePosition.x;
+            deltaPos.y = shape.transform.position.y - referencePosition.y;
+            deltaPos = deltaPos.normalized;
+            return Mathf.Atan2(deltaPos.y,deltaPos.x);
+        }
+    }
+
+    [BurstCompile]
+    public static class SFShapeComponentUtilities
+    {
+        public static NativeArray<PhysicsQuery.WorldOverlapResult> OverlapBodyAABB(this SFShapeComponent shapeComponent, PhysicsQuery.QueryFilter filter)
+        {
+            return OverlapBodyAABB(ref shapeComponent.Body, in shapeComponent.PhysicsWorld, ref filter);
+        }
+
+        // [BurstCompile] need to do an out instead of return NativeArray
+        private static NativeArray<PhysicsQuery.WorldOverlapResult> OverlapBodyAABB(ref PhysicsBody body, in PhysicsWorld world ,ref PhysicsQuery.QueryFilter filter)
+        {
+            if (!body.isValid || !world.isValid)
+                return new NativeArray<PhysicsQuery.WorldOverlapResult>(0, Allocator.None);
+
+            return world.OverlapAABB(body.GetAABB(), filter);
+        }
     }
 }
