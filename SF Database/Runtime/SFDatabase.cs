@@ -93,18 +93,13 @@ namespace SF.DataModule
                 foundDatabase.DataEntries[i].ID = i;
             }
         }
-        
-        protected virtual void SetCommonDataFields<TDatabaseType>() where TDatabaseType : SFAssetDatabase<T> 
-        {
-            
-        }
 #endif
     }
     
     /// <summary>
     /// A generic database class for storing data about DTOBase classes or sub classes.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="TDTOBase"></typeparam>
     public abstract class SFDatabase<TDTOBase> : SFDatabase where TDTOBase : DTOBase
     {
         [SerializeReference] public List<TDTOBase> DataEntries = new List<TDTOBase>();

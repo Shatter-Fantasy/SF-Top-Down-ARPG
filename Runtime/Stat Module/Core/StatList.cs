@@ -4,9 +4,13 @@ using SF.Inventory.StatModule;
 
 namespace SF.StatModule
 {
-
     [System.Serializable]
-    public class StatList
+    public class StatListBase
+    {
+
+    }
+    [System.Serializable]
+    public class StatList : StatListBase
     {
         public AttributesStats AttributesStats;
 
