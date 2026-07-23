@@ -39,13 +39,13 @@ namespace SF.DamageModule
         
         public void OnTriggerBegin2D(PhysicsEvents.TriggerBeginEvent beginEvent, SFShapeComponent callingShapeComponent)
         {
-            // If the target is not a component we can back out.
-            if(!beginEvent.TryGetCallbackComponentOnVisitor(out Component callbackTarget))
+            PhysicsShape damageableShape = beginEvent.GetShapeWithCategoryBit(SFPhysicsManager.PlayerLayer);
+
+            // (PhysicsShape)default should be false when using SIValid.
+            if (!damageableShape.isValid)
                 return;
-            
-            if(!callbackTarget.TryGetComponent(out IDamagable damagable))
-                return;
-            
+
+            damageableShape.TryGetCallbackComponent(out IDamagable damagable);
             damagable.TakeDamage(DamageAmount,_knockBackForce);
         }
 
@@ -56,14 +56,10 @@ namespace SF.DamageModule
         
         public void OnContactBegin2D(PhysicsEvents.ContactBeginEvent beginEvent, SFShapeComponent callingShapeComponent)
         {
-            IDamagable damagable;
-
-            if (!beginEvent.shapeA.isValid || !beginEvent.shapeB.isValid)
+            if (!beginEvent.TryGetShapeWithCategoryBit(SFPhysicsManager.PlayerLayer, out PhysicsShape damageableShape))
                 return;
 
-            PhysicsShape damageableShape = beginEvent.GetShapeWithCategoryBit(SFPhysicsManager.PlayerLayer);
-
-            if(damageableShape.TryGetCallbackComponent(out damagable))
+            if(damageableShape.TryGetCallbackComponent(out IDamagable damagable))
                 damagable.TakeDamage(DamageAmount,_knockBackForce);
         }
 

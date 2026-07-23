@@ -255,6 +255,52 @@ namespace SF.U2D.Physics
             // Neither shape had the right categoryBitIndex set.
             return false;
         }
+
+        public static PhysicsShape GetShapeWithCategoryBit(this in PhysicsEvents.TriggerBeginEvent beginEvent, in int categoryBitIndex)
+        {
+            if (beginEvent.triggerShape.contactFilter.categories.IsBitSet(categoryBitIndex))
+                return beginEvent.triggerShape;
+
+            if (beginEvent.visitorShape.contactFilter.categories.IsBitSet(categoryBitIndex))
+                return beginEvent.visitorShape;
+
+            return (PhysicsShape)default;
+        }
+
+        /// <summary>
+        /// Checks if both of the <see cref="PhysicsShape"/> involved in the <see cref="beginEvent"/> are valid and only returns
+        /// one of the shapes if they both pass IsValid checks.
+        /// If either fail the valid check this method returns a default <see cref="PhysicsShape"/>.
+        ///
+        /// Imprtant this only checks the <see cref="PhysicsShape"/> for being valid not the <see cref="PhysicsBody"/> they are a part of.
+        /// </summary>
+        /// <param name="beginEvent"></param>
+        /// <param name="categoryBitIndex"></param>
+        /// <param name="shape"></param>
+        /// <returns></returns>
+        public static bool TryGetShapeWithCategoryBit(this in PhysicsEvents.TriggerBeginEvent beginEvent, in int categoryBitIndex, out PhysicsShape shape)
+        {
+            shape = (PhysicsShape)default;
+            var shapeA = beginEvent.visitorShape;
+            var shapeB = beginEvent.triggerShape;
+            if (!shapeA.isValid || !shapeB.isValid)
+                return false;
+
+            if (shapeA.contactFilter.categories.IsBitSet(categoryBitIndex))
+            {
+                shape = shapeA;
+                return true;
+            }
+
+            if (shapeB.contactFilter.categories.IsBitSet(categoryBitIndex))
+            {
+                shape = shapeB;
+                return true;
+            }
+
+            // Neither shape had the right categoryBitIndex set.
+            return false;
+        }
 #endregion
     }
 }
