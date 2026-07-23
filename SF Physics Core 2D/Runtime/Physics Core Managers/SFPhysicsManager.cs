@@ -102,7 +102,7 @@ namespace SF.U2D.Physics
             tempBodies.Dispose();
         }
 
-        public static bool RunSFPhysicsPlayerLoop = true;
+        public static bool RunSFPhysicsPlayerLoop = false;
 
 
         /// <summary>
