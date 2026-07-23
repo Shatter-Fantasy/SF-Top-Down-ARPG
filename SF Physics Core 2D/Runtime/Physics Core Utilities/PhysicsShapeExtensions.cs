@@ -35,18 +35,22 @@ namespace SF.U2D.Physics
         }
         
 #region PhysicsShape Callbacks Targets
-        public static bool TryGetCallbackComponent<T>(this PhysicsShape shape,out T component, bool checkShapeValidation = false) where T : Component
+        public static bool TryGetCallbackComponent<T>(this PhysicsShape shape,out T component, bool checkShapeValidation = true, bool checkSiblingComponents = true)
         {
-            component = null;
+            component = (T)default;
             
             // Optional check for only using Component set as a callbackTarget for valid shapes.
             if (checkShapeValidation && !shape.isValid)
                 return false;
 
-            if (shape.callbackTarget is not T callbackTarget) 
+            var callbackTarget = shape.callbackTarget;
+            if (callbackTarget is not T && !checkSiblingComponents)
                 return false;
-            
-            component = callbackTarget;
+
+            if (callbackTarget is not Component callbackComponent
+                || !callbackComponent.TryGetComponent(out component))
+                return false;
+
             return true;
         }
 #endregion
