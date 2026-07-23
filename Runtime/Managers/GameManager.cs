@@ -61,7 +61,7 @@ namespace SF.Managers
         private void Awake()
         {
             if(GameSettings != null)
-                GameSettings.DisplaySettings.ProcessSettings();
+                GameSettings.ProcessSettings();
 
             if (Instance == null)
             {
@@ -80,13 +80,10 @@ namespace SF.Managers
             {
                 SFInputManager.Controls.GameControl.Enable();
                 SFInputManager.Controls.GameControl.ExitGame.performed += OnExitGame;
-
             }
             //DialogueManager.DialogueStartedHandler += OnDialogueStarted;
             //DialogueManager.DialogueEndedHandler += OnDialogueEnded;
         }
-
-
 
         protected void OnDisable ()
         {
