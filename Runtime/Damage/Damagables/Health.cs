@@ -9,6 +9,13 @@ using SF.DamageModule;
 
 namespace SF.SpawnModule
 {
+    public enum MaxHPChangeMode
+    {
+        Nothing  = 0,
+        AddChangedToCurrent = 1,
+        ResetCurrentToMax = 2
+    }
+
     /// <summary>
     /// Adds a health system to anything. 
     /// This does not need to be on a character. You can add this to a crate or anything that wants to be damaged. There are checks in do stuff for character specific objects if you want to.
@@ -24,7 +31,7 @@ namespace SF.SpawnModule
         /// </summary>
         public IDamageController DamageController;
 
-        [SerializeField] protected int _currentHealth;
+        [CreateProperty,SerializeField] protected int _currentHealth;
         [CreateProperty] public int CurrentHealth
         {
             get => _currentHealth;
@@ -34,13 +41,14 @@ namespace SF.SpawnModule
                 _currentHealth = value;
 
                 if(previousValue != _currentHealth)
-                    HealthChangedCallback?.Invoke(_currentHealth);
+                    CurrentHealthChangedCallback?.Invoke(_currentHealth);
             }
         }
-        public Action<int> HealthChangedCallback;
+        public Action<int> CurrentHealthChangedCallback;
+        public Action<Health> HealthChangedHandler;
         public Action<Health> DeathHandler;
         
-        public int MaxHealth = 10;
+        [CreateProperty] public int MaxHealth = 10;
 
         [Header("SFX")]
         [SerializeField] protected AudioClip _deathSFX;
@@ -79,11 +87,20 @@ namespace SF.SpawnModule
         /// </summary>
         /// <param name="amount"></param>
         /// <param name="resetCurrentToMaxHp"></param>
-        public void ChangeMaxHp(int amount = 5, bool resetCurrentToMaxHp = false)
+        public void ChangeMaxHp(int amount = 5, MaxHPChangeMode changeMode = MaxHPChangeMode.AddChangedToCurrent)
         {
             MaxHealth += amount;
-            if (resetCurrentToMaxHp)
-                CurrentHealth = MaxHealth;
+            switch (changeMode)
+            {
+                case MaxHPChangeMode.AddChangedToCurrent:
+                    CurrentHealth += amount;
+                    break;
+                case MaxHPChangeMode.ResetCurrentToMax:
+                    CurrentHealth = MaxHealth;
+                    break;
+            }
+
+            HealthChangedHandler?.Invoke(this);
         }
 
         public virtual void InstantKill()
