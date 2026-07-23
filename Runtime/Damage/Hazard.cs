@@ -60,19 +60,10 @@ namespace SF.DamageModule
 
             if (!beginEvent.shapeA.isValid || !beginEvent.shapeB.isValid)
                 return;
-            
-            if (beginEvent.shapeA.contactFilter.categories.IsBitSet(SFPhysicsManager.PlayerLayer))
-            {
-                if(beginEvent.TryGetComponentOnShapeAGameObject(out damagable))
-                    damagable.TakeDamage(DamageAmount,_knockBackForce);
-                
-                return; // If we already hit the target don't waste CPU on the second if statement.
-            }
 
-            if (!beginEvent.shapeB.contactFilter.categories.IsBitSet(SFPhysicsManager.PlayerLayer))
-                return;
-            
-            if(beginEvent.TryGetComponentOnShapeBGameObject(out damagable))
+            PhysicsShape damageableShape = beginEvent.GetShapeWithCategoryBit(SFPhysicsManager.PlayerLayer);
+
+            if(damageableShape.TryGetCallbackComponent(out damagable))
                 damagable.TakeDamage(DamageAmount,_knockBackForce);
         }
 
