@@ -5,6 +5,7 @@ using UnityEngine;
 
 namespace SF.Settings
 {
+    using SF.AudioModule;
     /// <summary>
     /// The data object for game play settings that can be changed by the players.
     /// </summary>
@@ -13,13 +14,16 @@ namespace SF.Settings
     {
         private List<SettingsBase> _settings = new();
         
-        [CreateProperty]
-        public DisplaySettings DisplaySettings;
-        
+        [CreateProperty] public DisplaySettings DisplaySettings = new DisplaySettings();
+        [CreateProperty] public AudioSettings AudioSettings = new AudioSettings();
+
         private void OnEnable()
         {
             if(DisplaySettings != null)
                 _settings.Add(DisplaySettings);
+
+            if(DisplaySettings != null)
+                _settings.Add(AudioSettings);
         }
 
         /// <summary>
@@ -80,6 +84,17 @@ namespace SF.Settings
                 QualitySettings.vSyncCount  = 0;
                 Application.targetFrameRate = FrameRateLimit;
             }
+        }
+    }
+
+    [Serializable]
+    public class AudioSettings : SettingsBase
+    {
+        public List<AudioManager.AudioChannelSettings> AudioChannelSettingsList = new();
+
+        public override void ProcessSettings()
+        {
+
         }
     }
 }
