@@ -5,7 +5,7 @@ using UnityEngine.Serialization;
 
 namespace SF.CameraModule
 {
-    [AddComponentMenu("Cinemachine/Procedural/Extensions/Cinemachine Rectangle Confiner 2D ")]
+    [AddComponentMenu("Cinemachine/Procedural/Extensions/Cinemachine Rectangle Confiner 2D")]
     [SaveDuringPlay]
     [ExecuteAlways]
     [DisallowMultipleComponent]
