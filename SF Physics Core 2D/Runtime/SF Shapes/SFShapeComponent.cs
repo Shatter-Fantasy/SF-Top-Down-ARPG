@@ -196,7 +196,10 @@ namespace SF.U2D.Physics
             EntityId = GetEntityId();
             //If we set one from a different class don't override it and we set this in start to allow other classes a chance to set it before registering a callback.
             _cachedTransformObject ??= transform;
-            PhysicsWorld.RegisterTransformChange(_cachedTransformObject,this);
+            if(_cachedTransformObject != null)
+                PhysicsWorld.RegisterTransformChange(_cachedTransformObject,this);
+
+
             
             PreEnabled();
             CreateShape();
@@ -217,7 +220,9 @@ namespace SF.U2D.Physics
         
         protected void OnDisable()
         {
-            PhysicsWorld.UnregisterTransformChange(_cachedTransformObject,this);
+            if(_cachedTransformObject != null)
+                PhysicsWorld.UnregisterTransformChange(_cachedTransformObject,this);
+
             PreDisable();
             DestroyBody();
             DestroyShape();
