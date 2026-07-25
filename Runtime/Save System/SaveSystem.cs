@@ -2,17 +2,17 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Security.Cryptography;
-
+using Unity.Scripting.LifecycleManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace SF.DataManagement
 {
-    public class SaveSystem
+    [AutoStaticsCleanup]
+    public partial class SaveSystem
     {
-        protected static SaveSystem _instance;
-        public static SaveSystem Instance
+        [NoAutoStaticsCleanup] protected static SaveSystem _instance;
+        [NoAutoStaticsCleanup] public static SaveSystem Instance
         {
             get => _instance;
             set
@@ -38,7 +38,7 @@ namespace SF.DataManagement
         protected static List<SaveFileData> SaveFile = new() { new SaveFileData() };
         
         protected static SaveFileData _currentSaveFileData;
-        public static SaveFileData CurrentSaveFileData 
+        public static SaveFileData CurrentSaveFileData
         { 
             get
             {
@@ -87,7 +87,7 @@ namespace SF.DataManagement
             Application.persistentDataPath + "/ICSaveData.txt";
 #endif
         // The data stream of the contents being written and read from the save file.
-        protected static FileStream DataStream;
+        [NoAutoStaticsCleanup] protected static FileStream DataStream;
 
         // Key for reading and writing encrypted data.
         // (This is a "hardcoded" secret key. )

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Unity.Scripting.LifecycleManagement;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -25,8 +26,9 @@ namespace SF.Managers
 	/// The current play state of the game loop that describes what type of logic loop is being updated.
 	/// </summary>
 
+    [AutoStaticsCleanup]
     [DefaultExecutionOrder(-5)]
-    public class GameManager : MonoBehaviour
+    public partial class GameManager : ManagerBaseStaticCleanUp<GameManager>
     {
         [SerializeReference]
         public List<SaveDataBlock> SaveDataBlocks = new List<SaveDataBlock> ();
@@ -45,8 +47,6 @@ namespace SF.Managers
                 }
             }
         }
-        
-        public static GameManager Instance;
 
         public Action<GameControlState> OnGameControlStateChanged;
 
@@ -63,9 +63,9 @@ namespace SF.Managers
             if(GameSettings != null)
                 GameSettings.ProcessSettings();
 
-            if (Instance == null)
+            if (_instance == null)
             {
-                Instance = this;
+                _instance = this;
                 DontDestroyOnLoad(gameObject); 
             }
             else

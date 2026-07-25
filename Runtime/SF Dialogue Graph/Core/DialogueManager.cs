@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.Scripting.LifecycleManagement;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -13,10 +14,10 @@ namespace SF.DialogueModule
     /// <summary>
     /// The in scene manager that controls the way DialogueConversations are run and set up.
     /// </summary>
-    public class DialogueManager : MonoBehaviour
+    public partial class DialogueManager : MonoBehaviour
     {
-        private static DialogueManager _instance;
-        public static DialogueManager Instance
+        [AutoStaticsCleanup] private static DialogueManager _instance;
+        [AutoStaticsCleanup] public static DialogueManager Instance
         {
             get => _instance;
             set
@@ -34,8 +35,8 @@ namespace SF.DialogueModule
         [SerializeField] private DialogueConversation _dialogueConversation;
         [field: SerializeField] public DialogueDatabase DialogueDB { get; private set; }
         
-        private static DialogueEntry  _currentEntry;
-        public static DialogueConversation RecentConversation
+        [AutoStaticsCleanup] private static DialogueEntry  _currentEntry;
+        [AutoStaticsCleanup] public static DialogueConversation RecentConversation
         {
             get => _instance._dialogueConversation;
             private set => _instance._dialogueConversation = value;
@@ -51,12 +52,12 @@ namespace SF.DialogueModule
         [NonSerialized] public List<DialogueExtensionBase> Extensions = new(); 
         
         #region Dialogue Events
-        public static event Action DialogueStartedHandler;  
-        public static event Action DialogueEndedHandler;
+        [AutoStaticsCleanup] public static event Action DialogueStartedHandler;
+        [AutoStaticsCleanup] public static event Action DialogueEndedHandler;
         /// <summary>
         /// Invoked when the dialogue changes the current <see cref="DialogueEntry"/> to the next conversation node.
         /// </summary>
-        public static event Action<DialogueEntry> DialogueTextChangedHandler;  
+        [AutoStaticsCleanup] public static event Action<DialogueEntry> DialogueTextChangedHandler;
         #endregion
 
         private Controls _controls;

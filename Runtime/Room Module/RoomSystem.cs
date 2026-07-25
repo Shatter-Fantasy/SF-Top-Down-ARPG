@@ -1,13 +1,13 @@
 using System;
 using System.Collections.Generic;
-
+using Unity.Scripting.LifecycleManagement;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
 namespace SF.RoomModule
 {
     //using SF.LoggingModule;
-    using RegionModule;
+    using SF.RoomModule.RegionModule;
     /// <summary>
     /// Used to allow interactions between the in game systems and the rooms in the current loaded region. <see cref="RegionSystem.LoadedRegionDataAsset"/>.
     /// Also includes helper functions for interacting with room management like room loading/unloading and keeping track of what rooms are already loaded.
@@ -20,7 +20,8 @@ namespace SF.RoomModule
     /// 
     /// </remarks>
     /// </summary>
-    public static class RoomSystem
+    [AutoStaticsCleanup]
+    public static partial class RoomSystem
     {
         public static int StartingRoomId;
         public static bool DynamicRoomLoading = true;

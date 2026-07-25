@@ -1,7 +1,7 @@
-#if !SF_DATABASES
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.Scripting.LifecycleManagement;
 using UnityEngine;
 
 namespace SF.DataModule
@@ -16,9 +16,9 @@ namespace SF.DataModule
         public List<SFDatabase> PreloadedDatabase = new List<SFDatabase>();
         [NonSerialized] public Dictionary<Type, SFDatabase> RegisteredDatabases = new();
 
-        private static DatabaseRegistry _registry;
+        [NoAutoStaticsCleanup] private static DatabaseRegistry _registry;
 
-        public static DatabaseRegistry Registry
+        [NoAutoStaticsCleanup] public static DatabaseRegistry Registry
         {
             get => _registry;
             private set => _registry = value;
@@ -175,4 +175,3 @@ namespace SF.DataModule
 #endif
     }
 }
-#endif

@@ -2,15 +2,16 @@
 using UnityEditor;
 #endif
 
+using Unity.Scripting.LifecycleManagement;
 using UnityEngine;
 using UnityEngine.Rendering;
 
 namespace SF.Utilities
 {
-    public static class GLUtilities
+    public static partial class GLUtilities
     {
-        public static Color GLColor;
-        public static Material DrawHandleMaterial;
+        [NoAutoStaticsCleanup] public static Color GLColor;
+        [NoAutoStaticsCleanup]public static Material DrawHandleMaterial;
 
         private const int GridGizmoVertexCount = 32000;
         private const float GridGizmoDistanceFalloff = 50f;
@@ -18,7 +19,7 @@ namespace SF.Utilities
         /// <summary>
         /// This is used to store the Viewport before doing a viewport clip during clipping operations. This allows for restoring the pre clipped viewport rect.
         /// </summary>
-        private static Rect _storedPreClippedViewPort;
+        [AutoStaticsCleanup] private static Rect _storedPreClippedViewPort;
 
         
 #region MyRegion

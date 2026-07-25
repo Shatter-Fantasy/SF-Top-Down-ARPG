@@ -1,13 +1,14 @@
 using System;
+using Unity.Scripting.LifecycleManagement;
 using UnityEditor;
 using UnityEngine;
 
 namespace SF.Utilities
 {
-    public abstract class SingletonBehavior<TSingleton> : MonoBehaviour where TSingleton : MonoBehaviour
+    public abstract partial class SingletonBehavior<TSingleton> : MonoBehaviour where TSingleton : MonoBehaviour
     {
-        protected static TSingleton _instance;
-        public static TSingleton Instance
+        [AutoStaticsCleanup] protected static TSingleton _instance;
+        [AutoStaticsCleanup] public static TSingleton Instance
         {
             get
             {

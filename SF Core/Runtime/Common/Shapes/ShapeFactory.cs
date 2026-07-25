@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
-
-using SF.Utilities.InteropServices;
-
+using Unity.Scripting.LifecycleManagement;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -60,6 +58,7 @@ namespace SF.Utilities.Shapes
      *
      */
 
+    using SF.Utilities.InteropServices;
 
 
     /// <summary>
@@ -140,6 +139,7 @@ namespace SF.Utilities.Shapes
         }
     }
 
+    [NoAutoStaticsCleanup]
     public static class SFRendererUtilities
     {
         public static RenderTexture OutputTexture;
@@ -151,7 +151,7 @@ namespace SF.Utilities.Shapes
         public static Material DebugMaterial;
         public static Color OutlineColor = Color.green;
 
-        public readonly static List<Mesh> DebugMeshes = new List<Mesh>();
+        public static readonly List<Mesh> DebugMeshes = new List<Mesh>();
 
         private static void InitializeDebugMaterial()
         {
@@ -222,47 +222,5 @@ namespace SF.Utilities.Shapes
         {
             DebugMeshes.Add(Resources.GetBuiltinResource<Mesh>("Cube.fbx"));
         }
-    }
-
-
-    /// <summary>
-    /// Shape data struct that keeps track of the position of the single point and all the <see cref="ShapeEdge"/>
-    /// it is a part of.
-    /// </summary>
-    public struct ShapePoint
-    {
-        public Vector3 Position;
-
-        public List<ShapeEdge> ConnectedEdges;
-
-        public ShapePoint(Vector3 position)
-        {
-            Position = position;
-            ConnectedEdges = new List<ShapeEdge>();
-        }
-
-        public ShapePoint(Vector3 position, List<ShapeEdge> connectedEdges)
-        {
-            Position = position;
-            ConnectedEdges = connectedEdges;
-        }
-
-        public static Vector3 ShapePointToVector3(ShapePoint shapePoint) => shapePoint;
-
-        public static implicit operator Vector3(ShapePoint shapePoint) => shapePoint.Position;
-        public static explicit operator ShapePoint(Vector3 position) => new ShapePoint(position);
-
-
-    }
-
-    /// <summary>
-    /// This keeps tracks of all the connections between two points in a shape.
-    /// Useful for mesh generation, rendering shape creation, and custom physics shape making.
-    /// Example <see cref="UnityEngine.PhysicsShape2D"/>
-    /// </summary>
-    public struct ShapeEdge
-    {
-        public ShapePoint StartPoint;
-        public ShapePoint EndPoint;
     }
 }
